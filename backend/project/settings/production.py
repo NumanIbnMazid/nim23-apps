@@ -7,7 +7,7 @@ ALLOWED_HOSTS = [
     "apps.nim23.com",  # Frontend Host (Vercel)
     "nim23-apps.vercel.app",  # Frontend Host (Vercel)
     "backend.apps.nim23.com",  # Backend Host (Northflank)
-    "p01--nim23-apps--47v76khxj6jn.code.run",  # Backend Host (Northflank)
+    "p02--nim23-apps--47v76khxj6jn.code.run",  # Backend Host (Northflank)
 ]
 
 # ----------------------------------------------------
