@@ -41,7 +41,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function downloadMediaInfo(
+async function downloadMediaInfo(
   videoTitle: string,
   mediaType: string,
   mediaFormat: string | null,
