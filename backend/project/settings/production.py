@@ -4,16 +4,7 @@ from project.settings.base import *
 # *** Allowed Hosts ***
 # ----------------------------------------------------
 ALLOWED_HOSTS = [
-    "nim23.com",  # Frontend Host (Production)
-    "nim23-staging.vercel.app",  # Frontend Host (Staging)
     "apps.nim23.com",  # Frontend Host (apps)
-    "admin.nim23.com",  # Backend Host
-    "backend.nim23.com",  # Backend Host
-    "nim23.koyeb.app",  # Backend Host
-    "p01--nim23--47v76khxj6jn.code.run",  # Northflank Host (Production)
-    "admin.nim23.com.numa-zjzm.dns.northflank.app",  # Northflank Host (Production)
-    "staging.nim23.com",  # Northflank Host (Staging)
-    "p01--nim23-staging--47v76khxj6jn.code.run",  # Northflank Host (Staging)
 ]
 
 # ----------------------------------------------------
@@ -49,10 +40,8 @@ SECURE_HSTS_PRELOAD = True
 CORS_ORIGIN_ALLOW_ALL = False
 # CORS_ALLOW_ALL_ORIGINS = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
 CORS_ORIGIN_WHITELIST = [
-    "https://nim23.com",
-    "https://www.nim23.com",
-    "https://nim23-staging.vercel.app",
-    "https://www.nim23-staging.vercel.app",
+    "https://apps.nim23.com",
+    "https://www.apps.nim23.com",
 ]
 
 # ----------------------------------------------------
