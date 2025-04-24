@@ -4,7 +4,8 @@ from project.settings.base import *
 # *** Allowed Hosts ***
 # ----------------------------------------------------
 ALLOWED_HOSTS = [
-    "apps.nim23.com",  # Frontend Host (apps)
+    "apps.nim23.com",  # Frontend Host (Vercel)
+    "backend.apps.nim23.com",  # Backend Host (Northflank)
 ]
 
 # ----------------------------------------------------
