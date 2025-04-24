@@ -47,6 +47,7 @@ class FetchMediaInfoViewSet(GenericViewSet, RetrieveModelMixin):
                 data={"media_info": media_info}, status=status.HTTP_200_OK
             )
         except Exception as e:
+            print(f"Error fetching media info: {e}")
             return ResponseWrapper(
                 message="Failed to get media details!",
                 error_message=str(e),

@@ -288,3 +288,4 @@ GitHub.sublime-settings
 **/cache.json
 
 backend/utils/pytube/tokens.json
+backend/utils/pytube/cookies.txt

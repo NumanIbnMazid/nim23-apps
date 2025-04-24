@@ -1,25 +1,31 @@
-from omdb import OMDBClient
-from imdb import Cinemagoer
-import json
+import requests
 
 
-print("\n\n Data from OMDB \n\n")
-# must use OMDb API parameters
-client = OMDBClient(apikey="6da2e614")
-res = client.request(t="Dragon", y="2012", plot="short", r="json")
-result_byte_data = res.content
-decoded_str = result_byte_data.decode("utf-8")
-json_data = json.loads(decoded_str)
-print(json_data)
+def fetch_youtube_metadata(url):
+    oembed_url = "https://www.youtube.com/oembed"
+    params = {"url": url, "format": "json"}
+    response = requests.get(oembed_url, params=params)
+    return response.json()
 
 
-print("\n\n Data from IMDB \n\n")
-# create an instance of the Cinemagoer class
-ia = Cinemagoer()
+print(
+    fetch_youtube_metadata(
+        "https://www.youtube.com/watch?v=tNGIgjR_RfY&ab_channel=DevGoutamMusicExpress"
+    )
+)
 
-results = ia.search_movie("Like Stars on Earth")
-if results:
-    # Get detailed info from first match
-    movie = results[0]
-    ia.update(movie)
-    print(movie.infoset2keys)
+json_data = {
+    "title": "Amar haat bandhibi || Dev goutam.",
+    "author_name": "Dev Goutam Music Express ",
+    "author_url": "https://www.youtube.com/@devgoutammus",
+    "type": "video",
+    "height": 113,
+    "width": 200,
+    "version": "1.0",
+    "provider_name": "YouTube",
+    "provider_url": "https://www.youtube.com/",
+    "thumbnail_height": 360,
+    "thumbnail_width": 480,
+    "thumbnail_url": "https://i.ytimg.com/vi/tNGIgjR_RfY/hqdefault.jpg",
+    "html": '<iframe width="200" height="113" src="https://www.youtube.com/embed/tNGIgjR_RfY?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="Amar haat bandhibi || Dev goutam."></iframe>',
+}

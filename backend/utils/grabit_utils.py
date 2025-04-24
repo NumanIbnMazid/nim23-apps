@@ -8,12 +8,16 @@ import os
 import time
 import re
 import json
+import base64
 
+
+load_dotenv()
 
 # Define the token file path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TOKEN_DIR = os.path.join(BASE_DIR, "pytube")
 TOKEN_FILE = os.path.join(TOKEN_DIR, "tokens.json")
+COOKIES_PATH = os.path.join(BASE_DIR, "pytube", "cookies.txt")
 
 
 def is_token_valid(token_data):
@@ -27,7 +31,6 @@ def is_token_valid(token_data):
 def generate_tokens_json():
     """Creates tokens.json from environment variables if it does not exist."""
     # Load environment variables
-    load_dotenv()
     tokens = {
         "access_token": os.getenv("PYTUBE_ACCESS_TOKEN"),
         "refresh_token": os.getenv("PYTUBE_REFRESH_TOKEN"),
@@ -48,6 +51,19 @@ def generate_tokens_json():
     # Write to tokens.json
     with open(TOKEN_FILE, "w") as f:
         json.dump(tokens, f)
+
+
+def generate_ytdlp_cookies():
+    """Generates yt-dlp cookies.txt file from base64-encoded env string."""
+    cookies_b64 = os.getenv("YT_COOKIES_B64")
+
+    if not cookies_b64:
+        raise ValueError("YT_COOKIES_B64 not set in environment.")
+
+    os.makedirs(os.path.dirname(COOKIES_PATH), exist_ok=True)
+
+    with open(COOKIES_PATH, "wb") as f:
+        f.write(base64.b64decode(cookies_b64))
 
 
 def is_youtube_url(url: str) -> bool:
@@ -95,9 +111,7 @@ def fetch_media_info_pytube(url, detailed=False):
 
     # Fetch the highest quality video and audio streams
     best_video = (
-        info_dict.streams.filter(
-            only_video=True, file_extension="mp4"
-        )
+        info_dict.streams.filter(only_video=True, file_extension="mp4")
         .order_by("resolution")
         .desc()
         .first()
@@ -146,9 +160,7 @@ def fetch_media_info_pytube(url, detailed=False):
             ],
             "video_formats": [
                 get_format_info(s, "video")
-                for s in info_dict.streams.filter(
-                    only_video=True, file_extension="mp4"
-                )
+                for s in info_dict.streams.filter(only_video=True, file_extension="mp4")
             ],
             "audio_formats": [
                 get_format_info(s, "audio")
@@ -178,7 +190,7 @@ def fetch_media_info_pytube(url, detailed=False):
     return media_info
 
 
-def fetch_media_info_yt_dlp(url, detailed=False):
+def fetch_media_info_yt_dlp(url, detailed=False, is_youtube=False):
     """Fetches the media details from the provided URL using yt_dlp."""
     # TODO: REMOVE TEST CODE
     # fake_data_file = os.path.join(
@@ -187,10 +199,18 @@ def fetch_media_info_yt_dlp(url, detailed=False):
     # with open(fake_data_file, "r") as f:
     #     return json.load(f)["data"]["media_info"]
     # TODO: REMOVE END
+    ydl_opts = {
+        "quiet": True,
+        "skip_download": True,
+    }
+
+    if is_youtube:
+        # Check if cookies.txt exists
+        if not os.path.exists(COOKIES_PATH):
+            generate_ytdlp_cookies()
+        ydl_opts["cookiefile"] = COOKIES_PATH
 
     info_dict = {}
-
-    ydl_opts = {"quiet": True, "skip_download": True}
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(url, download=False)
@@ -200,7 +220,9 @@ def fetch_media_info_yt_dlp(url, detailed=False):
     best_video = next(
         f
         for f in info_dict.get("formats", [])[::-1]
-        if f.get("vcodec") != "none" and f.get("acodec") == "none" and f.get("ext") == "mp4"
+        if f.get("vcodec") != "none"
+        and f.get("acodec") == "none"
+        and f.get("ext") == "mp4"
     )
     best_audio = next(
         f
@@ -282,10 +304,12 @@ def fetch_media_info_yt_dlp(url, detailed=False):
 def fetch_media_info(url, detailed=False):
     """Fetches the media details from the provided URL."""
     if is_youtube_url(url):
-        print("Fetching media info from pytube...")
-        return fetch_media_info_pytube(url, detailed)
+        # print("Fetching media info from YouTube with pytube...")
+        # return fetch_media_info_pytube(url, detailed)
+        print("Fetching media info from YouTube with yt_dlp...")
+        return fetch_media_info_yt_dlp(url, detailed, is_youtube=True)
     else:
-        print("Fetching media info from yt_dlp...")
+        print("Fetching media info using yt_dlp...")
         return fetch_media_info_yt_dlp(url, detailed)
 
 

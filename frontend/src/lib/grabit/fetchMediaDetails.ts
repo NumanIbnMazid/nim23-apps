@@ -11,7 +11,7 @@ export const fetchMediaDetails = async (url: string, setStatusMessage: any) => {
       errorMsg = errorData.message || errorMsg
     } catch (e) {
       // ignore JSON parse errors
-      errorMsg = `Failed to fetch media details! (${e})`
+      errorMsg = `Failed to fetch media details! (${response.statusText})`
     }
     throw new Error(errorMsg)
   }
