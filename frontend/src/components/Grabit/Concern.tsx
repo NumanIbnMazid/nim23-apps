@@ -31,6 +31,9 @@ export default function Concern() {
             </div>
           </span>
         </AnimatedText>
+        <AnimatedText variants={opacityVariant} className="text-md text-cyan-500 dark:text-cyan-400 font-bold">
+          [ NOTE: Currently, YouTube download is not supported ]
+        </AnimatedText>
       </div>
     </>
   )

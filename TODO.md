@@ -6,3 +6,5 @@
 - [ ] Create domain `apps.nim23.com` and `apps.backend.nim23.com`.
 - [ ] Update ALLOWED_HOSTS in settings.py.
 - [ ] Upgrade Next PWA Version.
+- [ ] Add YouTube Music API using https://ytmusicapi.readthedocs.io/en/stable/ for recommendr.
+- [ ] Fix YouTube Download Bug.
