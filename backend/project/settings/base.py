@@ -131,7 +131,7 @@ WSGI_APPLICATION = "project.wsgi.application"
 # ----------------------------------------------------
 # *** ASGI Application ***
 # ----------------------------------------------------
-WSGI_APPLICATION = "project.asgi.application"
+ASGI_APPLICATION = "project.asgi.application"
 
 # ----------------------------------------------------
 # *** Database Configuration ***
