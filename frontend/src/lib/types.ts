@@ -31,3 +31,12 @@ export type PageMeta = {
   humanizerAI: PageData
   recommendr: PageData
 }
+
+export type FormInput = {
+  to_name: string
+  first_name: string
+  last_name: string
+  email: string
+  subject: string
+  message: string
+}
