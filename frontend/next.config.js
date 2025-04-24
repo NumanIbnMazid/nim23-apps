@@ -16,7 +16,7 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
   buildExcludes: ['.next/static/chunks/pages/*.js'], // ✅ Prevents slow initial navigation
-  publicExcludes: ['!resume.pdf', '!robots.txt', '!sitemap.xml', '!workbox-*.js', '!sw.js'],
+  publicExcludes: ['!robots.txt', '!sitemap.xml', '!workbox-*.js', '!sw.js'],
 })
 
 /** @type {import('next').NextConfig} */
@@ -27,7 +27,7 @@ const nextConfig = withPWA({
     workerThreads: false, // ✅ Ensure service worker updates
   },
   generateBuildId: async () => {
-    return 'nim23-build'
+    return 'nim23-apps-build'
   },
   reactStrictMode: true,
   images: {
@@ -77,4 +77,3 @@ const nextConfig = withPWA({
 })
 
 module.exports = nextConfig
-// TEST Comment

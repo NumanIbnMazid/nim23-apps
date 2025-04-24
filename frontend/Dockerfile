@@ -29,9 +29,6 @@ COPY frontend/.env /app/.env
 COPY frontend/package*.json /app
 COPY frontend/yarn.lock /app
 
-# Copy the Prisma schema
-COPY frontend/prisma /app/prisma
-
 # Install dependencies
 RUN yarn install
 
