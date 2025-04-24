@@ -27,9 +27,19 @@ export async function GET(req: Request) {
 }
 
 async function fetchMediaInfo(mediaUrl: string) {
-  const apiUrl = `${process.env.BACKEND_API_BASE_URL}/grabit-fetch-media-info/details/`
+  const baseUrl = process.env.BACKEND_API_BASE_URL
+  const token = process.env.BACKEND_API_TOKEN
 
-  const response = await fetch(apiUrl + '?media_url=' + encodeURIComponent(mediaUrl))
+  const apiUrl = `${baseUrl}/grabit-fetch-media-info/details/`
+  const query = `?media_url=${encodeURIComponent(mediaUrl)}`
+
+  const response = await fetch(apiUrl + query, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${token}`, // Knox token passed here
+    },
+  })
   const result = await response
   return result
 }

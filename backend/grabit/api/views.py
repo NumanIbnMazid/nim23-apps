@@ -15,7 +15,7 @@ import json
 
 @custom_response_wrapper
 class FetchMediaInfoViewSet(GenericViewSet, RetrieveModelMixin):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -86,7 +86,7 @@ class FetchMediaInfoViewSet(GenericViewSet, RetrieveModelMixin):
 
 
 class DownloadViewset(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def clean_filename(self, filename: str) -> str:
         # Remove any invalid characters (non-alphanumeric, non-hyphen, non-underscore, non-period)

@@ -18,10 +18,13 @@ export async function getRecommendations(preferences: any, clientID: string | nu
     other_preferences: preferences.other_preferences || '',
   }
 
+  const token = process.env.BACKEND_API_TOKEN
+
   const res = await fetch(apiURL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Token ${token}`
     },
     body: JSON.stringify(body),
   })

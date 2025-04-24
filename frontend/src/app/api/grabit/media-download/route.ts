@@ -41,7 +41,7 @@ export async function GET(req: Request) {
   }
 }
 
-async function downloadMediaInfo(
+export async function downloadMediaInfo(
   videoTitle: string,
   mediaType: string,
   mediaFormat: string | null,
@@ -49,16 +49,32 @@ async function downloadMediaInfo(
   bestAudioObject: any,
   downloadPath: string
 ) {
-  // Construct the API URL for downloading media
-  const downloadApiUrl =
-    `${process.env.BACKEND_API_BASE_URL}/grabit-download/process-media-download?` +
-    `video_title=${encodeURIComponent(videoTitle)}&` +
-    `media_type=${encodeURIComponent(mediaType)}&` +
-    `media_format=${encodeURIComponent(JSON.stringify(mediaFormat))}&` +
-    `selected_media_object=${encodeURIComponent(JSON.stringify(selectedMediaobject))}&` +
-    `best_audio_object=${encodeURIComponent(JSON.stringify(bestAudioObject))}&` +
-    `download_path=${encodeURIComponent(downloadPath)}`
+  const baseUrl = process.env.BACKEND_API_BASE_URL
+  const token = process.env.BACKEND_API_TOKEN
 
-  const response = await fetch(downloadApiUrl)
+  const params = new URLSearchParams({
+    video_title: videoTitle,
+    media_type: mediaType,
+    media_format: JSON.stringify(mediaFormat),
+    selected_media_object: JSON.stringify(selectedMediaobject),
+    best_audio_object: JSON.stringify(bestAudioObject),
+    download_path: downloadPath,
+  })
+
+  const downloadApiUrl = `${baseUrl}/grabit-download/process-media-download?${params.toString()}`
+
+  const response = await fetch(downloadApiUrl, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Token ${token}`, // Knox token added
+    },
+  })
+
+  if (!response.ok) {
+    const errText = await response.text()
+    throw new Error(`Download failed: ${errText}`)
+  }
+
   return response
 }

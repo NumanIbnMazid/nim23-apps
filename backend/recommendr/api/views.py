@@ -73,7 +73,7 @@ class MediaRecommendation(BaseModel):
 
 @custom_response_wrapper
 class RecommendationViewSet(GenericViewSet):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = RecommendationRequestSerializer
 
     @swagger_auto_schema(

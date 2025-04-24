@@ -20,7 +20,7 @@ import json
 
 @custom_response_wrapper
 class HumanizerAiViewset(GenericViewSet):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = HumanizerRequestSerializer
 
     def get_client(self, client_name):
