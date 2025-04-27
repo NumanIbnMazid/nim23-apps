@@ -15,7 +15,7 @@ export default function HumanizerAiClient() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const maxLength = 350 // Words
+  const maxLength = Number(process.env.HUMANIZER_AI_MAX_WORDS) || 300 // Words
   const minLength = 23 // Words
 
   const handleSubmit = async () => {
