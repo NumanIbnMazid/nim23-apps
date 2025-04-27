@@ -89,7 +89,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
       setRecommendations(response || [])
     } catch (error) {
       console.error('Error fetching recommendations:', error)
-      setError('Failed to fetch recommendations. Please try again.')
+      setError('⚠️ Failed to fetch recommendations. Please try again.')
       setShowForm(true)
     } finally {
       setRecommendationLoading(false)
@@ -109,7 +109,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
 
   useEffect(() => {
     if (!recommendationLoading && recommendationListScrollTo) {
-      const el = document.getElementById('recommendation-list')
+      const el = document.getElementById('content-area')
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' })
         setRecommendationListScrollTo(false)
@@ -152,6 +152,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
               />
             </>
           )}
+          <div id="content-area"></div>
           {error && <Error error={error} />}
           {recommendationLoading && <LoadingRecommendations recommendationActiveLog={recommendationActiveLog} />}
           {!recommendationLoading && userPrefs && recommendations.length > 0 && (
