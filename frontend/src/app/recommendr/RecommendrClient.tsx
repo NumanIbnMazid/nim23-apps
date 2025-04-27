@@ -10,6 +10,7 @@ import LoadingRecommendations from '@/components/Recommendr/LoadingRecommendatio
 import AppIntro from '@/components/Recommendr/AppIntro'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { useClientID } from '@/context/clientIdContext'
+import { useWebSocket } from '@/context/WebSocketContext'
 import PreferenceControls from '@/components/Recommendr/PreferenceControls'
 
 export default function RecommendrClient({ preferencesChoices }: { preferencesChoices: any }) {
@@ -24,6 +25,8 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
   const [modifyPreferencesScrollToPrefs, setModifyPreferencesScrollToPrefs] = useState(false)
   const [loadingRecommendationsScrollTo, setLoadingRecommendationsScrollTo] = useState(false)
   const [recommendationListScrollTo, setRecommendationListScrollTo] = useState(false)
+  const { logs } = useWebSocket()
+  const [recommendationActiveLog, setRecommendationActiveLog] = useState<string | null>(null)
 
   const [liveFormData, setLiveFormData] = useState<any>({
     mood: '',
@@ -59,8 +62,20 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
     setLoading(false)
   }, [])
 
+  useEffect(() => {
+    if (
+      logs &&
+      logs?.message?.type === 'event' &&
+      logs?.message?.module === 'recommendr' &&
+      logs?.message?.scope === 'get-recommendation'
+    ) {
+      setRecommendationActiveLog(logs.message.message)
+    }
+  }, [logs])
+
   const handleFormSubmit = async (prefs: any) => {
     setUserPrefs(prefs)
+    setRecommendationActiveLog(null)
     setRecommendationLoading(true)
     setShowForm(false)
     setCurrentPreferences(prefs)
@@ -132,7 +147,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
               />
             </>
           )}
-          {recommendationLoading && <LoadingRecommendations />}
+          {recommendationLoading && <LoadingRecommendations recommendationActiveLog={recommendationActiveLog} />}
           {!recommendationLoading && userPrefs && recommendations.length > 0 && (
             <RecommendationList
               results={recommendations}
