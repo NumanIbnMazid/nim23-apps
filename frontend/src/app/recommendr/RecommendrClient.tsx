@@ -90,7 +90,6 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
     } catch (error) {
       console.error('Error fetching recommendations:', error)
       setError('Failed to fetch recommendations. Please try again.')
-      setRecommendations([])
       setShowForm(true)
     } finally {
       setRecommendationLoading(false)
