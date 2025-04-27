@@ -5,6 +5,10 @@ export default function Concern() {
   return (
     <>
       <div className={`w-full flex flex-col items-center justify-center gap-3 py-2 select-none`}>
+        <AnimatedText variants={opacityVariant} className="text-md text-cyan-500 dark:text-cyan-400 font-bold">
+          [NOTE: This app is still in development phase. You might face some issues in several cases. Currently,
+          YouTube download is not supported.]
+        </AnimatedText>
         <AnimatedText variants={opacityVariant} className="text-md text-gray-600 dark:text-gray-400">
           <span className="pe-1">
             <span className="font-bold">Copyrighted</span> and <span className="font-bold">Age Restricted</span>{' '}
@@ -30,9 +34,6 @@ export default function Concern() {
               copyright law and the Terms of Service.
             </div>
           </span>
-        </AnimatedText>
-        <AnimatedText variants={opacityVariant} className="text-md text-cyan-500 dark:text-cyan-400 font-bold">
-          [ NOTE: Currently, YouTube download is not supported ]
         </AnimatedText>
       </div>
     </>
