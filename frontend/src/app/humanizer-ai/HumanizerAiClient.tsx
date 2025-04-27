@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { FadeContainer } from '@/content/FramerMotionVariants'
 import HumanizerInput from '@/components/humanizerAI/HumanizerInput'
+import RegenerateButton from '@/components/humanizerAI/RegenerateButton'
 import HumanizedOutput from '@/components/humanizerAI/HumanizedOutput'
 import AppIntro from '@/components/humanizerAI/AppIntro'
 import ErrorMessage from '@/components/humanizerAI/ErrorMessage'
@@ -16,7 +17,7 @@ export default function HumanizerAiClient() {
   const [error, setError] = useState('')
 
   const maxLength = Number(process.env.HUMANIZER_AI_MAX_WORDS) || 300 // Words
-  const minLength = 23 // Words
+  const minLength = Number(process.env.HUMANIZER_AI_MIN_WORDS) || 20 // Words
 
   const handleSubmit = async () => {
     if (!inputText.trim()) {
@@ -74,6 +75,11 @@ export default function HumanizerAiClient() {
             />
             {error && <ErrorMessage error={error} />}
             {outputText && <HumanizedOutput output={outputText} />}
+            {outputText && (
+              <div className="flex justify-end mt-4">
+                <RegenerateButton onClick={handleSubmit} isLoading={loading} />
+              </div>
+            )}
           </div>
         </div>
       </motion.section>

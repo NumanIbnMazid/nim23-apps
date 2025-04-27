@@ -63,6 +63,7 @@ const nextConfig = withPWA({
     DARKSTAR_GOOGLE_API_KEY: process.env.DARKSTAR_GOOGLE_API_KEY,
     PORTFOLIO_SITE_URL: process.env.PORTFOLIO_SITE_URL,
     HUMANIZER_AI_MAX_WORDS: process.env.HUMANIZER_AI_MAX_WORDS,
+    HUMANIZER_AI_MIN_WORDS: process.env.HUMANIZER_AI_MIN_WORDS,
   },
   webpack(config, { isServer }) {
     if (!isServer) {
