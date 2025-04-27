@@ -1,5 +1,3 @@
-'use client'
-
 import { FaMagic, FaFilm, FaMusic, FaSmile } from 'react-icons/fa'
 import { motion } from 'framer-motion'
 

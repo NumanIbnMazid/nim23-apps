@@ -1,5 +1,3 @@
-'use client'
-
 import ReactModal from 'react-modal'
 import { FaRegFrown } from 'react-icons/fa'
 

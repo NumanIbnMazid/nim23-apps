@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import { FaFilter, FaTrash } from 'react-icons/fa'
 import ActivePreferencesModal from '@/components/Recommendr/ActivePreferencesModal'

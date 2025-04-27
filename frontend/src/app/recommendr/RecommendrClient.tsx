@@ -12,6 +12,7 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import { useClientID } from '@/context/clientIdContext'
 import { useWebSocket } from '@/context/WebSocketContext'
 import PreferenceControls from '@/components/Recommendr/PreferenceControls'
+import Error from '@/components/Recommendr/Error'
 
 export default function RecommendrClient({ preferencesChoices }: { preferencesChoices: any }) {
   const [preferences, setPreferences] = useState<any | null>(null)
@@ -27,6 +28,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
   const [recommendationListScrollTo, setRecommendationListScrollTo] = useState(false)
   const { logs } = useWebSocket()
   const [recommendationActiveLog, setRecommendationActiveLog] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const [liveFormData, setLiveFormData] = useState<any>({
     mood: '',
@@ -74,6 +76,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
   }, [logs])
 
   const handleFormSubmit = async (prefs: any) => {
+    setError(null)
     setUserPrefs(prefs)
     setRecommendationActiveLog(null)
     setRecommendationLoading(true)
@@ -86,6 +89,9 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
       setRecommendations(response || [])
     } catch (error) {
       console.error('Error fetching recommendations:', error)
+      setError('Failed to fetch recommendations. Please try again.')
+      setRecommendations([])
+      setShowForm(true)
     } finally {
       setRecommendationLoading(false)
       setRecommendationListScrollTo(true)
@@ -147,6 +153,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
               />
             </>
           )}
+          {error && <Error error={error} />}
           {recommendationLoading && <LoadingRecommendations recommendationActiveLog={recommendationActiveLog} />}
           {!recommendationLoading && userPrefs && recommendations.length > 0 && (
             <RecommendationList

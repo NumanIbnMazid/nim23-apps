@@ -1,5 +1,3 @@
-'use client'
-
 import { useState, useEffect } from 'react'
 import ReactModal from 'react-modal'
 import { FaPaperPlane, FaSliders } from 'react-icons/fa6'

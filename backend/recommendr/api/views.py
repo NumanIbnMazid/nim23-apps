@@ -49,7 +49,9 @@ spotify_client = spotipy.Spotify(
     )
 )
 # YouTube Client
-youtube_client = build("youtube", "v3", developerKey=YOUTUBE_API_KEY, cache_discovery=False)
+youtube_client = build(
+    "youtube", "v3", developerKey=YOUTUBE_API_KEY, cache_discovery=False
+)
 # OMDB Client
 omdb_client = OMDBClient(apikey="6da2e614")
 # IMDB Client
@@ -343,7 +345,7 @@ class RecommendationViewSet(GenericViewSet):
             client=client,
             model=RECOMMENDR_MODEL,
             system_prompt=system_prompt,
-            user_prompt="Please give me a list of 5 recommendations",
+            user_prompt=f"Please give me a list of 5 {media_type_name_plural} according to my preferences.",
         )
 
         # TODO: Remove after testing
@@ -408,6 +410,7 @@ class RecommendationViewSet(GenericViewSet):
             result = self.generate_recommendation(serializer.validated_data)
 
             if not result:
+                logger.info(f"⚠️ No recommendations found. {result}")
                 return ResponseWrapper(
                     message="No recommendations found",
                     status=status.HTTP_404_NOT_FOUND,
