@@ -6,7 +6,17 @@ from drf_yasg import openapi
 from django.conf import settings
 from dotenv import load_dotenv
 from recommendr.api.serializers import RecommendationRequestSerializer
-from recommendr.models import RecommendrUtils
+from recommendr.models import (
+    RecommendrUtils,
+    MediaType,
+    Mood,
+    Language,
+    Genre,
+    Occasion,
+    MediaAge,
+    Rating,
+    Category,
+)
 from recommendr.api.cache import (
     get_previous_titles,
     save_recommendations,
@@ -83,24 +93,64 @@ class RecommendationViewSet(GenericViewSet):
     )
     @action(detail=False, methods=["get"], url_path="preferences")
     def get_preferences(self, request):
-        data_path = os.path.join(settings.BASE_DIR, "recommendr/api/data")
+        try:
+            # Fetch simple lists
+            media_types = list(
+                MediaType.objects.order_by("order").values_list("title", flat=True)
+            )
+            moods = list(Mood.objects.order_by("order").values_list("title", flat=True))
+            languages = list(
+                Language.objects.order_by("order").values_list("title", flat=True)
+            )
+            occasions = list(
+                Occasion.objects.order_by("order").values_list("title", flat=True)
+            )
+            media_ages = list(
+                MediaAge.objects.order_by("order").values_list("title", flat=True)
+            )
+            ratings = list(
+                Rating.objects.order_by("order").values_list("title", flat=True)
+            )
 
-        def load_json(file):
-            with open(os.path.join(data_path, file), "r") as f:
-                return json.load(f)
+            # Fetch genres grouped by media_type
+            genres_qs = Genre.objects.select_related("media_type").order_by("order")
+            genres = {}
+            for genre in genres_qs:
+                media_type_title = (
+                    genre.media_type.title if genre.media_type else "Unknown"
+                )
+                genres.setdefault(media_type_title, []).append(genre.title)
 
-        preferences = {
-            "media_types": load_json("media_types.json"),
-            "mood": load_json("moods.json"),
-            "language": load_json("languages.json"),
-            "occasion": load_json("occasions.json"),
-            "genres": load_json("genres.json"),
-            "media_age": load_json("media_age.json"),
-            "rating": load_json("ratings.json"),
-            "categories": load_json("categories.json"),
-        }
+            # Fetch categories grouped by media_type
+            categories_qs = Category.objects.select_related("media_type").order_by(
+                "order"
+            )
+            categories = {}
+            for category in categories_qs:
+                media_type_title = (
+                    category.media_type.title if category.media_type else "Unknown"
+                )
+                categories.setdefault(media_type_title, []).append(category.title)
 
-        return ResponseWrapper(data=preferences, status=status.HTTP_200_OK)
+            preferences = {
+                "media_types": media_types,
+                "mood": moods,
+                "language": languages,
+                "occasion": occasions,
+                "genres": genres,
+                "media_age": media_ages,
+                "rating": ratings,
+                "categories": categories,
+            }
+
+            return ResponseWrapper(data=preferences, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"⚠️ Error fetching recommendr preferences: {e}")
+            return ResponseWrapper(
+                message="Fetching preferences failed!",
+                error_message=str(e),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def get_gemini_client(self):
         return genai.Client(api_key=GEMINI_API_KEY)
@@ -486,6 +536,8 @@ class RecommendationViewSet(GenericViewSet):
                         )
                     except Exception as e:
                         logger.error(f"Error fetching YouTube link: {e}")
+                else:
+                    filtered_result[index]["youtube_link"] = None
 
             # Step 4: Save new ones
             by_type = extract_titles_by_type(filtered_result)

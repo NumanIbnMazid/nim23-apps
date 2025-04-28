@@ -13,6 +13,7 @@ import { useClientID } from '@/context/clientIdContext'
 import { useWebSocket } from '@/context/WebSocketContext'
 import PreferenceControls from '@/components/Recommendr/PreferenceControls'
 import Error from '@/components/Recommendr/Error'
+import HowToUse from '@/components/Recommendr/HowToUse'
 
 export default function RecommendrClient({ preferencesChoices }: { preferencesChoices: any }) {
   const [preferences, setPreferences] = useState<any | null>(null)
@@ -165,6 +166,9 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
               setModifyPreferencesScrollToPrefs={setModifyPreferencesScrollToPrefs}
             />
           )}
+
+          <hr className="my-16 border-gray-300 dark:border-gray-700" />
+          <HowToUse />
         </div>
       )}
     </motion.section>

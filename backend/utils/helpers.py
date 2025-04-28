@@ -5,6 +5,7 @@ from rest_framework import permissions
 from django.db import models
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
+from django.db.models import Max
 from functools import wraps
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -182,3 +183,35 @@ def send_log_message(
     }
 
     async_to_sync(channel_layer.group_send)("log_group", payload)
+
+
+# Assign Order to Models Instances
+
+def assign_order(instance, model_class, order_field='order'):
+    """
+    Assigns an automatic order to a new instance of a model.
+    It finds the lowest missing integer starting from 1 if any previous order is deleted.
+
+    Args:
+        instance (models.Model): The instance for which to assign the order.
+        model_class (models.Model): The model class to query existing orders.
+        order_field (str): The name of the field to be used for ordering. Default is 'order'.
+
+    Example:
+        assign_order(instance, MediaType)
+    """
+    if instance.pk:  # Existing instances should not update their order
+        return
+
+    if getattr(instance, order_field) is not None:
+        return  # If the order is manually set, do not override
+
+    existing_orders = model_class.objects.values_list(order_field, flat=True)
+    existing_orders = sorted(filter(None, existing_orders))
+
+    max_order = model_class.objects.aggregate(max_order=Max(order_field))['max_order'] or 0
+
+    for i in range(1, max_order + 2):
+        if i not in existing_orders:
+            setattr(instance, order_field, i)
+            break

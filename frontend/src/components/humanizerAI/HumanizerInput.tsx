@@ -83,7 +83,7 @@ const HumanizerInput: React.FC<Props> = ({ inputText, maxLength, minLength, setI
           <button
             type="button"
             onClick={handlePasteFromClipboard}
-            className="absolute left-3 top-3 px-3 py-1.5 rounded-md text-sm border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition flex items-center gap-2"
+            className="absolute left-3 top-12 px-3 py-1.5 mt-1 rounded-md text-sm border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition flex items-center gap-2"
           >
             <FaPaste size={14} />
             Paste

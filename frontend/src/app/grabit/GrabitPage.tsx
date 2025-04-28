@@ -17,6 +17,7 @@ import StatusMessage from '@/components/Grabit/StatusMessage'
 import ErrorMessage from '@/components/Grabit/ErrorMessage'
 import AppIntro from '@/components/Grabit/AppIntro'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
+import HowToUseGrabit from '@/components/Grabit/HowToUse'
 
 export default function GrabitPage() {
   const [fetchMediaLoading, setFetchMediaLoading] = useState(false)
@@ -162,6 +163,8 @@ export default function GrabitPage() {
             <StatusMessage statusMessage={statusMessage} />
             <ErrorMessage error={error} />
           </div>
+          <hr className="my-16 border-gray-300 dark:border-gray-700" />
+          <HowToUseGrabit />
         </section>
       </motion.section>
     </div>

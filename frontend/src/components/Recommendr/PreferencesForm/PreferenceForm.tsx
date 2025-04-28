@@ -90,7 +90,7 @@ export default function PreferenceForm({ preferences, onSubmit, onChange, initia
 
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg space-y-6 max-w-2xl mx-auto my-8">
-      <h2 className="text-xl font-bold text-gray-800 dark:text-white">Pick your preferences</h2>
+      <h2 className="text-xl font-bold text-gray-800 dark:text-white text-center">Pick your preferences</h2>
 
       <RequiredFields preferences={preferences} formData={formData} handleSelect={handleSelect} />
 

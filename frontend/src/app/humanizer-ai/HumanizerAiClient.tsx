@@ -9,6 +9,7 @@ import HumanizedOutput from '@/components/humanizerAI/HumanizedOutput'
 import AppIntro from '@/components/humanizerAI/AppIntro'
 import ErrorMessage from '@/components/humanizerAI/ErrorMessage'
 import { fetchHumanizedText } from '@/lib/humanizerAI/fetchHumanizedText'
+import HowToUseHumanizer from '@/components/humanizerAI/HowToUse'
 
 export default function HumanizerAiClient() {
   const [inputText, setInputText] = useState('')
@@ -81,6 +82,8 @@ export default function HumanizerAiClient() {
               </div>
             )}
           </div>
+          <hr className="my-16 border-gray-300 dark:border-gray-700" />
+          <HowToUseHumanizer maxLength={maxLength} minLength={minLength} />
         </div>
       </motion.section>
     </div>
