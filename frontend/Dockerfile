@@ -23,7 +23,7 @@ RUN npm install -g yarn
 WORKDIR /app
 
 # Copy the .env file to /app
-COPY frontend/.env /app/.env
+# COPY frontend/.env /app/.env
 
 # Copy package files
 COPY frontend/package*.json /app

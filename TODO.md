@@ -8,3 +8,5 @@
 - [ ] Upgrade Next PWA Version.
 - [ ] Add YouTube Music API using https://ytmusicapi.readthedocs.io/en/stable/ for recommendr.
 - [ ] Fix YouTube Download Bug.
+- [ ] YouTube and Text Summarization. PDF Summarization.
+- [ ] YouTube to Text Conversion.
