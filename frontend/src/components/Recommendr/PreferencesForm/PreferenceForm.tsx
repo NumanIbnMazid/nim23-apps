@@ -95,20 +95,26 @@ export default function PreferenceForm({ preferences, onSubmit, onChange, initia
       <RequiredFields preferences={preferences} formData={formData} handleSelect={handleSelect} />
 
       {canSubmit && (
-        <div className="flex flex-col sm:flex-row justify-between items-center pt-2">
-          <button
-            onClick={() => setModalIsOpen(true)}
-            className="inline-flex items-center gap-2 my-4 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
-          >
-            <FaSliders /> Advanced Filters
-          </button>
+        <div>
+          <p className="text-gray-600 dark:text-gray-400 text-center mt-4">
+            Click on <span className="text-cyan-600 dark:text-cyan-400">Advanced Filters</span> to filter{' '}
+            <b>Language</b>, <b>Genre</b>, <b>Rating</b> and more.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-between items-center pt-2">
+            <button
+              onClick={() => setModalIsOpen(true)}
+              className="inline-flex items-center gap-2 my-4 bg-cyan-500 dark:bg-cyan-800 text-white dark:text-white py-2 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600"
+            >
+              <FaSliders /> Advanced Filters
+            </button>
 
-          <button
-            onClick={handleSubmit}
-            className="inline-flex items-center gap-2 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
-          >
-            Get Recommendation <FaPaperPlane />
-          </button>
+            <button
+              onClick={handleSubmit}
+              className="inline-flex items-center gap-2 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+            >
+              Get Recommendation <FaPaperPlane />
+            </button>
+          </div>
         </div>
       )}
 
