@@ -493,6 +493,8 @@ class RecommendationViewSet(GenericViewSet):
 
                 # ATTACH IMDB DATA
                 if media_type in ["Movie", "TV Show", "Web Series", "Documentary"]:
+                    # Remove spotify link if present
+                    filtered_result[index]["spotify_link"] = None
                     try:
                         is_omdb_update_success = self.update_data_with_omdb(
                             filtered_result, index
