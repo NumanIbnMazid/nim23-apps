@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useRef, useState } from 'react'
 import emailjs from '@emailjs/browser'
 import { motion } from 'framer-motion'
@@ -57,6 +55,7 @@ export default function ContactForm() {
       sendButtonRef.current?.removeAttribute('disabled')
       setIsSubmitting(false)
     } catch (err) {
+      console.error('Error sending email:', err)
       toast.error('Failed to send. Try again!', { id: toastId })
       sendButtonRef.current?.removeAttribute('disabled')
       setIsSubmitting(false)

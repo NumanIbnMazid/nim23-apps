@@ -14,7 +14,7 @@
     "find:unused": "next-unused"
   },
   "dependencies": {
-    "@emailjs/browser": "^3.11.0",
+    "@emailjs/browser": "^4.4.1",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "@google-analytics/data": "^3.3.0",

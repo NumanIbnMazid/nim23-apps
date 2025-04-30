@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server'
 import { BetaAnalyticsDataClient } from '@google-analytics/data'
 
-const propertyId = process.env.NEXT_PUBLIC_GA_PROPERTY_ID
+const propertyId = process.env.SECRET_GA_PROPERTY_ID
 const DAYS = 30
 
 const analyticsDataClient = new BetaAnalyticsDataClient({
   credentials: {
-    client_email: process.env.NEXT_PUBLIC_GA_CLIENT_EMAIL,
-    private_key: process.env.NEXT_PUBLIC_GA_PRIVATE_KEY?.replace(/\\n/gm, '\n'), // ✅ Fix private key formatting
+    client_email: process.env.SECRET_GA_CLIENT_EMAIL,
+    private_key: process.env.SECRET_GA_PRIVATE_KEY?.replace(/\\n/gm, '\n'), // ✅ Fix private key formatting
   },
-  projectId: process.env.NEXT_PUBLIC_GA_PROJECT_ID,
+  projectId: process.env.SECRET_GA_PROJECT_ID,
 })
 
 export async function GET() {

@@ -55,6 +55,7 @@ export default function Form() {
       sendButtonRef.current?.removeAttribute('disabled')
       setIsSubmitting(false)
     } catch (err) {
+      console.error('Error sending email:', err)
       toast.error('Failed to send. Try again!', { id: toastId })
       sendButtonRef.current?.removeAttribute('disabled')
       setIsSubmitting(false)
