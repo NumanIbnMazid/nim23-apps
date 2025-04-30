@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 export async function GET() {
-  const apiURL = `${process.env.SECRET_BACKEND_API_BASE_URL}/recommendr/preferences/`
+  const apiURL = `${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}/recommendr/preferences/`
   const token = process.env.SECRET_BACKEND_API_TOKEN
 
   try {

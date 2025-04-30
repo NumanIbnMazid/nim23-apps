@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   const token = process.env.SECRET_BACKEND_API_TOKEN
-  const apiURL = `${process.env.SECRET_BACKEND_API_BASE_URL}/recommendr/recommend/`
+  const apiURL = `${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}/recommendr/recommend/`
 
   try {
     const preferences = await req.json()
