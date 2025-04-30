@@ -97,8 +97,11 @@ export default function PreferenceForm({ preferences, onSubmit, onChange, initia
       {canSubmit && (
         <div>
           <p className="text-gray-600 dark:text-gray-400 text-center mt-4">
-            Click on <span className="text-cyan-600 dark:text-cyan-400">Advanced Filters</span> to filter{' '}
-            <b>Language</b>, <b>Genre</b>, <b>Rating</b> and more.
+            Click on{' '}
+            <span className="text-cyan-600 dark:text-cyan-400 cursor-pointer" onClick={() => setModalIsOpen(true)}>
+              Advanced Filters
+            </span>{' '}
+            to filter <b>Language</b>, <b>Genre</b>, <b>Rating</b> and more.
           </p>
           <div className="flex flex-col sm:flex-row justify-between items-center pt-2">
             <button
