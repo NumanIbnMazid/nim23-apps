@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getPageMetadata, pageMeta } from '@/lib/Meta'
 import type { Metadata } from 'next'
-import { PUBLIC_NEXT_PUBLIC_SITE_URL } from '@/lib/constants'
+import { PUBLIC_SITE_URL } from '@/lib/constants'
 
 // ✅ Generate metadata for 404 Not Found Page
 export const metadata: Metadata = getPageMetadata({
@@ -9,7 +9,7 @@ export const metadata: Metadata = getPageMetadata({
   description: 'Oops! The page you are looking for does not exist. You are lost in space!',
   image: pageMeta.home.image, // ✅ Optional image for better social previews
   keywords: '404, page not found, lost, missing page, error',
-  url: `${PUBLIC_NEXT_PUBLIC_SITE_URL}/404`,
+  url: `${PUBLIC_SITE_URL}/404`,
 })
 
 export default function NotFoundPage() {

@@ -46,10 +46,10 @@ export default function ContactForm() {
 
     try {
       await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAIL_JS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAIL_JS_TEMPLATE_ID!,
+        process.env.EMAIL_JS_SERVICE_ID!,
+        process.env.EMAIL_JS_TEMPLATE_ID!,
         emailData!,
-        process.env.NEXT_PUBLIC_EMAIL_JS_PUBLIC_KEY!
+        process.env.EMAIL_JS_PUBLIC_KEY!
       )
 
       formRef.current?.reset()

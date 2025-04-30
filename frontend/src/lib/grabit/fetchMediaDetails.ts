@@ -1,7 +1,7 @@
-import { PUBLIC_NEXT_PUBLIC_SITE_URL } from '@/lib/constants'
+import { PUBLIC_SITE_URL } from '@/lib/constants'
 
 export const fetchMediaDetails = async (url: string, setStatusMessage: any) => {
-  const apiUrl = `${PUBLIC_NEXT_PUBLIC_SITE_URL}/api/grabit/media-details`
+  const apiUrl = `${PUBLIC_SITE_URL}/api/grabit/media-details`
   const response = await fetch(`${apiUrl}?media_url=${encodeURIComponent(url)}`)
 
   if (!response.ok) {

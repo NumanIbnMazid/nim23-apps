@@ -1,5 +1,5 @@
 import { downloadMedia } from '@/lib/grabit/downloadMedia'
-import { PUBLIC_NEXT_PUBLIC_SITE_URL } from '@/lib/constants'
+import { PUBLIC_SITE_URL } from '@/lib/constants'
 
 export const processDownload = async (
   videoTitle: string,
@@ -18,7 +18,7 @@ export const processDownload = async (
   setStatusMessage("Processing download.....")
 
   const downloadApiUrl =
-    `${PUBLIC_NEXT_PUBLIC_SITE_URL}/api/grabit/media-download?` +
+    `${PUBLIC_SITE_URL}/api/grabit/media-download?` +
     `video_title=${encodeURIComponent(videoTitle.trim() || '')}&` +
     `media_type=${encodeURIComponent(mediaTypeRef.current?.value || '')}&` +
     `media_format=${encodeURIComponent(mediaFormatRef.current?.value || '')}&` +
