@@ -47,7 +47,7 @@ export default function Footer({ setShowQR, showQR }: { setShowQR: (value: boole
                 <FooterLink key={index} route={route} text={text === 'rss' ? 'RSS' : text} />
               ))}
             {/* Portfolio */}
-            <Link href={`${process.env.NEXT_PUBLIC_PORTFOLIO_URL}`} target="_blank" rel="noopener noreferrer">
+            <Link href={`${process.env.NEXT_PUBLIC_PORTFOLIO_SITE_URL}`} target="_blank" rel="noopener noreferrer">
               <motion.p className="hover:text-black dark:hover:text-white w-fit" variants={popUp}>
                 Portfolio
               </motion.p>
