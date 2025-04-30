@@ -10,3 +10,4 @@
 - [ ] Fix YouTube Download Bug.
 - [ ] YouTube and Text Summarization. PDF Summarization.
 - [ ] YouTube to Text Conversion.
+- [ ] Do not expose sensitive env variables with  prefix. Move those to api folder.

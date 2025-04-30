@@ -49,8 +49,8 @@ async function downloadMediaInfo(
   bestAudioObject: any,
   downloadPath: string
 ) {
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL
-  const token = process.env.NEXT_PUBLIC_BACKEND_API_TOKEN
+  const baseUrl = process.env.BACKEND_API_BASE_URL
+  const token = process.env.BACKEND_API_TOKEN
 
   const params = new URLSearchParams({
     video_title: videoTitle,
