@@ -1,11 +1,11 @@
-import { PUBLIC_SITE_URL } from '@/lib/constants'
+import { PUBLIC_NEXT_PUBLIC_SITE_URL } from '@/lib/constants'
 
 export const fetchFileInChunks = async (
   url: string,
   chunkSize: number,
   onProgress: (percent: number, downloaded: number, total: number) => void
 ): Promise<Uint8Array> => {
-  const headRes = await fetch(`${PUBLIC_SITE_URL}/api/grabit/proxy?url=${encodeURIComponent(url)}`, { method: 'HEAD' })
+  const headRes = await fetch(`${PUBLIC_NEXT_PUBLIC_SITE_URL}/api/grabit/proxy?url=${encodeURIComponent(url)}`, { method: 'HEAD' })
   const contentLength = parseInt(headRes.headers.get('Content-Length') || '0', 10)
   const chunks: Uint8Array[] = []
 
@@ -16,7 +16,7 @@ export const fetchFileInChunks = async (
   while (start < contentLength) {
     end = Math.min(start + chunkSize - 1, contentLength - 1)
 
-    const chunkRes = await fetch(`${PUBLIC_SITE_URL}/api/grabit/proxy?url=${encodeURIComponent(url)}`, {
+    const chunkRes = await fetch(`${PUBLIC_NEXT_PUBLIC_SITE_URL}/api/grabit/proxy?url=${encodeURIComponent(url)}`, {
       headers: { Range: `bytes=${start}-${end}` },
     })
 

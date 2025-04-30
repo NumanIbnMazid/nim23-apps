@@ -1,11 +1,11 @@
-import { PUBLIC_SITE_URL } from '@/lib/constants'
+import { PUBLIC_NEXT_PUBLIC_SITE_URL } from '@/lib/constants'
 
 export async function GET() {
   // ✅ Define static routes
   const staticRoutes = ['', 'grabit', 'humanizer-ai', 'recommendr', 'contact', 'privacy']
 
   // ✅ Generate sitemap entries
-  const sitemapEntries = [...staticRoutes.map((route) => `<url><loc>${PUBLIC_SITE_URL}/${route}</loc></url>`)]
+  const sitemapEntries = [...staticRoutes.map((route) => `<url><loc>${PUBLIC_NEXT_PUBLIC_SITE_URL}/${route}</loc></url>`)]
 
   // ✅ Build the XML Sitemap
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

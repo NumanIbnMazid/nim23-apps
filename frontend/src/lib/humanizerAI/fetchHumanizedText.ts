@@ -1,5 +1,5 @@
 export async function fetchHumanizedText(inputText: string): Promise<string> {
-  const apiURL = `${process.env.BACKEND_API_BASE_URL}/humanizer-ai/humanize/`
+  const apiURL = `${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}/humanizer-ai/humanize/`
   const token = process.env.BACKEND_API_TOKEN
   const res = await fetch(apiURL, {
     method: 'POST',

@@ -64,7 +64,7 @@ export default function TopNavbar() {
                 <NavItem key={index} href={`/${route}`} text={text} pathname={pathname ?? ''} />
               ))}
             {/* Hardcoded Portfolio Link */}
-            <NavItem href={`${process.env.PORTFOLIO_SITE_URL}`} text="Portfolio" pathname="" target="_blank" />
+            <NavItem href={`${process.env.NEXT_PUBLIC_PORTFOLIO_URL}`} text="Portfolio" pathname="" target="_blank" />
           </div>
         </motion.div>
       </motion.nav>
@@ -154,7 +154,7 @@ const MobileMenu = ({ handleClick }: { handleClick: () => void }) => {
           })}{' '}
         {/* Hardcoded Portfolio Link */}
         <Link
-          href={`${process.env.PORTFOLIO_SITE_URL}`}
+          href={`${process.env.NEXT_PUBLIC_PORTFOLIO_URL}`}
           target="_blank"
           rel="noopener noreferrer"
           onClick={handleClick}
