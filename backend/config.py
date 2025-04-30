@@ -9,7 +9,7 @@ class BaseConfig(BaseSettings):
     LOG_LEVEL: str = Field("DEBUG", pattern="(DEBUG|INFO|WARNING|ERROR|CRITICAL)")
     SECRET_KEY: str = Field(..., alias="SECRET_KEY")
     DJANGO_LOG_LEVEL: str = Field("INFO", alias="DJANGO_LOG_LEVEL")
-    NEXT_PUBLIC_BACKEND_BASE_URL: str = Field(..., alias="NEXT_PUBLIC_BACKEND_BASE_URL")
+    BACKEND_BASE_URL: str = Field(..., alias="BACKEND_BASE_URL")
 
     class Config:
         env_file = f"{Path(__file__).resolve().parent.parent}/.env"
