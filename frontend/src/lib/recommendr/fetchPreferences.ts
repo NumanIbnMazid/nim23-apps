@@ -1,5 +1,5 @@
 export async function getPreferences() {
-  const apiURL = `${process.env.BACKEND_API_BASE_URL}/recommendr/preferences/`
+  const apiURL = `${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}/recommendr/preferences/`
   const token = process.env.BACKEND_API_TOKEN
   const res = await fetch(apiURL, {
     method: 'GET',

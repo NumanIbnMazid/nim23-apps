@@ -1,6 +1,6 @@
 import { PageMeta } from '@/lib/types'
 import type { Metadata } from 'next'
-import { PUBLIC_SITE_URL } from '@/lib/constants'
+import { PUBLIC_NEXT_PUBLIC_SITE_URL } from '@/lib/constants'
 
 const myImage = 'images/numan.png'
 const logoImage = 'images/logo.png'
@@ -141,7 +141,7 @@ export const commonMeta: Metadata = {
     'show and movie finder',
     'vibe-based content',
   ].join(', '),
-  metadataBase: new URL(PUBLIC_SITE_URL),
+  metadataBase: new URL(PUBLIC_NEXT_PUBLIC_SITE_URL),
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon-dark.ico',
@@ -175,7 +175,7 @@ export const commonMeta: Metadata = {
     title: 'APPS | NIM23',
     description:
       'Applications offered by NIM23. Discover a range of useful and innovative apps created and offered by NIM23. From productivity tools to creative utilities, each app is built with care to solve real-world problems and enhance your digital experience.',
-    url: new URL(PUBLIC_SITE_URL),
+    url: new URL(PUBLIC_NEXT_PUBLIC_SITE_URL),
     siteName: 'APPS | NIM23',
     authors: ['Numan Ibn Mazid'],
     images: [
@@ -218,7 +218,7 @@ export function getPageMetadata({
     title: title || commonMeta.title,
     description: description || commonMeta.description,
     keywords: keywords ? (Array.isArray(keywords) ? keywords.join(', ') : keywords) : commonMeta.keywords,
-    metadataBase: new URL(PUBLIC_SITE_URL),
+    metadataBase: new URL(PUBLIC_NEXT_PUBLIC_SITE_URL),
     icons: {
       icon: '/favicon.ico',
       shortcut: '/favicon-dark.ico',

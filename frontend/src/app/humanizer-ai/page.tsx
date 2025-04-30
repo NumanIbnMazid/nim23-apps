@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { getPageMetadata, pageMeta } from '@/lib/Meta'
 import { Metadata } from 'next'
-import { PUBLIC_SITE_URL } from '@/lib/constants'
+import { PUBLIC_NEXT_PUBLIC_SITE_URL } from '@/lib/constants'
 
 // Generate metadata for the landing page
 export const metadata: Metadata = getPageMetadata({
@@ -11,7 +11,7 @@ export const metadata: Metadata = getPageMetadata({
   description: pageMeta.humanizerAI.description,
   image: pageMeta.humanizerAI.image,
   keywords: pageMeta.humanizerAI.keywords,
-  url: PUBLIC_SITE_URL,
+  url: PUBLIC_NEXT_PUBLIC_SITE_URL,
 })
 
 export default function Page() {
