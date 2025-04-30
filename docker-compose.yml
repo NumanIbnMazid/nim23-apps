@@ -44,15 +44,11 @@ services:
       - net-tier
 
   frontend:
-    depends_on:
-      - backend
-    env_file: ./frontend/.env
+    env_file: ./.env
     container_name: frontend
     build:
-      context: .
-      dockerfile: ./frontend/Dockerfile
-    volumes:
-      - ./frontend:/app
+      context: ./frontend
+      dockerfile: ./Dockerfile
     ports:
       - '3000:3000'
     stdin_open: true

@@ -21,6 +21,7 @@ const withPWA = require('next-pwa')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withPWA({
+  output: 'standalone',
   experimental: {
     // turbo: {}, // ✅ Ensure Turbopack is enabled correctly
     serverActions: {}, // ✅ Ensure Server Actions are enabled correctly,

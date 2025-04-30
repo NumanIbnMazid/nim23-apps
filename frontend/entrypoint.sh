@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "🔍 Listing contents of /app:"
+ls -la /app
+
 # Source the .env file to load environment variables
 # Ensure the .env file is in the same directory as this script
 # if [ -f .env ]; then
@@ -11,12 +14,10 @@ if [ -f /app/.env ]; then
   set +a
 fi
 
-# Run lint command
-yarn run lint
-
 # Conditionally run start or dev command based on MODE value
+echo "🚀 Starting Next.js server..."
 if [ "$MODE" = "PRODUCTION" ]; then
-  yarn run start
+  node server.js
 else
   yarn run dev
 fi
