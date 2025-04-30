@@ -16,7 +16,7 @@ fi
 
 # Conditionally run start or dev command based on MODE value
 echo "🚀 Starting Next.js server..."
-if [ "$MODE" = "PRODUCTION" ]; then
+if [ "$NEXT_PUBLIC_MODE" = "PRODUCTION" ]; then
   node server.js
 else
   yarn run dev
