@@ -18,7 +18,7 @@ export async function getRecommendations(preferences: any, clientID: string | nu
     other_preferences: preferences.other_preferences || '',
   }
 
-  const token = process.env.BACKEND_API_TOKEN
+  const token = process.env.NEXT_PUBLIC_BACKEND_API_TOKEN
 
   const res = await fetch(apiURL, {
     method: 'POST',
