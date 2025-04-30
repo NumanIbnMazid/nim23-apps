@@ -1,6 +1,5 @@
 import RecommendrClient from '@/app/recommendr/RecommendrClient'
 import { Suspense } from 'react'
-import { notFound } from 'next/navigation'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { getPageMetadata, pageMeta } from '@/lib/Meta'
 import { Metadata } from 'next'
@@ -23,13 +22,12 @@ export default function Page() {
   )
 }
 
-// ✅ Fetch Movies & YouTube Videos Using API for Fresh Data
 async function MainPage() {
-  try {
-    const recommenderPreferences = await getPreferences()
-    return <RecommendrClient preferencesChoices={recommenderPreferences} />
-  } catch (error) {
-    console.error('Error fetching recommender preferences choices:', error)
-    return notFound()
+  const recommenderPreferences = await getPreferences()
+
+  if (recommenderPreferences && Object.keys(recommenderPreferences).length === 0) {
+    console.warn('Fallback: Using empty preferences due to fetch error.')
   }
+
+  return <RecommendrClient preferencesChoices={recommenderPreferences} />
 }
