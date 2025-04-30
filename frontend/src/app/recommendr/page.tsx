@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { getPageMetadata, pageMeta } from '@/lib/Meta'
 import { Metadata } from 'next'
-import { PUBLIC_NEXT_PUBLIC_SITE_URL } from '@/lib/constants'
+import { PUBLIC_SITE_URL } from '@/lib/constants'
 import { getPreferences } from '@/lib/recommendr/fetchPreferences'
 
 export const metadata: Metadata = getPageMetadata({
@@ -12,7 +12,7 @@ export const metadata: Metadata = getPageMetadata({
   description: pageMeta.recommendr.description,
   image: pageMeta.recommendr.image,
   keywords: pageMeta.recommendr.keywords,
-  url: PUBLIC_NEXT_PUBLIC_SITE_URL,
+  url: PUBLIC_SITE_URL,
 })
 
 export default function Page() {

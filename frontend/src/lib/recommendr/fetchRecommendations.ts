@@ -1,10 +1,10 @@
+import { PUBLIC_SITE_URL } from '@/lib/constants'
+
 export async function getRecommendations(preferences: any, clientID: string | null) {
   if (!clientID) {
     throw new Error('Client ID is required')
   }
 
-  const apiURL = `${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}/recommendr/recommend/`
-  // Enforcing the expected request structure
   const body = {
     client_id: clientID,
     media_type: preferences.media_type,
@@ -18,13 +18,10 @@ export async function getRecommendations(preferences: any, clientID: string | nu
     other_preferences: preferences.other_preferences || '',
   }
 
-  const token = process.env.NEXT_PUBLIC_BACKEND_API_TOKEN
-
-  const res = await fetch(apiURL, {
+  const res = await fetch(`${PUBLIC_SITE_URL}/api/recommendr/recommend`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Token ${token}`
     },
     body: JSON.stringify(body),
   })
@@ -35,5 +32,5 @@ export async function getRecommendations(preferences: any, clientID: string | nu
     throw new Error(data.message || 'Failed to fetch recommendations!')
   }
 
-  return data?.data?.recommendations || []
+  return data.recommendations
 }

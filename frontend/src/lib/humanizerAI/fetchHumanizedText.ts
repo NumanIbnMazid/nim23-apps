@@ -1,11 +1,10 @@
+import { PUBLIC_SITE_URL } from '@/lib/constants'
+
 export async function fetchHumanizedText(inputText: string): Promise<string> {
-  const apiURL = `${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}/humanizer-ai/humanize/`
-  const token = process.env.NEXT_PUBLIC_BACKEND_API_TOKEN
-  const res = await fetch(apiURL, {
+  const res = await fetch(`${PUBLIC_SITE_URL}/api/humanizer-ai`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Token ${token}`
     },
     body: JSON.stringify({ input_text: inputText }),
   })
@@ -16,5 +15,5 @@ export async function fetchHumanizedText(inputText: string): Promise<string> {
     throw new Error(data.message || 'Failed to humanize text.')
   }
 
-  return data.data.humanized_text
+  return data.humanized_text
 }

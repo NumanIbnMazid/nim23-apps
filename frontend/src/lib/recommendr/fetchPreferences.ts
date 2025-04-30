@@ -1,11 +1,10 @@
+import { PUBLIC_SITE_URL } from '@/lib/constants'
+
 export async function getPreferences() {
-  const apiURL = `${process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL}/recommendr/preferences/`
-  const token = process.env.NEXT_PUBLIC_BACKEND_API_TOKEN
-  const res = await fetch(apiURL, {
+  const res = await fetch(`${PUBLIC_SITE_URL}/api/recommendr`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Token ${token}`
     },
   })
 

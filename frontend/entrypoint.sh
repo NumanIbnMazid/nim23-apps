@@ -14,9 +14,9 @@ if [ -f /app/.env ]; then
   set +a
 fi
 
-# Conditionally run start or dev command based on NEXT_PUBLIC_MODE value
+# Conditionally run start or dev command based on SECRET_MODE value
 echo "🚀 Starting Next.js server..."
-if [ "$NEXT_PUBLIC_MODE" = "PRODUCTION" ]; then
+if [ "$SECRET_MODE" = "PRODUCTION" ]; then
   node server.js
 else
   yarn run dev

@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { getPageMetadata, pageMeta } from '@/lib/Meta'
 import type { Metadata } from 'next'
-import { PUBLIC_NEXT_PUBLIC_SITE_URL } from '@/lib/constants'
+import { PUBLIC_SITE_URL } from '@/lib/constants'
 
 // ✅ Generate metadata for Privacy Policy Page
 export const metadata: Metadata = getPageMetadata({
@@ -11,7 +11,7 @@ export const metadata: Metadata = getPageMetadata({
   description: pageMeta.privacy.description,
   image: pageMeta.privacy.image,
   keywords: pageMeta.privacy.keywords,
-  url: `${PUBLIC_NEXT_PUBLIC_SITE_URL}/privacy`, // ✅ Privacy Policy page URL
+  url: `${PUBLIC_SITE_URL}/privacy`, // ✅ Privacy Policy page URL
 })
 
 export default function Page() {
