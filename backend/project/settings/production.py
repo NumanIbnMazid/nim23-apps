@@ -50,8 +50,8 @@ CORS_ORIGIN_WHITELIST = [
 # ----------------------------------------------------
 # *** Site Info ***
 # ----------------------------------------------------
-# NEXT_PUBLIC_BACKEND_BASE_URL = "https://nim23.com/backend"
-NEXT_PUBLIC_BACKEND_BASE_URL = config.NEXT_PUBLIC_BACKEND_BASE_URL
+# BACKEND_BASE_URL = "https://nim23.com/backend"
+BACKEND_BASE_URL = config.BACKEND_BASE_URL
 FRONTEND_BASE_URL = "https://nim23.com"
 
 # ----------------------------------------------------

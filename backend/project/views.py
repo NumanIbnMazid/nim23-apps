@@ -10,7 +10,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         # Backend Base URL
-        context["backend_base_url"] = settings.NEXT_PUBLIC_BACKEND_BASE_URL
+        context["backend_base_url"] = settings.BACKEND_BASE_URL
 
         # Frontend Base URL=
         context["frontend_base_url"] = settings.FRONTEND_BASE_URL
