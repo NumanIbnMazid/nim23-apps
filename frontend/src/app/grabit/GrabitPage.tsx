@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { FadeContainer } from '@/content/FramerMotionVariants'
-import { loadFFmpeg } from '@/lib/grabit/loadFFmpeg'
+import FFmpegManager from '@/lib/grabit/ffmpeg/FFmpegManager'
 import { fetchMediaDetails } from '@/lib/grabit/fetchMediaDetails'
 import { updateFormatOptions } from '@/lib/grabit/updateFormatOptions'
 import { processDownload } from '@/lib/grabit/processDownload'
@@ -12,20 +12,20 @@ import MediaType from '@/components/Grabit/MediaType'
 import MediaSelect from '@/components/Grabit/MediaSelect'
 import MediaFormat from '@/components/Grabit/MediaFormat'
 import DownloadButton from '@/components/Grabit/DownloadButton'
-import FFmpegLoadingButton from '@/components/Grabit/FFmpegLoadingButton'
 import StatusMessage from '@/components/Grabit/StatusMessage'
 import ErrorMessage from '@/components/Grabit/ErrorMessage'
 import AppIntro from '@/components/Grabit/AppIntro'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import HowToUseGrabit from '@/components/Grabit/HowToUse'
+import Loader from '@/components/Loader'
 
 export default function GrabitPage() {
   const [fetchMediaLoading, setFetchMediaLoading] = useState(false)
   const [downloadLoading, setDownloadLoading] = useState(false)
-  const [ffmpegLoading, setFfmpegLoading] = useState(false)
-  const [ffmpegLoaded, setFfmpegLoaded] = useState(false)
   const [downloadProgress, setDownloadProgress] = useState<number>(0)
   const [statusMessage, setStatusMessage] = useState<string>('')
+
+  const [mediaInfoScrollToPrefs, setMediaInfoScrollToPrefs] = useState(false)
 
   const [error, setError] = useState('')
 
@@ -38,20 +38,24 @@ export default function GrabitPage() {
   const mediaFormatRef = useRef<HTMLSelectElement>(null) as React.RefObject<HTMLSelectElement>
   const downloadPathRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>
 
-  const ffmpegRef = useRef(new FFmpeg())
+  const [ffmpegInstance, setFfmpegInstance] = useState<FFmpeg | null>(null)
+  const [isFfmpegLoading, setIsFfmpegLoading] = useState(true)
 
-  const loadFFmpegHandler = async () => {
-    setFfmpegLoading(true)
-    try {
-      await loadFFmpeg(ffmpegRef.current, setStatusMessage)
-      setFfmpegLoading(false)
-      setFfmpegLoaded(true)
-    } catch (error) {
-      setError(`${error}`)
-      setFfmpegLoading(false)
-      setFfmpegLoaded(false)
+  useEffect(() => {
+    const load = async () => {
+      setIsFfmpegLoading(true)
+      try {
+        await FFmpegManager.load(setStatusMessage)
+        const instance = FFmpegManager.getInstance()
+        setFfmpegInstance(instance)
+      } catch (error) {
+        setError(`FFmpeg failed to load: ${error}`)
+      } finally {
+        setIsFfmpegLoading(false)
+      }
     }
-  }
+    load()
+  }, [])
 
   // Reset statusMessage
   useEffect(() => {
@@ -60,6 +64,16 @@ export default function GrabitPage() {
       return () => clearTimeout(timer) // Cleanup timer on unmount or statusMessage change
     }
   }, [statusMessage])
+
+  useEffect(() => {
+    if (mediaData && mediaInfoScrollToPrefs) {
+      const el = document.getElementById('media-info')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        setMediaInfoScrollToPrefs(false)
+      }
+    }
+  }, [mediaData, mediaInfoScrollToPrefs])
 
   const downloadLoadHandler = async () => {
     setDownloadLoading(true)
@@ -71,6 +85,10 @@ export default function GrabitPage() {
     const bestAudioObject = mediaData?.formats_filtered?.best_audio || {}
 
     try {
+      if (!ffmpegInstance) {
+        setError('FFmpeg is not loaded. Please try again.')
+        return
+      }
       await processDownload(
         mediaTitle,
         mediaTypeRef,
@@ -78,7 +96,7 @@ export default function GrabitPage() {
         selectedFormatRef,
         bestAudioObject,
         downloadPathRef,
-        ffmpegRef.current,
+        ffmpegInstance,
         setDownloadProgress,
         setStatusMessage
       )
@@ -102,6 +120,7 @@ export default function GrabitPage() {
       setMediaData(mediaDetails)
       const formats = updateFormatOptions('video', mediaDetails)
       setFormats(formats)
+      setMediaInfoScrollToPrefs(true)
     } catch (error) {
       setStatusMessage('')
       const message = error instanceof Error ? error.message : 'Unknown error!'
@@ -134,7 +153,7 @@ export default function GrabitPage() {
             <motion.div initial="hidden" whileInView="visible" variants={FadeContainer} viewport={{ once: true }}>
               <MediaInput mediaUrlRef={mediaUrlRef} fetchMediaDetails={fetchDetails} loading={fetchMediaLoading} />
               {mediaData && (
-                <div>
+                <div id="media-info">
                   <MediaInfo mediaInfo={mediaData} videoUrl={mediaUrlRef.current?.value || ''} />
                   <MediaType
                     mediaData={mediaData}
@@ -147,15 +166,15 @@ export default function GrabitPage() {
                     selectedFormatRef={selectedFormatRef}
                   />
                   <MediaFormat mediaTypeRef={mediaTypeRef} mediaFormatRef={mediaFormatRef} />
-                  {ffmpegLoaded ? (
+                  {isFfmpegLoading ? (
+                    <Loader />
+                  ) : (
                     <DownloadButton
                       downloadMedia={downloadLoadHandler}
                       selectedFormatRef={selectedFormatRef}
                       loading={downloadLoading}
                       progress={downloadProgress}
                     />
-                  ) : (
-                    <FFmpegLoadingButton load={loadFFmpegHandler} isLoading={ffmpegLoading} />
                   )}
                 </div>
               )}

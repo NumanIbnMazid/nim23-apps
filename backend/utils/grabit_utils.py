@@ -68,7 +68,7 @@ def generate_ytdlp_cookies():
 
 def is_youtube_url(url: str) -> bool:
     # Regular expression to match YouTube video URLs (both HTTP and HTTPS)
-    youtube_regex = r"(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)"
+    youtube_regex = r"(https?://)?(www\.)?(youtube|youtu|youtube-nocookie|yewtu)\.(com|be)"
     # Match the URL with the regex pattern
     return bool(re.match(youtube_regex, url))
 

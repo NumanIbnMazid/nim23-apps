@@ -76,4 +76,9 @@ URL: https://openrouter.ai/models
 
 Models:
 - nvidia/llama-3.1-nemotron-nano-8b-v1:free
-- 
+
+
+## OTHER RESOURCES
+
+- Youtube Alterntives to download: https://yewtu.be/, https://freetubeapp.io/
+- ttps://askubuntu.com/questions/1342197/why-is-youtube-dl-blocking-me-from-downloading-youtube-videos-which-are-supposed
