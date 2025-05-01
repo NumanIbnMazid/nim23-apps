@@ -39,7 +39,8 @@
     "request": "^2.88.2",
     "rss": "^1.2.2",
     "sonner": "^2.0.0",
-    "swr": "^2.2.0"
+    "swr": "^2.2.0",
+    "youtube-dl-exec": "^3.0.20"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",

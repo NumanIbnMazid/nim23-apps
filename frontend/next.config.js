@@ -57,6 +57,7 @@ const nextConfig = withPWA({
     NEXT_PUBLIC_PORTFOLIO_SITE_URL: process.env.NEXT_PUBLIC_PORTFOLIO_SITE_URL,
     NEXT_PUBLIC_HUMANIZER_AI_MAX_WORDS: process.env.NEXT_PUBLIC_HUMANIZER_AI_MAX_WORDS,
     NEXT_PUBLIC_HUMANIZER_AI_MIN_WORDS: process.env.NEXT_PUBLIC_HUMANIZER_AI_MIN_WORDS,
+    NEXT_PUBLIC_YT_DLP_PATH: process.env.NEXT_PUBLIC_YT_DLP_PATH,
   },
   webpack(config, { isServer }) {
     if (!isServer) {

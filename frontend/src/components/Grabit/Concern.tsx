@@ -26,13 +26,13 @@ export default function Concern() {
               <path d="M512 768c-17.664722 0-32.00086-14.303454-32.00086-32.00086L479.99914 448c0-17.664722 14.336138-32.00086 32.00086-32.00086s32.00086 14.336138 32.00086 32.00086l0 287.99914C544.00086 753.696546 529.664722 768 512 768z" />
             </svg>
 
-            <div className="absolute top-full left-1/2 z-10 w-72 -translate-x-1/2 mt-2 rounded-md bg-gray-800 text-white text-xs px-3 py-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+            <span className="absolute top-full left-1/2 z-10 w-72 -translate-x-1/2 mt-2 rounded-md bg-gray-800 text-white text-xs px-3 py-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
               By choosing to download, you acknowledge that the audio or video content you are accessing is for
               personal and non-commercial use only. You agree not to distribute, copy, modify or otherwise use the
               downloaded content for any commercial purpose, including but not limited to resale, public performance or
               broadcast. Any use of the content beyond the scope of these terms may result in a violation of applicable
               copyright law and the Terms of Service.
-            </div>
+            </span>
           </span>
         </AnimatedText>
       </div>

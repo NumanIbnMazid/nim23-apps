@@ -58,7 +58,10 @@ const MediaSelect: React.FC<Props> = ({ formats, bestAudioObject, selectedFormat
 
   return (
     <div className="mt-4">
-      <label htmlFor="formatSelect" className="text-md text-slate-600 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+      <label
+        htmlFor="formatSelect"
+        className="text-md text-slate-600 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+      >
         Select Source Format
       </label>
       <select
@@ -68,7 +71,8 @@ const MediaSelect: React.FC<Props> = ({ formats, bestAudioObject, selectedFormat
       >
         {formats.map((media, index) => (
           <option key={index} value={JSON.stringify(media)}>
-            {`[${formatExtension(media.ext, media.format)}] ${media.quality}` +
+            {`[${formatExtension(media.ext, media.format)}] ` +
+              (media.quality ? `${media.quality} ` : '') +
               (media.resolution && media.quality !== media.resolution ? ` (${media.resolution})` : '') +
               (media.fps ? ` (${media.fps} fps)` : '') +
               (media.filesize ? ` (${formatFilesize(media.filesize)})` : '') +
