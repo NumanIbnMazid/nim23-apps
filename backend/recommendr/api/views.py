@@ -66,6 +66,8 @@ youtube_client = build(
 omdb_client = OMDBClient(apikey="6da2e614")
 # IMDB Client
 imdb_client = Cinemagoer()
+# Gemini Client
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 
 class MediaRecommendation(BaseModel):
@@ -152,15 +154,12 @@ class RecommendationViewSet(GenericViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def get_gemini_client(self):
-        return genai.Client(api_key=GEMINI_API_KEY)
-
     def get_client(self, client_name):
         """
         Get the appropriate client based on the client name.
         """
         if client_name == "gemini":
-            return self.get_gemini_client()
+            return gemini_client
         else:
             raise ValueError("Invalid client name")
 

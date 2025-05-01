@@ -3,7 +3,6 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from django.conf import settings
 
 from humanizer_ai.models import HumanizerAiUtils
 
@@ -18,6 +17,23 @@ from dotenv import load_dotenv
 import json
 
 
+# Load environment variables
+load_dotenv()
+
+# ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+# anthropic_client = anthropic.Anthropic(
+#     api_key=ANTHROPIC_API_KEY,
+# )
+# OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+# openrouter_client = OpenAI(
+#     base_url="https://openrouter.ai/api/v1",
+#     api_key=OPENROUTER_API_KEY,
+# )
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+
+
 @custom_response_wrapper
 class HumanizerAiViewset(GenericViewSet):
     permission_classes = (permissions.IsAuthenticated,)
@@ -28,22 +44,13 @@ class HumanizerAiViewset(GenericViewSet):
         Get the appropriate client based on the client name.
         """
         if client_name == "anthropic":
-            ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-            client = anthropic.Anthropic(
-                api_key=ANTHROPIC_API_KEY,
-            )
-            return client
+            # return anthropic_client
+            raise ValueError("Anthropic client not implemented yet")
         elif client_name == "openrouter":
-            OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-            client = OpenAI(
-                base_url="https://openrouter.ai/api/v1",
-                api_key=OPENROUTER_API_KEY,
-            )
-            return client
+            # return openrouter_client
+            raise ValueError("Openrouter client not implemented yet")
         elif client_name == "gemini":
-            GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-            client = genai.Client(api_key=GEMINI_API_KEY)
-            return client
+            return gemini_client
         else:
             raise ValueError("Invalid client name")
 
@@ -153,9 +160,6 @@ class HumanizerAiViewset(GenericViewSet):
         serializer.is_valid(raise_exception=True)
 
         input_text = serializer.validated_data["input_text"]
-
-        # Load environment variables
-        load_dotenv()
         client_name = os.getenv("HUMANIZER_AI_CLIENT")
         client = self.get_client(client_name)
         MODEL = os.getenv("HUMANIZER_AI_MODEL")
