@@ -2,7 +2,7 @@ import { PUBLIC_SITE_URL } from '@/lib/constants'
 
 export const fetchMediaDetails = async (url: string, setStatusMessage: any) => {
   // Replace YouTube domain with yewtu.be if matched
-  const transformedUrl = url.replace(/https?:\/\/(www\.)?(youtube\.com|youtu\.be)/, 'https://yewtu.be')
+  const transformedUrl = url.replace(/https?:\/\/(www\.)?(youtube\.com|youtu\.be)/, 'https://id.420129.xyz')
 
   const apiUrl = `${PUBLIC_SITE_URL}/api/grabit/media-details`
   const response = await fetch(`${apiUrl}?media_url=${encodeURIComponent(transformedUrl)}`)
