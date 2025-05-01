@@ -6,8 +6,7 @@ export default function Concern() {
     <>
       <div className={`w-full flex flex-col items-center justify-center gap-3 py-2 select-none`}>
         <AnimatedText variants={opacityVariant} className="text-md text-cyan-500 dark:text-cyan-400 font-bold">
-          [NOTE: This app is still in development phase. You might face some issues in several cases. Currently,
-          YouTube download is not supported.]
+          [NOTE: This app is still in development phase and may not work as expected]
         </AnimatedText>
         <AnimatedText variants={opacityVariant} className="text-md text-gray-600 dark:text-gray-400">
           <span className="pe-1">

@@ -1,8 +1,11 @@
 import { PUBLIC_SITE_URL } from '@/lib/constants'
 
 export const fetchMediaDetails = async (url: string, setStatusMessage: any) => {
+  // Replace YouTube domain with yewtu.be if matched
+  const transformedUrl = url.replace(/https?:\/\/(www\.)?(youtube\.com|youtu\.be)/, 'https://yewtu.be')
+
   const apiUrl = `${PUBLIC_SITE_URL}/api/grabit/media-details`
-  const response = await fetch(`${apiUrl}?media_url=${encodeURIComponent(url)}`)
+  const response = await fetch(`${apiUrl}?media_url=${encodeURIComponent(transformedUrl)}`)
 
   if (!response.ok) {
     let errorMsg = `Failed to fetch media details (HTTP ${response.status})`
@@ -10,7 +13,6 @@ export const fetchMediaDetails = async (url: string, setStatusMessage: any) => {
       const errorData = await response.json()
       errorMsg = errorData.message || errorMsg
     } catch (e) {
-      // ignore JSON parse errors
       errorMsg = `Failed to fetch media details! (${response.statusText})`
     }
     throw new Error(errorMsg)

@@ -60,30 +60,39 @@ const MediaInfo: React.FC<MediaInfoProps> = ({ mediaInfo, videoUrl }) => {
         )}
 
         {/* Text Info */}
-        <div className="text-center md:text-left">
-          {mediaInfo?.title && <h2 className="text-lg font-semibold mt-4 md:mt-0">{mediaInfo.title}</h2>}
+        <div className="text-center md:text-left px-4 w-full overflow-hidden">
+          {mediaInfo?.title && <h2 className="text-lg font-semibold mt-4 md:mt-0 break-words">{mediaInfo.title}</h2>}
 
-          <div className="flex items-center gap-4 mt-3 sm:flex-row flex-col md:gap-8">
-            {mediaInfo?.author && (
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-medium">Author:</span> {mediaInfo.author} |
-              </p>
-            )}
-            {mediaInfo?.resolution && (
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-medium">Resolution:</span> {mediaInfo.resolution} |
-              </p>
-            )}
-            {mediaInfo?.duration && (
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-medium">Duration:</span> {mediaInfo.duration} seconds |
-              </p>
-            )}
-            {mediaInfo?.upload_date && (
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-medium">Uploaded on:</span> {formatUploadDate(mediaInfo.upload_date)} |
-              </p>
-            )}
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-3 text-sm text-gray-700 dark:text-gray-300 w-full">
+            {[
+              mediaInfo?.author && (
+                <span className="whitespace-normal break-words">
+                  <span className="font-medium">Author:</span> {mediaInfo.author}
+                </span>
+              ),
+              mediaInfo?.resolution && (
+                <span className="whitespace-normal break-words">
+                  <span className="font-medium">Resolution:</span> {mediaInfo.resolution}
+                </span>
+              ),
+              mediaInfo?.duration && (
+                <span className="whitespace-normal break-words">
+                  <span className="font-medium">Duration:</span> {mediaInfo.duration} seconds
+                </span>
+              ),
+              mediaInfo?.upload_date && (
+                <span className="whitespace-normal break-words">
+                  <span className="font-medium">Uploaded on:</span> {formatUploadDate(mediaInfo.upload_date)}
+                </span>
+              ),
+            ]
+              .filter(Boolean)
+              .map((item, index, array) => (
+                <span key={index} className="flex items-center gap-1 max-w-full">
+                  {item}
+                  {index < array.length - 1 && <span className="text-gray-400">|</span>}
+                </span>
+              ))}
           </div>
 
           {/* Video Source */}
