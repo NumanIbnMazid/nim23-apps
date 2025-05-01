@@ -205,6 +205,10 @@ def fetch_media_info_yt_dlp(url, detailed=False, is_youtube=False):
     ydl_opts = {
         "quiet": True,
         "skip_download": True,
+        # Throttle settings to avoid YouTube guest rate limit
+        "sleep_interval": 10,  # Always sleep at least 10 seconds between downloads
+        "max_sleep_interval": 15,  # Random sleep between 10-15 seconds
+        "sleep_requests": 1,  # Sleep 1 second between network requests (metadata fetches)
     }
 
     info_dict = {}
@@ -226,6 +230,7 @@ def fetch_media_info_yt_dlp(url, detailed=False, is_youtube=False):
         info_dict = ydl.extract_info(url, download=False)
         if not info_dict:
             return {}
+
     # Fetch the highest quality video and audio streams
     best_video = next(
         f
