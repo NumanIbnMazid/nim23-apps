@@ -5,7 +5,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin
 from utils.helpers import custom_response_wrapper, ResponseWrapper
-from utils.grabit_utils import fetch_media_info
+from grabit.utils.grabit_utils import fetch_media_info
 from utils.throttles import MediaInfoRateThrottle
 import re
 from drf_yasg import openapi

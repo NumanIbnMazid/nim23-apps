@@ -80,6 +80,10 @@ RUN yarn build
 
 # Production image, copy all the files and run next
 FROM base AS runner
+
+# Set timezone
+RUN ln -fs /usr/share/zoneinfo/Asia/Dhaka /etc/localtime && dpkg-reconfigure --frontend noninteractive tzdata
+
 WORKDIR /app
 
 ENV NODE_ENV=production

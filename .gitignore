@@ -287,5 +287,5 @@ GitHub.sublime-settings
 **/tmp/
 **/cache.json
 
-backend/utils/pytube/tokens.json
-backend/utils/pytube/cookies.txt
+backend/grabit/utils/resources/tokens.json
+backend/grabit/utils/resources/cookies.txt

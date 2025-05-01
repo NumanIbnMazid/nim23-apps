@@ -1,72 +1,75 @@
-# Use Ubuntu as the base image
-FROM ubuntu:25.04
+# ================================
+# Stage 1: Build Environment
+# ================================
+FROM python:3.12-slim AS builder
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
-# Set the environment variable to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Dhaka
-ENV PYTHON_VERSION=3.12.2
 
-# Install required system dependencies (including zlib-dev)
-RUN apt update && \
-    apt install -y --no-install-recommends \
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
-    curl \
-    wget \
-    redis-server \
-    net-tools \
-    musl-dev \
-    libssl-dev \
     libffi-dev \
+    libssl-dev \
     libjpeg-dev \
-    libpq-dev \
     zlib1g-dev \
-    netcat-traditional \
-    tzdata \
+    libpq-dev \
+    wget \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY backend/requirements.txt /app/
+RUN pip install --upgrade pip && pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
+
+
+# ================================
+# Stage 2: Runtime Environment
+# ================================
+FROM python:3.12-slim
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Dhaka
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
+    netcat-traditional \
+    redis-server \
     supervisor \
+    tzdata \
     ca-certificates \
     && update-ca-certificates \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python ${PYTHON_VERSION} from source (using --no-check-certificate for wget)
-RUN wget --no-check-certificate https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz && \
-    tar xzf Python-${PYTHON_VERSION}.tgz && \
-    cd Python-${PYTHON_VERSION} && \
-    ./configure --without-tests --enable-optimizations --enable-shared && \
-    make -j$(nproc) && \
-    make altinstall && \
-    ldconfig /usr/local/lib && \
-    cd .. && rm -rf Python-${PYTHON_VERSION}.tgz Python-${PYTHON_VERSION} && \
-    ln -s /usr/local/bin/python3.12 /usr/local/bin/python
+# Set timezone
+RUN ln -fs /usr/share/zoneinfo/Asia/Dhaka /etc/localtime && dpkg-reconfigure --frontend noninteractive tzdata
 
-# Set the Python executable path explicitly
-ENV PYTHON="/usr/local/bin/python3.12" 
-
-# Upgrade pip for Python
-RUN $PYTHON -m ensurepip && \
-    $PYTHON -m pip install --no-cache --upgrade pip
-
-# Create and set the working directory
-RUN mkdir /app
+# Create working directory
 WORKDIR /app
 
-# Copy the requirements file and install Python dependencies
-COPY backend/requirements.txt /app/requirements.txt
-RUN $PYTHON -m pip install -r requirements.txt
+# Copy wheels and install dependencies
+COPY --from=builder /wheels /wheels
+COPY backend/requirements.txt /app/
+RUN pip install --no-cache-dir --no-index --find-links=/wheels -r requirements.txt
+
+# Copy application files
+COPY backend /app
 
 # Set up Supervisor
 COPY backend/supervisord.conf /etc/supervisor/supervisord.conf
 
 # Add the entrypoint script and make it executable
-COPY backend/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Copy the rest of the application files
-COPY backend /app
-
-# Set the entrypoint
-ENTRYPOINT [ "bash", "-c", "/app/entrypoint.sh" ]
+# Entrypoint
+ENTRYPOINT ["bash", "-c", "/app/entrypoint.sh"]
