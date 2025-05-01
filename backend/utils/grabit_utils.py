@@ -299,7 +299,7 @@ def fetch_media_info(url, detailed=False):
     """Fetches the media details from the provided URL."""
     print(f"🔥 Fetching media info for URL: {url}")
     if is_youtube_url(url):
-        # print("Fetching media info from YouTube with pytube...")
+        # print("🔥 Fetching media info from YouTube with pytube...")
         # return fetch_media_info_pytube(url, detailed)
         print("🔥 Fetching media info from YouTube with yt_dlp...")
         return fetch_media_info_yt_dlp(url, detailed, is_youtube=True)
