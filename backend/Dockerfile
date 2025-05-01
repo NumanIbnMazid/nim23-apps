@@ -47,6 +47,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     supervisor \
     tzdata \
     ca-certificates \
+    libpq5 \
     && update-ca-certificates \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -60,7 +61,7 @@ WORKDIR /app
 # Copy wheels and install dependencies
 COPY --from=builder /wheels /wheels
 COPY backend/requirements.txt /app/
-RUN pip install --no-cache-dir --no-index --find-links=/wheels -r requirements.txt
+RUN pip install --no-cache-dir --no-index --find-links=/wheels -r requirements.txt || pip install --no-cache-dir psycopg2-binary
 
 # Copy application files
 COPY backend /app

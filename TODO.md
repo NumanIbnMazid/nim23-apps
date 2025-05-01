@@ -11,3 +11,4 @@
 - [ ] YouTube and Text Summarization. PDF Summarization.
 - [ ] YouTube to Text Conversion.
 - [ ] Do not expose sensitive env variables with  prefix. Move those to api folder.
+- [ ] Add sleep time for youtube downloader between downloads.
