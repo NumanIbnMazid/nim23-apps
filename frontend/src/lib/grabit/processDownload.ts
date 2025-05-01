@@ -13,7 +13,7 @@ export const processDownload = async (
   setStatusMessage: (s: string) => void
 ): Promise<boolean> => {
   try {
-    setStatusMessage('Fetching media info...')
+    setStatusMessage('Processing download...')
     setDownloadProgress(0)
 
     const selectedMediaObject = JSON.parse(selectedFormatRef.current?.value || '{}')

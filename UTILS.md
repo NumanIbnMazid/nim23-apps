@@ -82,3 +82,5 @@ Models:
 
 - Youtube Alterntives to download: https://yewtu.be/, https://id.420129.xyz/, https://freetubeapp.io/
 - https://askubuntu.com/questions/1342197/why-is-youtube-dl-blocking-me-from-downloading-youtube-videos-which-are-supposed
+- https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp
+- https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies
