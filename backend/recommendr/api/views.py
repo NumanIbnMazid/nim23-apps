@@ -3,7 +3,6 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from django.conf import settings
 from dotenv import load_dotenv
 from recommendr.api.serializers import RecommendationRequestSerializer
 from recommendr.models import (
@@ -24,7 +23,6 @@ from recommendr.api.cache import (
 )
 from utils.throttles import RecommendrRateThrottle
 from utils.helpers import custom_response_wrapper, ResponseWrapper, send_log_message
-from django.conf import settings
 
 from google import genai
 from googleapiclient.discovery import build

@@ -5,7 +5,7 @@ from django.core.cache import cache
 import asyncio
 
 
-logger = logging.getLogger("recommendr")
+logger = logging.getLogger("consumers")
 
 
 class LogConsumer(AsyncWebsocketConsumer):

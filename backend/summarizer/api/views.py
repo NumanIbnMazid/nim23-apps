@@ -8,9 +8,6 @@ from utils.helpers import custom_response_wrapper, ResponseWrapper
 
 from summarizer.api.serializers import SummarizerRequestSerializer
 from summarizer.handlers.url_handler import extract_audio_from_url
-from summarizer.handlers.pdf_handler import handle_pdf
-from summarizer.handlers.docx_handler import handle_docx
-from summarizer.handlers.text_handler import handle_text
 from summarizer.utils.whisper import transcribe_audio_base64
 from summarizer.utils.summarizer import summarize_text
 
@@ -18,11 +15,7 @@ from google import genai
 from faster_whisper import WhisperModel
 
 import os
-import mimetypes
 import logging
-import base64
-import requests
-
 
 logger = logging.getLogger("summarizer")
 
@@ -30,6 +23,7 @@ load_dotenv()
 
 SUMMARIZER_MODEL = os.getenv("SUMMARIZER_AI_MODEL")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
 # Gemini Client
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
@@ -41,9 +35,7 @@ def get_whisper_model():
     global _whisper_model
     if _whisper_model is None:
         logger.info("[Whisper] Loading model...")
-        _whisper_model = WhisperModel(
-            "small", device="cpu"
-        )  # change to "medium" or "large" if needed
+        _whisper_model = WhisperModel("small", device="cpu")
     return _whisper_model
 
 
@@ -66,52 +58,12 @@ class SummarizerViewset(GenericViewSet):
         serializer.is_valid(raise_exception=True)
         validated = serializer.validated_data
 
-        url = validated.get("url")
-        file = validated.get("file")
         text = validated.get("text")
 
         try:
-            if url:
-                # If the URL is a video/audio URL (e.g., YouTube/Facebook)
-                extracted_audio_url = extract_audio_from_url(url)
-                # Download audio bytes
-                audio_response = requests.get(extracted_audio_url)
-                if audio_response.status_code != 200:
-                    raise Exception("Failed to fetch audio from extracted URL.")
+            if not text:
+                raise ValueError("'text' must be provided.")
 
-                base64_audio = base64.b64encode(audio_response.content).decode("utf-8")
-                text = transcribe_audio_base64(
-                    audio_b64=base64_audio, model=whisper_model
-                )
-
-            elif file:
-                mime_type, _ = mimetypes.guess_type(file.name)
-
-                if (
-                    mime_type
-                    and mime_type.startswith("audio")
-                    or mime_type.startswith("video")
-                ):
-                    base64_audio = base64.b64encode(file.read()).decode("utf-8")
-                    text = transcribe_audio_base64(
-                        audio_b64=base64_audio, model=whisper_model
-                    )
-
-                elif mime_type == "application/pdf":
-                    text = handle_pdf(file)
-
-                elif mime_type in [
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                ]:
-                    text = handle_docx(file)
-
-                elif mime_type == "text/plain":
-                    text = handle_text(file)
-
-            elif text:
-                pass  # already assigned
-
-            # Summarize final extracted text
             summary = summarize_text(text, model=SUMMARIZER_MODEL, client=gemini_client)
             return ResponseWrapper(data={"summary": summary}, status=status.HTTP_200_OK)
 
@@ -151,6 +103,36 @@ class SummarizerViewset(GenericViewSet):
         except Exception as e:
             return ResponseWrapper(
                 message="Failed to extract audio from URL.",
+                error_message=str(e),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    @swagger_auto_schema(
+        method="post",
+        manual_parameters=[
+            openapi.Parameter(
+                "audio_b64",
+                openapi.IN_BODY,
+                description="Base64 encoded audio",
+                type=openapi.TYPE_STRING,
+            )
+        ],
+        responses={200: openapi.Response("Extracted audio URL")},
+    )
+    @action(detail=False, methods=["post"], url_path="transcribe-bs64-audio")
+    def transcribe_bs64_audio(self, request):
+        audio_b64 = request.data.get("audio_b64")
+        text = ""
+        try:
+            if audio_b64:
+                text = transcribe_audio_base64(audio_b64=audio_b64, model=whisper_model)
+            return ResponseWrapper(
+                data={"transcription": text}, status=status.HTTP_200_OK
+            )
+
+        except Exception as e:
+            return ResponseWrapper(
+                message="Failed to transcribe audio.",
                 error_message=str(e),
                 status=status.HTTP_400_BAD_REQUEST,
             )

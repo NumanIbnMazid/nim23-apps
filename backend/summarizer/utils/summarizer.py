@@ -28,13 +28,7 @@ def summarize_text(text: str, model: str, client: any) -> str:
                 system_instruction=system_prompt,
             ),
         )
-        logger.info(f"Response: {response}")
-
-        if response.error:
-            error_message = response.error.get("message")
-            logger.error(f"Error summarizing text: {error_message}")
-            raise Exception(f"Failed to summarize text: {error_message}")
-
+        logger.info(f"✅ Response Text:\n\n {response.text}\n\n")
         return response.text
     except Exception as e:
         logger.error(f"Error summarizing text: {e}")
