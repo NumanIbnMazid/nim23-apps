@@ -6,9 +6,13 @@ import yt_dlp
 from dotenv import load_dotenv
 import os
 import time
-import re
 import json
-import base64
+from utils.snippets import is_youtube_url
+from utils.helpers import (
+    generate_ytdlp_cookies,
+    yt_dlp_cookies_exists,
+    get_cookies_path,
+)
 
 
 load_dotenv()
@@ -17,7 +21,6 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TOKEN_DIR = os.path.join(BASE_DIR, "resources")
 TOKEN_FILE = os.path.join(TOKEN_DIR, "tokens.json")
-COOKIES_PATH = os.path.join(BASE_DIR, "resources", "cookies.txt")
 
 
 def is_token_valid(token_data):
@@ -51,29 +54,6 @@ def generate_tokens_json():
     # Write to tokens.json
     with open(TOKEN_FILE, "w") as f:
         json.dump(tokens, f)
-
-
-def generate_ytdlp_cookies():
-    """Generates yt-dlp cookies.txt file from base64-encoded env string."""
-    cookies_b64 = os.getenv("YTDLP_COOKIES_B64")
-
-    if not cookies_b64:
-        raise ValueError("YTDLP_COOKIES_B64 not set in environment.")
-
-    os.makedirs(os.path.dirname(COOKIES_PATH), exist_ok=True)
-
-    with open(COOKIES_PATH, "wb") as f:
-        f.write(base64.b64decode(cookies_b64))
-    return COOKIES_PATH
-
-
-def is_youtube_url(url: str) -> bool:
-    # Regular expression to match YouTube video URLs (both HTTP and HTTPS)
-    youtube_regex = (
-        r"(https?://)?(www\.)?(youtube|youtu|youtube-nocookie|yewtu)\.(com|be)"
-    )
-    # Match the URL with the regex pattern
-    return bool(re.match(youtube_regex, url))
 
 
 def fetch_media_info_pytube(url, detailed=False):
@@ -215,16 +195,13 @@ def fetch_media_info_yt_dlp(url, detailed=False, is_youtube=False):
 
     if is_youtube:
         # Check if cookies.txt exists
-        if not os.path.exists(COOKIES_PATH):
-            print("🔥 Cookies file not found. Generating new cookies.txt...")
+        if not yt_dlp_cookies_exists():
             # Create cookies.txt from environment variables
             generate_ytdlp_cookies()
-
-        if COOKIES_PATH:
-            print("🔥 Using cookies.txt for authentication...")
-            ydl_opts["cookiefile"] = COOKIES_PATH
+        if os.path.exists(get_cookies_path()):
+            ydl_opts["cookiefile"] = get_cookies_path()
         else:
-            raise Exception("Cookies file not found.")
+            raise Exception("Cookies file not found. Please refresh your credentials.")
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info_dict = ydl.extract_info(url, download=False)

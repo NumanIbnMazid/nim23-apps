@@ -2,8 +2,8 @@ import { PUBLIC_SITE_URL } from '@/lib/constants'
 
 export const fetchFileInChunks = async (
   url: string,
-  chunkSize: number,
-  onProgress: (percent: number, downloaded: number, total: number) => void
+  chunkSize: number = 1024 * 1024, // Default chunk size of 1MB
+  onProgress?: (percent: number, downloaded: number, total: number) => void
 ): Promise<Uint8Array> => {
   const headRes = await fetch(`${PUBLIC_SITE_URL}/api/grabit/proxy?url=${encodeURIComponent(url)}`, { method: 'HEAD' })
   const contentLength = parseInt(headRes.headers.get('Content-Length') || '0', 10)
@@ -24,7 +24,7 @@ export const fetchFileInChunks = async (
     chunks.push(new Uint8Array(arrayBuffer))
 
     received += arrayBuffer.byteLength
-    onProgress(received / contentLength, received, contentLength)
+    onProgress?.(received / contentLength, received, contentLength)
 
     start = end + 1
   }

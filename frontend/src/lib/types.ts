@@ -30,6 +30,7 @@ export type PageMeta = {
   grabit: PageData
   humanizerAI: PageData
   recommendr: PageData
+  summarizer: PageData
 }
 
 export type FormInput = {

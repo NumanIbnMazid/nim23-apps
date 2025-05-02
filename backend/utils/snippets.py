@@ -10,6 +10,7 @@ import base64
 from django.contrib.staticfiles import finders
 from urllib.parse import urlparse
 import requests
+import re
 
 
 def random_string_generator(size=4, chars=string.ascii_lowercase + string.digits):
@@ -314,3 +315,12 @@ def get_client_ip(request):
     else:
         clientID = request.META.get('REMOTE_ADDR')
     return clientID
+
+
+def is_youtube_url(url: str) -> bool:
+    # Regular expression to match YouTube video URLs (both HTTP and HTTPS)
+    youtube_regex = (
+        r"(https?://)?(www\.)?(youtube|youtu|youtube-nocookie|yewtu)\.(com|be)"
+    )
+    # Match the URL with the regex pattern
+    return bool(re.match(youtube_regex, url))

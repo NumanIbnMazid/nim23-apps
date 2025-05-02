@@ -9,6 +9,10 @@ from django.db.models import Max
 from functools import wraps
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+import os
+from django.conf import settings
+from dotenv import load_dotenv
+import base64
 
 
 class ResponseWrapper(Response):
@@ -215,3 +219,40 @@ def assign_order(instance, model_class, order_field='order'):
         if i not in existing_orders:
             setattr(instance, order_field, i)
             break
+
+
+def get_yt_dlp_cookies_dir():
+    """Returns the path to the yt-dlp cookies.txt file."""
+    BASE_DIR = settings.BASE_DIR
+    COOKIES_DIR = os.path.join(BASE_DIR, "data", "yt-dlp")
+    return COOKIES_DIR
+
+
+def generate_ytdlp_cookies():
+    """Generates yt-dlp cookies.txt file from base64-encoded env string."""
+    load_dotenv()
+    cookies_b64 = os.getenv("YTDLP_COOKIES_B64")
+    if not cookies_b64:
+        raise ValueError("YTDLP_COOKIES_B64 not set in environment.")
+
+    COOKIES_DIR = get_yt_dlp_cookies_dir()
+    COOKIES_PATH = os.path.join(COOKIES_DIR, "cookies.txt")
+
+    if not os.path.exists(COOKIES_PATH):
+        print("🔥 Cookies file not found. Generating new cookies.txt...")
+        # Create the directory if it doesn't exist
+        os.makedirs(os.path.dirname(COOKIES_PATH), exist_ok=True)
+        with open(COOKIES_PATH, "wb") as f:
+            f.write(base64.b64decode(cookies_b64))
+    return COOKIES_PATH
+
+
+def yt_dlp_cookies_exists():
+    """Checks if the yt-dlp cookies.txt file exists."""
+    COOKIES_PATH = os.path.join(get_yt_dlp_cookies_dir(), "cookies.txt")
+    return os.path.exists(COOKIES_PATH)
+
+def get_cookies_path():
+    """Returns the path to the yt-dlp cookies.txt file."""
+    COOKIES_PATH = os.path.join(get_yt_dlp_cookies_dir(), "cookies.txt")
+    return COOKIES_PATH

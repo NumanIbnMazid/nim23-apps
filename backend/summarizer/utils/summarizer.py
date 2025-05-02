@@ -1,0 +1,41 @@
+from google import genai
+import logging
+
+logger = logging.getLogger("summarizer")
+
+
+def summarize_text(text: str, model: str, client: any) -> str:
+    """
+    Summarizes the provided text using Gemini AI.
+    """
+    try:
+        system_prompt = (
+            "You are a helpful assistant that summarizes text. "
+            "Your task is to summarize the provided text in a concise and clear manner."
+        )
+        user_prompt = f"Summarize the following text:\n\n{text}"
+
+        logger.info(f"Summarizing text with Gemini AI model: {model}")
+        logger.info(f"User prompt: {user_prompt}")
+        logger.info(f"System prompt: {system_prompt}")
+
+        response = client.models.generate_content(
+            model=model,
+            contents=user_prompt,
+            config=genai.types.GenerateContentConfig(
+                temperature=1.0,
+                max_output_tokens=8192,
+                system_instruction=system_prompt,
+            ),
+        )
+        logger.info(f"Response: {response}")
+
+        if response.error:
+            error_message = response.error.get("message")
+            logger.error(f"Error summarizing text: {error_message}")
+            raise Exception(f"Failed to summarize text: {error_message}")
+
+        return response.text
+    except Exception as e:
+        logger.error(f"Error summarizing text: {e}")
+        raise ValueError(f"Failed to summarize text: {e}")

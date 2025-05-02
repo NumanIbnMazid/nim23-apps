@@ -52,6 +52,14 @@ export const pageMeta: PageMeta = {
     keywords:
       'mood-based recommendations, media recommendation engine, personalized movie recommendations, music discovery tool, mood playlists, AI media curator, recommendr app, NIM23 recommendr, smart content suggestions, mood media finder, best recommendation engine 2025, emotion-based recommendations, what to watch, what to listen to, curated content tool, mood AI assistant, entertainment suggester, discover music by mood, show and movie finder, vibe-based content',
   },
+  summarizer: {
+    title: 'Summarizer - AI-Powered Text Summarization Tool | NIM23',
+    description:
+      'Summarizer by NIM23 is a powerful AI tool that condenses videos, audios, long articles, documents, and texts into concise summaries. Save time and get the gist of any content quickly and efficiently.',
+    image: logoImage,
+    keywords:
+      'text summarization, AI summarizer, nim23 summarizer, article summarizer, document summarizer, content summarization tool, free text summarizer, online summarization tool, AI-powered summarization, quick summary generator',
+  },
 }
 
 export const commonMeta: Metadata = {

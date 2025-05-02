@@ -52,6 +52,8 @@ LOCAL_APPS = [
     "detect_ai",
     # Recommendation System
     "recommendr",
+    # Summarizer
+    "summarizer",
 ]
 INSTALLED_APPS = (
     [

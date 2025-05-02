@@ -1,5 +1,3 @@
-'use client'
-
 import { motion } from 'framer-motion'
 import { FaDownload, FaVideo, FaMusic, FaShieldAlt } from 'react-icons/fa'
 

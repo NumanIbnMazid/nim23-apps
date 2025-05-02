@@ -255,5 +255,5 @@ GitHub.sublime-settings
 /backend/supervisord.pid
 
 backend/grabit/utils/resources/tokens.json
-backend/grabit/utils/resources/cookies.txt
+backend/data/yt-dlp/cookies.txt
 backend/dump.rdb

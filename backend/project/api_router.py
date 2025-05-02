@@ -24,6 +24,11 @@ from humanizer_ai.api.routers import *
 # ----------------------------------------------------
 from recommendr.api.routers import *
 
+# ----------------------------------------------------
+# *** Summarizer System ***
+# ----------------------------------------------------
+from summarizer.api.routers import *
+
 
 app_name = "NIM23 APPS Backend"
 urlpatterns = router.urls
