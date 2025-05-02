@@ -18,8 +18,12 @@ def transcribe_audio_base64(
         audio_stream = io.BytesIO(audio_bytes)
 
         if batch:
+            logger.info(
+                f"[Whisper] Using batched inference with batch size: {batch_size}"
+            )
             segments, info = model.transcribe(audio_stream, batch_size=batch_size)
         else:
+            logger.info("[Whisper] Using non-batched inference")
             segments, info = model.transcribe(audio_stream)
 
         logger.info(

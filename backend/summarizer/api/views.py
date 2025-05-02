@@ -30,7 +30,7 @@ gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 # Whisper
 whisper_model_size = os.getenv("WHISPER_MODEL_SIZE", "tiny")
 whisper_device = os.getenv("WHISPER_DEVICE", "cpu")
-whisper_batch_enabled = bool(os.getenv("WHISPER_BATCH_ENABLED", "False"))
+whisper_batch_enabled = os.getenv("WHISPER_BATCH_ENABLED", "False").lower() == "true"
 whisper_batch_size = int(os.getenv("WHISPER_BATCH_SIZE", 8))
 
 if whisper_model_size not in ["tiny", "base", "small", "medium", "large"]:
