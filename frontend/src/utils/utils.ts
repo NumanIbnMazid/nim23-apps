@@ -4,8 +4,8 @@ export const navigationRoutesAll: string[] = [
   'home',
   'grabit',
   'humanizer-ai',
-  'recommendr',
   'summarizer',
+  'recommendr',
   'contact',
   'privacy',
 ]

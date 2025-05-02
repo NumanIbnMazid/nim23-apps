@@ -12,3 +12,5 @@
 - [ ] YouTube to Text Conversion.
 - [ ] Do not expose sensitive env variables with  prefix. Move those to api folder.
 - [ ] Add sleep time for youtube downloader between downloads.
+- [ ] [Summarizer] Add Limit to video/audio/pdf/text/word length. And validate input.
+- [ ] [Summarizer] Add batch and chunk by chunk summarization support for long text.

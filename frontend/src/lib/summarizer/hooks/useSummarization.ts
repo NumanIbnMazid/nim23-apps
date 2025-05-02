@@ -53,6 +53,7 @@ export const useSummarization = () => {
   ) => {
     setLoading(true)
     reset()
+    setStatusMessage('Processing your input...')
 
     try {
       let textToSummarize = ''
@@ -60,10 +61,10 @@ export const useSummarization = () => {
 
       // ### Case: Local file upload
       if (selectedFile) {
-        const result = await processLocalFile(selectedFile, ffmpegInstance)
+        const result = await processLocalFile(selectedFile, ffmpegInstance, setStatusMessage)
         if (result.base64Audio) {
-          setStatusMessage('Audio file processed successfully.')
           audioBase64 = result.base64Audio
+          setStatusMessage('Transcribing audio...')
           textToSummarize = await transcribeAudioBase64(audioBase64, setWhisperTranscription)
         }
         if (result.text) {
@@ -95,13 +96,13 @@ export const useSummarization = () => {
           const result = await res.json()
           // *** Assign Audio Data  ***
           const extractedAudio = result.data.extracted_audio_url
-          audioData = await convertAudioUrlToFile(extractedAudio, ffmpegInstance)
+          audioData = await convertAudioUrlToFile(extractedAudio, ffmpegInstance, setStatusMessage)
         }
 
         // Now audioUrl is a direct link (either provided directly or via backend)
         else if (isVideo || (!isAudio && isDirectMedia)) {
           // *** Assign Audio Data  ***
-          audioData = await convertVideoUrlToAudio(mediaUrl, ffmpegInstance)
+          audioData = await convertVideoUrlToAudio(mediaUrl, ffmpegInstance, setStatusMessage)
         } else if (isAudio || (!isVideo && isDirectMedia)) {
           // *** Assign Audio Data  ***
           audioData = await convertAudioUrlToFile(mediaUrl, ffmpegInstance)
@@ -110,6 +111,7 @@ export const useSummarization = () => {
         }
 
         audioBase64 = await convertAudioFileToBase64(audioData)
+        setStatusMessage('Transcribing audio...')
         textToSummarize = await transcribeAudioBase64(audioBase64, setWhisperTranscription)
       }
       // ### Case: Plain text input
@@ -123,6 +125,8 @@ export const useSummarization = () => {
       if (!textToSummarize) {
         throw new Error('No text available for summarization.')
       }
+
+      setStatusMessage('Processing completed. Generating summary...')
 
       // Summarization API call
       const response = await fetch(`${PUBLIC_SITE_URL}/api/summarizer/summarize`, {
@@ -138,7 +142,7 @@ export const useSummarization = () => {
 
       const data = await response.json()
       setSummary(data.data.summary)
-      setStatusMessage('Summarization completed successfully.')
+      setStatusMessage('Summarization completed!')
     } catch (error: any) {
       // console.error('Summarization error:', error)
 

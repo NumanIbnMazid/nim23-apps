@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { FadeContainer } from '@/content/FramerMotionVariants'
 import Loader from '@/components/Loader'
 import AppIntro from '@/components/Summarizer/AppIntro'
+import HowToUse from '@/components/Summarizer/HowToUse'
 import URLInput from '@/components/Summarizer/URLInput'
 import FileUploadInput from '@/components/Summarizer/FileUploadInput'
 import TextAreaInput from '@/components/Summarizer/TextAreaInput'
@@ -141,6 +142,9 @@ const SummarizerClient: React.FC = () => {
               />
             )}
           </div>
+
+          <hr className="my-16 border-gray-300 dark:border-gray-700" />
+          <HowToUse />
         </section>
       </motion.section>
     </div>

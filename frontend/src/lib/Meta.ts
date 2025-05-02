@@ -53,12 +53,12 @@ export const pageMeta: PageMeta = {
       'mood-based recommendations, media recommendation engine, personalized movie recommendations, music discovery tool, mood playlists, AI media curator, recommendr app, NIM23 recommendr, smart content suggestions, mood media finder, best recommendation engine 2025, emotion-based recommendations, what to watch, what to listen to, curated content tool, mood AI assistant, entertainment suggester, discover music by mood, show and movie finder, vibe-based content',
   },
   summarizer: {
-    title: 'Summarizer - AI-Powered Text Summarization Tool | NIM23',
+    title: 'Summarizer – Smart AI-Powered Content Summarization Tool | NIM23',
     description:
-      'Summarizer by NIM23 is a powerful AI tool that condenses videos, audios, long articles, documents, and texts into concise summaries. Save time and get the gist of any content quickly and efficiently.',
-    image: logoImage,
+      'Summarizer by NIM23 is a powerful AI-driven app that quickly distills audio, video, documents, or text into concise summaries. Upload or paste content, drop files (PDF, DOCX, TXT, Markdown, audio/video), or input any URL to get instant, intelligent summaries.',
+    image: '/images/summarizer-cover.png', // Replace with actual image path
     keywords:
-      'text summarization, AI summarizer, nim23 summarizer, article summarizer, document summarizer, content summarization tool, free text summarizer, online summarization tool, AI-powered summarization, quick summary generator',
+      'AI summarizer, content summarization tool, youtube video summarizer, facebook video summarizer, youtube video transcription, facebook video transcription, youtube video to text, video summarizer, audio summarizer, document summarizer, smart summary generator, summarize PDF DOCX TXT Markdown, text to summary, summarize YouTube videos, summarizer app NIM23, intelligent summarization, Whisper transcription, Gemini summarization, text AI assistant, summarization from URL, content distillation, file-based summarizer, quick summaries, AI content processor, multimedia summarizer, smart text reducer',
   },
 }
 

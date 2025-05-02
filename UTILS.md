@@ -87,6 +87,6 @@ Models:
 
 ### Sample Video Audio Files
 
-- http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4
 - https://www.youtube.com/watch?v=ry9SYnV3svc&ab_channel=LearnEnglishbyPocketPassport
+- http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4
 - https://voiceage.com/wbsamples/out48s/Trailer.wav

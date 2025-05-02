@@ -49,11 +49,11 @@ const FileUploadInput: React.FC<FileUploadInputProps> = ({ onFileSelect }) => {
       onDragOver={handleDragOver}
       className="border-2 border-dashed border-gray-300 p-4 rounded-md text-center mb-4 dark:bg-gray-800"
     >
-      <p className="mb-2">Drag and drop a file here, or click to select a file. [Video/Audio/PDF/Word]</p>
+      <p className="mb-2">Drag and drop a file here, or click to select a file. [Video/Audio/PDF/Word/Text/Markdown]</p>
       <input
         ref={inputRef}
         type="file"
-        accept=".pdf,.doc,.docx,.txt,audio/*,video/*"
+        accept=".pdf,.docx,.txt,.md,audio/*,video/*"
         onChange={handleFileChange}
         className="hidden"
         id="fileUpload"

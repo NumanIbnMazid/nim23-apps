@@ -167,7 +167,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
             />
           )}
 
-          <hr className="my-16 border-gray-300 dark:border-gray-700" />
+          <hr className="my-6 border-gray-300 dark:border-gray-700" />
           <HowToUse />
         </div>
       )}
