@@ -5,7 +5,7 @@ interface StatusMessageProps {
 }
 
 const StatusMessage: React.FC<StatusMessageProps> = ({ message }) => {
-  return message ? <p className="mt-2 text-green-600">{message}</p> : null
+  return message ? <p className="mt-6 text-green-600">{message}</p> : null
 }
 
 export default StatusMessage

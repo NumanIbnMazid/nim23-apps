@@ -37,7 +37,7 @@ const URLInput: React.FC<URLInputProps> = ({ url, setUrl, setIsValidUrl, setUrlE
         type="url"
         value={url}
         onChange={handleUrlChange}
-        placeholder="https://example.com/media"
+        placeholder="https://example.com/media.mp3"
         className="w-full border border-gray-300 p-2 rounded-md dark:bg-darkSecondary dark:text-white"
       />
       {urlError && <p className="text-red-500 mt-2 text-sm">{urlError}</p>}

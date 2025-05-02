@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { processLocalFile } from '@/lib/summarizer/processLocalFile'
-import { convertAudioUrlToBase64 } from '@/lib/summarizer/convertAudioUrlToBase64'
+import { convertAudioUrlToFile } from '@/lib/summarizer/convertAudioUrlToFile'
+import { convertVideoUrlToAudio } from '@/lib/summarizer/convertVideoUrlToAudioFile'
+import { convertAudioFileToBase64 } from '@/lib/summarizer/convertAudioFileToBase64'
 import { PUBLIC_SITE_URL } from '@/lib/constants'
 
 /**
@@ -50,17 +52,13 @@ export const useSummarization = () => {
     ffmpegInstance: any
   ) => {
     setLoading(true)
-    setStatusMessage('')
-    setErrorMessage('')
-    setSummary('')
-    setWhisperTranscription('')
-    setTranscriptionTimeline('')
+    reset()
 
     try {
       let textToSummarize = ''
       let audioBase64 = ''
 
-      // Case: Local file upload
+      // ### Case: Local file upload
       if (selectedFile) {
         const result = await processLocalFile(selectedFile, ffmpegInstance)
         if (result.base64Audio) {
@@ -72,11 +70,17 @@ export const useSummarization = () => {
           textToSummarize = result.text
         }
       }
-      // Case: Media URL
+      // ### Case: Media URL
       else if (mediaUrl) {
         setStatusMessage('Fetching and processing media from URL...')
         const isDirectMedia = /\.(mp3|mp4|m4a|mov|wav|webm|ogg)$/i.test(mediaUrl)
+        const isVideo = /\.(mp4|mov|webm)$/i.test(mediaUrl)
+        const isAudio = /\.(mp3|m4a|wav|ogg)$/i.test(mediaUrl)
+
+        let audioData = null
+
         if (!isDirectMedia) {
+          // Use backend to extract downloadable audio URL
           const res = await fetch(`${PUBLIC_SITE_URL}/api/summarizer/get-audio-url`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -89,13 +93,26 @@ export const useSummarization = () => {
           }
 
           const result = await res.json()
-          const audioUrl = result.data.extracted_audio_url
-          audioBase64 = await convertAudioUrlToBase64(audioUrl, ffmpegInstance)
-
-          textToSummarize = await transcribeAudioBase64(audioBase64, setWhisperTranscription)
+          // *** Assign Audio Data  ***
+          const extractedAudio = result.data.extracted_audio_url
+          audioData = await convertAudioUrlToFile(extractedAudio, ffmpegInstance)
         }
+
+        // Now audioUrl is a direct link (either provided directly or via backend)
+        else if (isVideo || (!isAudio && isDirectMedia)) {
+          // *** Assign Audio Data  ***
+          audioData = await convertVideoUrlToAudio(mediaUrl, ffmpegInstance)
+        } else if (isAudio || (!isVideo && isDirectMedia)) {
+          // *** Assign Audio Data  ***
+          audioData = await convertAudioUrlToFile(mediaUrl, ffmpegInstance)
+        } else {
+          throw new Error('Unsupported media type in URL.')
+        }
+
+        audioBase64 = await convertAudioFileToBase64(audioData)
+        textToSummarize = await transcribeAudioBase64(audioBase64, setWhisperTranscription)
       }
-      // Case: Plain text input
+      // ### Case: Plain text input
       else if (textInput) {
         setStatusMessage('Using provided text for summarization.')
         textToSummarize = textInput
@@ -123,19 +140,30 @@ export const useSummarization = () => {
       setSummary(data.data.summary)
       setStatusMessage('Summarization completed successfully.')
     } catch (error: any) {
-      const fallback = 'An unexpected error occurred!'
-      try {        
-        const errData = (await error?.response?.json?.()) || error
-        const detailed = errData?.error?.error_details || errData?.message || error.message
-        setErrorMessage(detailed || fallback)
-      } catch {
-        setErrorMessage(fallback)
+      // console.error('Summarization error:', error)
+
+      const fallback = 'Something went wrong while processing your input.'
+      let errorText = fallback
+
+      try {
+        // Try to parse JSON string inside error.message
+        if (typeof error?.message === 'string' && error.message.startsWith('{')) {
+          const parsed = JSON.parse(error.message)
+          errorText = parsed?.error?.error_details || parsed?.message || parsed?.error || fallback
+        } else {
+          errorText = error?.message || fallback
+        }
+      } catch (jsonErr) {
+        console.warn('Failed to parse error.message as JSON', jsonErr)
+        errorText = error?.message || fallback
       }
+
+      setErrorMessage(errorText)
+      setStatusMessage('')
     } finally {
       setLoading(false)
     }
   }
-
   return {
     summary,
     whisperTranscription,

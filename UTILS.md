@@ -84,3 +84,9 @@ Models:
 - https://askubuntu.com/questions/1342197/why-is-youtube-dl-blocking-me-from-downloading-youtube-videos-which-are-supposed
 - https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp
 - https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies
+
+### Sample Video Audio Files
+
+- http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4
+- https://www.youtube.com/watch?v=ry9SYnV3svc&ab_channel=LearnEnglishbyPocketPassport
+- https://voiceage.com/wbsamples/out48s/Trailer.wav
