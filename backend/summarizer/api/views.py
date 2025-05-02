@@ -12,7 +12,7 @@ from summarizer.utils.whisper import transcribe_audio_base64
 from summarizer.utils.summarizer import summarize_text
 
 from google import genai
-from faster_whisper import WhisperModel
+from faster_whisper import WhisperModel, BatchedInferencePipeline
 
 import os
 import logging
@@ -27,6 +27,18 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Gemini Client
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
+# Whisper
+whisper_model_size = os.getenv("WHISPER_MODEL_SIZE", "tiny")
+whisper_device = os.getenv("WHISPER_DEVICE", "cpu")
+whisper_batch_enabled = bool(os.getenv("WHISPER_BATCH_ENABLED", "False"))
+whisper_batch_size = int(os.getenv("WHISPER_BATCH_SIZE", 8))
+
+if whisper_model_size not in ["tiny", "base", "small", "medium", "large"]:
+    raise ValueError("Invalid whisper model size")
+
+if whisper_device not in ["cpu", "cuda"]:
+    raise ValueError("Invalid whisper device")
+
 # Singleton Whisper model
 _whisper_model = None
 
@@ -35,11 +47,14 @@ def get_whisper_model():
     global _whisper_model
     if _whisper_model is None:
         logger.info("[Whisper] Loading model...")
-        _whisper_model = WhisperModel("small", device="cpu")
+        _whisper_model = WhisperModel(whisper_model_size, device=whisper_device)
+    logger.info(f"[Whisper] Model loaded: {_whisper_model}")
     return _whisper_model
 
 
 whisper_model = get_whisper_model()
+
+whisper_batched_model = BatchedInferencePipeline(model=whisper_model)
 
 
 @custom_response_wrapper
@@ -125,7 +140,17 @@ class SummarizerViewset(GenericViewSet):
         text = ""
         try:
             if audio_b64:
-                text = transcribe_audio_base64(audio_b64=audio_b64, model=whisper_model)
+                if whisper_batch_enabled:
+                    text = transcribe_audio_base64(
+                        audio_b64=audio_b64,
+                        model=whisper_batched_model,
+                        batch=True,
+                        batch_size=whisper_batch_size,
+                    )
+                else:
+                    text = transcribe_audio_base64(
+                        audio_b64=audio_b64, model=whisper_model
+                    )
             return ResponseWrapper(
                 data={"transcription": text}, status=status.HTTP_200_OK
             )

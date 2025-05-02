@@ -7,7 +7,9 @@ from utils.helpers import send_log_message
 logger = logging.getLogger("summarizer")
 
 
-def transcribe_audio_base64(audio_b64: str, model: any) -> str:
+def transcribe_audio_base64(
+    audio_b64: str, model: any, batch: bool = False, batch_size: int = 8
+) -> str:
     """
     Transcribes audio from a base64-encoded stream using faster-whisper (non-streaming).
     """
@@ -15,7 +17,10 @@ def transcribe_audio_base64(audio_b64: str, model: any) -> str:
         audio_bytes = base64.b64decode(audio_b64)
         audio_stream = io.BytesIO(audio_bytes)
 
-        segments, info = model.transcribe(audio_stream, beam_size=5, language="en")
+        if batch:
+            segments, info = model.transcribe(audio_stream, batch_size=batch_size)
+        else:
+            segments, info = model.transcribe(audio_stream)
 
         logger.info(
             f"[Whisper] Detected language: {info.language} ({info.language_probability:.2f})"
