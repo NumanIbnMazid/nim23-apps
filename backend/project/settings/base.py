@@ -219,28 +219,42 @@ LOGGING = {
 }
 
 # ----------------------------------------------------
-# *** Django Channels ***
+# *** REDIS Configuration ***
+# ----------------------------------------------------
+redis_password = config.REDIS.REDIS_PASSWORD
+redis_host = config.REDIS.REDIS_HOST
+redis_port = config.REDIS.REDIS_PORT
+redis_db = config.REDIS.REDIS_DB
+
+redis_url = (
+    f"redis://:{redis_password}@{redis_host}:{redis_port}/{redis_db}"
+    if redis_password
+    else f"redis://{redis_host}:{redis_port}/{redis_db}"
+)
+
+# ----------------------------------------------------
+# *** Channel Layers Configuration ***
 # ----------------------------------------------------
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [
-                f"redis://{config.REDIS.REDIS_HOST}:{config.REDIS.REDIS_PORT}/{config.REDIS.REDIS_DB}"
-            ],
+            "hosts": [redis_url],
         },
     },
 }
 
 # ----------------------------------------------------
-# *** Cachee Configuration ****
+# *** Cache Configuration ***
 # ----------------------------------------------------
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{config.REDIS.REDIS_HOST}:{config.REDIS.REDIS_PORT}/{config.REDIS.REDIS_DB}",  # 'redis' is the Docker service name
+        "LOCATION": redis_url,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # Optionally pass password directly here too (redundant if in URL)
+            "PASSWORD": redis_password if redis_password else None,
         },
     }
 }
