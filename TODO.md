@@ -14,3 +14,5 @@
 - [ ] Add sleep time for youtube downloader between downloads.
 - [ ] [Summarizer] Add Limit to video/audio/pdf/text/word length. And validate input.
 - [ ] [Summarizer] Add batch and chunk by chunk summarization support for long text.
+- [ ] [Summarizer] Update prompt and save in database.
+- [ ] Analyze Hosting providers: https://railway.com/pricing, https://www.hetzner.com/cloud/
