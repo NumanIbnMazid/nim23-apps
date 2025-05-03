@@ -1,9 +1,20 @@
 from project.settings.base import *
 
+print("✅ Running Development Settings...")
+
 # # ----------------------------------------------------
 # # *** Allowed Hosts ***
 # # ----------------------------------------------------
+# Initial list of allowed hosts
 ALLOWED_HOSTS = ["*"]
+
+# Load extra hosts from environment and merge with de-duplication
+extra_hosts = os.environ.get("ALLOWED_HOSTS", "")
+if extra_hosts:
+    combined = ALLOWED_HOSTS + [
+        host.strip() for host in extra_hosts.split(",") if host.strip()
+    ]
+    ALLOWED_HOSTS = list(set(combined))  # Remove duplicates
 
 # ----------------------------------------------------
 # *** Static and Media Files Configuration ***
@@ -16,9 +27,7 @@ PUBLIC_ROOT = os.path.join(BASE_DIR, "public/")
 # MEDIA_ROOT = os.path.join(PUBLIC_ROOT, "media/")
 STATIC_ROOT = os.path.join(PUBLIC_ROOT, "static/")
 # Static Files Directories
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "public/", "staticfiles/"),
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "public/", "staticfiles/"),)
 
 # ----------------------------------------------------
 # *** Security ***
@@ -28,24 +37,24 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",  # frontend URL here
 ]
 CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS',
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
 ]
 CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'ClientID',
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+    "ClientID",
 ]
 
 # ----------------------------------------------------

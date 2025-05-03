@@ -1,5 +1,7 @@
 from project.settings.base import *
 
+print("✅ Running Production Settings...")
+
 # ----------------------------------------------------
 # *** Allowed Hosts ***
 # ----------------------------------------------------
