@@ -7,7 +7,7 @@ print("✅ Running Production Settings...")
 # ----------------------------------------------------
 # Initial list of allowed hosts
 ALLOWED_HOSTS = [
-    "127.0.0.1:8000",  # Localhost
+    "127.0.0.1",  # Localhost
     "apps.nim23.com",  # Frontend Host (Vercel)
     "nim23-apps.vercel.app",  # Frontend Host (Vercel)
     "backend.apps.nim23.com",  # Backend Host (Northflank)
