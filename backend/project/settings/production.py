@@ -3,13 +3,23 @@ from project.settings.base import *
 # ----------------------------------------------------
 # *** Allowed Hosts ***
 # ----------------------------------------------------
+# Initial list of allowed hosts
 ALLOWED_HOSTS = [
     "apps.nim23.com",  # Frontend Host (Vercel)
     "nim23-apps.vercel.app",  # Frontend Host (Vercel)
     "backend.apps.nim23.com",  # Backend Host (Northflank)
     "p02--nim23-apps--47v76khxj6jn.code.run",  # Backend Host (Northflank)
     "backend-nim23-apps.leapcell.app",  # Backend Host (Leapcell)
+    "nim23-apps-nimofficial2643-c4525gqk.leapcell.dev",  # Backend Host (Leapcell)
 ]
+
+# Load extra hosts from environment and merge with de-duplication
+extra_hosts = os.environ.get("ALLOWED_HOSTS", "")
+if extra_hosts:
+    combined = ALLOWED_HOSTS + [
+        host.strip() for host in extra_hosts.split(",") if host.strip()
+    ]
+    ALLOWED_HOSTS = list(set(combined))  # Remove duplicates
 
 # ----------------------------------------------------
 # *** Static and Media Files Configuration ***
