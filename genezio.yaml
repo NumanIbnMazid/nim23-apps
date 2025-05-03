@@ -1,0 +1,21 @@
+backend:
+    functions:
+        - entry: project/asgi.py
+          handler: application
+          name: django
+          path: .
+          type: httpServer
+    language:
+        name: python
+        packageManager: pip
+        runtime: python3.12.x
+    path: ./backend
+name: nim23-apps
+nextjs:
+    packageManager: npm
+    path: ./frontend
+    scripts:
+        deploy:
+            - yarn install
+region: eu-central-1
+yamlVersion: 2
