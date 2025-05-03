@@ -12,7 +12,7 @@ class BaseConfig(BaseSettings):
     BACKEND_BASE_URL: str = Field(..., alias="BACKEND_BASE_URL")
 
     class Config:
-        env_file = f"{Path(__file__).resolve().parent.parent}/.env"
+        env_file = f"{Path(__file__).resolve().parent}/.env"
         extra = "allow"
 
 

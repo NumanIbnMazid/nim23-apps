@@ -1,37 +1,8 @@
 services:
-  # db:
-  #   image: postgres:14.5-alpine
-  #   volumes:
-  #     - ./data/db:/var/lib/postgresql/data
-  #   environment:
-  #     - PGDATA=/var/lib/postgresql/data/db-files
-  #     - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-  #   networks:
-  #     - net-tier
-
-  # redis:
-  #   image: redis:7.4.2-alpine
-  #   container_name: redis
-  #   ports:
-  #     - '6379:6379'
-  #   environment:
-  #     REDIS_HOST: ${REDIS_HOST}
-  #     REDIS_PORT: ${REDIS_PORT}
-  #     REDIS_DB: ${REDIS_DB}
-  #   networks:
-  #     - net-tier
 
   backend:
-    # depends_on:
-    #   - db
-    env_file: ./.env
+    env_file: backend/.env
     container_name: backend
-    environment:
-      # WAIT_HOSTS: db:5432
-      DATABASE_HOST: ${DATABASE_HOST}
-      DATABASE_USER: ${DATABASE_USER}
-      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-      DATABASE_NAME: ${DATABASE_NAME}
     build:
       context: ./backend
       dockerfile: ./Dockerfile
@@ -41,7 +12,7 @@ services:
       - net-tier
 
   frontend:
-    env_file: ./.env
+    env_file: frontend/.env
     container_name: frontend
     build:
       context: ./frontend

@@ -48,7 +48,7 @@ def get_whisper_model():
     if _whisper_model is None:
         logger.info("[Whisper] Loading model...")
         _whisper_model = WhisperModel(whisper_model_size, device=whisper_device)
-    logger.info(f"[Whisper] Model loaded: {_whisper_model}")
+    logger.info(f"[Whisper] Model [{whisper_model_size}] loaded: {str(_whisper_model)}")
     return _whisper_model
 
 
