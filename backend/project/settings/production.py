@@ -7,14 +7,10 @@ print("✅ Running Production Settings...")
 # ----------------------------------------------------
 # Initial list of allowed hosts
 ALLOWED_HOSTS = [
-    "127.0.0.1",  # Localhost
     "apps.nim23.com",  # Frontend Host (Vercel)
     "nim23-apps.vercel.app",  # Frontend Host (Vercel)
     "backend.apps.nim23.com",  # Backend Host (Northflank)
     "p02--nim23-apps--47v76khxj6jn.code.run",  # Backend Host (Northflank)
-    "backend-nim23-apps.leapcell.app",  # Backend Host (Leapcell)
-    "nim23-apps-nimofficial2643-c4525gqk.leapcell.dev",  # Backend Host (Leapcell)
-    "nim23-apps.leapcell.app",  # Backend Host (Leapcell)
 ]
 
 # Load extra hosts from environment and merge with de-duplication
