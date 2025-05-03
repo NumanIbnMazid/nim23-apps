@@ -14,6 +14,7 @@ ALLOWED_HOSTS = [
     "p02--nim23-apps--47v76khxj6jn.code.run",  # Backend Host (Northflank)
     "backend-nim23-apps.leapcell.app",  # Backend Host (Leapcell)
     "nim23-apps-nimofficial2643-c4525gqk.leapcell.dev",  # Backend Host (Leapcell)
+    "nim23-apps.leapcell.app",  # Backend Host (Leapcell)
 ]
 
 # Load extra hosts from environment and merge with de-duplication
