@@ -17,5 +17,5 @@ nextjs:
     scripts:
         deploy:
             - yarn install
-region: us-east-1
+region: eu-central-1
 yamlVersion: 2
