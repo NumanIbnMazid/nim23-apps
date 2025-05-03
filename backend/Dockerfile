@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Copy requirements and install dependencies
-COPY backend/requirements.txt /app/
+COPY requirements.txt /app/
 RUN pip install --upgrade pip && pip wheel --no-cache-dir --wheel-dir /wheels -r requirements.txt
 
 
@@ -60,14 +60,14 @@ WORKDIR /app
 
 # Copy wheels and install dependencies
 COPY --from=builder /wheels /wheels
-COPY backend/requirements.txt /app/
+COPY requirements.txt /app/
 RUN pip install --no-cache-dir --no-index --find-links=/wheels -r requirements.txt || pip install --no-cache-dir psycopg2-binary
 
 # Copy application files
-COPY backend /app
+COPY . /app
 
 # Set up Supervisor
-COPY backend/supervisord.conf /etc/supervisor/supervisord.conf
+COPY supervisord.conf /etc/supervisor/supervisord.conf
 
 # Add the entrypoint script and make it executable
 RUN chmod +x /app/entrypoint.sh
