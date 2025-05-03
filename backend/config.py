@@ -26,7 +26,7 @@ class DatabaseConfig(BaseConfig):
 
 class RedisConfig(BaseConfig):
     REDIS_HOST: str = Field("localhost", alias="REDIS_HOST")
-    REDIS_PORT: str = Field("6379", alias="REDIS_PORT")
+    REDIS_PORT: int = Field(6379, alias="REDIS_PORT")
     REDIS_PASSWORD: str = Field("", alias="REDIS_PASSWORD")
     REDIS_DB: str = Field("0", alias="REDIS_DB")
 
