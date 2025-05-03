@@ -221,7 +221,7 @@ LOGGING = {
 # ----------------------------------------------------
 # *** REDIS Configuration ***
 # ----------------------------------------------------
-redis_url = getattr(config.REDIS, "REDIS_URL", None)
+redis_url = os.environ.get("REDIS_URL")
 
 if not redis_url:
     redis_password = config.REDIS.REDIS_PASSWORD
