@@ -27,6 +27,7 @@ services:
 
   nginx:
     image: nginx:latest
+    container_name: nginx
     ports:
       - '80:80'
       - '443:443'
@@ -36,6 +37,8 @@ services:
       - ./certs:/etc/ssl/certs:ro
     depends_on:
       - backend
+    networks:
+      - net-tier
 
 networks:
   net-tier:
