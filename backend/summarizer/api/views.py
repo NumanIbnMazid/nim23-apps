@@ -41,20 +41,21 @@ if whisper_device not in ["cpu", "cuda"]:
 
 # Singleton Whisper model
 _whisper_model = None
-
+_batched_model = None
 
 def get_whisper_model():
     global _whisper_model
     if _whisper_model is None:
         logger.info("[Whisper] Loading model...")
         _whisper_model = WhisperModel(whisper_model_size, device=whisper_device)
-    logger.info(f"[Whisper] Model [{whisper_model_size}] loaded: {str(_whisper_model)}")
     return _whisper_model
 
 
-whisper_model = get_whisper_model()
-
-whisper_batched_model = BatchedInferencePipeline(model=whisper_model)
+def get_batched_model():
+    global _batched_model
+    if _batched_model is None:
+        _batched_model = BatchedInferencePipeline(model=get_whisper_model())
+    return _batched_model
 
 
 @custom_response_wrapper
@@ -143,13 +144,13 @@ class SummarizerViewset(GenericViewSet):
                 if whisper_batch_enabled:
                     text = transcribe_audio_base64(
                         audio_b64=audio_b64,
-                        model=whisper_batched_model,
+                        model=get_batched_model(),
                         batch=True,
                         batch_size=whisper_batch_size,
                     )
                 else:
                     text = transcribe_audio_base64(
-                        audio_b64=audio_b64, model=whisper_model
+                        audio_b64=audio_b64, model=get_whisper_model()
                     )
             return ResponseWrapper(
                 data={"transcription": text}, status=status.HTTP_200_OK
