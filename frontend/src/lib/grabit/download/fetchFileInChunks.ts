@@ -6,12 +6,7 @@ export const fetchFileInChunks = async (
   onProgress?: (percent: number, downloaded: number, total: number) => void
 ): Promise<Uint8Array> => {
   const decodedUrl = decodeURIComponent(url)
-  console.log('Decoded URL:', decodedUrl)
-  console.log('Original URL:', url);
-  
   const isAlreadyProxied = decodedUrl.includes('/api/grabit/proxy')
-  console.log('Is already proxied:', isAlreadyProxied);
-  
 
   const targetUrl = isAlreadyProxied ? url : `${PUBLIC_SITE_URL}/api/grabit/proxy?url=${encodeURIComponent(url)}`
 
@@ -23,9 +18,9 @@ export const fetchFileInChunks = async (
   let start = 0
   let end = 0
 
-  // if (!contentLength || isNaN(contentLength)) {
-  //   throw new Error('Invalid Content-Length header from proxy.')
-  // }
+  if (!contentLength || isNaN(contentLength)) {
+    throw new Error('Invalid Content-Length header from proxy.')
+  }
 
   while (start < contentLength) {
     end = Math.min(start + chunkSize - 1, contentLength - 1)

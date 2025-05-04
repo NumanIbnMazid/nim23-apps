@@ -24,11 +24,6 @@ export const downloadMedia = async (
 
     setStatus('Fetching video and audio.....')
     setStatus('Please hold on. This may take a while. Rest of the process will be very quick.')
-    
-    console.log("videoUrl", videoUrl)
-    console.log("audioUrl", audioUrl)
-    console.log("title", title);
-    
 
     // ======= Heavy Part ========
     // const [videoData, audioData] = await Promise.all([fetchFile(videoProxyUrl), fetchFile(audioProxyUrl)])
