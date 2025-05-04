@@ -10,6 +10,21 @@ services:
     networks:
       - net-tier
 
+  frontend:
+    env_file: frontend/.env
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - net-tier
+
   nginx:
     image: nginx:latest
     container_name: nginx
