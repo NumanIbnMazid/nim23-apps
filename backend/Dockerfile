@@ -62,7 +62,7 @@ WORKDIR /app
 # Copy wheels and install dependencies
 COPY --from=builder /wheels /wheels
 COPY requirements.txt /app/
-RUN pip install --no-cache-dir --no-index --find-links=/wheels -r requirements.txt || pip install --no-cache-dir psycopg2-binary
+RUN pip install --no-cache-dir --no-index --find-links=/wheels -r requirements.txt
 
 # Copy application files
 COPY . /app
