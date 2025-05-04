@@ -35,9 +35,11 @@ export const processDownload = async (
       throw new Error(`Server error: ${res.status}. ${errText}`)
     }
 
-    const {
-      data: { video_title, video_url, audio_url, audio_ext, video_ext },
-    } = await res.json()
+    const responseBody = await res.json()
+    console.log(responseBody) // Log the response to inspect the structure
+
+    const { data } = responseBody
+    const { video_title, video_url, audio_url, audio_ext, video_ext } = data || {}
 
     return await downloadMedia(
       video_url,
