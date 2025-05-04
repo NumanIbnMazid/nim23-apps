@@ -4,7 +4,7 @@ import { formatBytes } from '@/lib/utils/helpers'
 export const convertAudioUrlToFile = async (
   audioURL: string,
   ffmpegInstance: any,
-  setStatusMessage?: any
+  setStatusMessage: any = () => {}
 ): Promise<Uint8Array> => {
   const chunkSize = 1024 * 1024 * 2 // 2MB per chunk
   let totalProgress = 0
