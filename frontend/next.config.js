@@ -23,9 +23,9 @@ const withPWA = require('next-pwa')({
 const nextConfig = withPWA({
   output: 'standalone',
   experimental: {
-    // turbo: {}, // ✅ Ensure Turbopack is enabled correctly
+    turbo: {}, // ✅ Ensure Turbopack is enabled correctly
     serverActions: {}, // ✅ Ensure Server Actions are enabled correctly,
-    workerThreads: false, // ✅ Ensure service worker updates
+    workerThreads: true, // ✅ Ensure service worker updates
   },
   generateBuildId: async () => {
     return 'nim23-apps-build'

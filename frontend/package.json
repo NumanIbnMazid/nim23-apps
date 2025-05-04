@@ -5,9 +5,9 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "tsc": "tsc",
-    "build": "next build",
+    "build": "next build --turbopack",
     "start": "next start",
     "tsc-watch": "tsc --watch",
     "lint": "next lint",
