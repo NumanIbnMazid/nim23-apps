@@ -11,7 +11,7 @@ ALLOWED_HOSTS = [
     "nim23-apps.vercel.app",  # Frontend Host (Vercel)
     "backend.apps.nim23.com",  # Backend Host (Northflank)
     "p02--nim23-apps--47v76khxj6jn.code.run",  # Backend Host (Northflank)
-    "54.255.143.72",  # Backend Host (AWS EC2)
+    "47.130.76.187",  # Backend Host (AWS EC2)
 ]
 
 # Load extra hosts from environment and merge with de-duplication
