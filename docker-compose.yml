@@ -1,5 +1,4 @@
 services:
-
   backend:
     env_file: backend/.env
     container_name: backend
@@ -25,6 +24,16 @@ services:
       - CHOKIDAR_USEPOLLING=true
     networks:
       - net-tier
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - frontend
 
 networks:
   net-tier:
