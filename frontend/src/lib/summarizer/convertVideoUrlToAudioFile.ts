@@ -41,7 +41,20 @@ export const convertVideoUrlToAudio = async (
 
   await ffmpegInstance.writeFile(inputName, videoData)
 
-  await ffmpegInstance.exec(['-i', inputName, '-vn', '-acodec', 'pcm_s16le', '-ar', '16000', '-ac', '1', outputName])
+  await ffmpegInstance.exec([
+    '-i',
+    inputName,
+    '-vn',
+    '-acodec',
+    'pcm_s16le',
+    '-ar',
+    '16000',
+    '-ac',
+    '1',
+    '-f',
+    'wav',
+    outputName,
+  ])
 
   const audioData = await ffmpegInstance.readFile(outputName)
   return audioData as Uint8Array

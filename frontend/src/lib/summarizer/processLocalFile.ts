@@ -34,7 +34,20 @@ export async function processLocalFile(
     const buffer = await file.arrayBuffer()
     await ffmpeg.writeFile('input.mp4', new Uint8Array(buffer))
 
-    await ffmpeg.exec(['-i', 'input.mp4', '-vn', '-acodec', 'pcm_s16le', '-ar', '16000', '-ac', '1', 'output.wav'])
+    await ffmpeg.exec([
+      '-i',
+      'input.mp4',
+      '-vn',
+      '-acodec',
+      'pcm_s16le',
+      '-ar',
+      '16000',
+      '-ac',
+      '1',
+      '-f',
+      'wav',
+      'output.wav',
+    ])
 
     const audio = await ffmpeg.readFile('output.wav')
     // @ts-ignore

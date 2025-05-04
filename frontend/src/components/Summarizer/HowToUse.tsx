@@ -17,14 +17,14 @@ export default function HowToUse() {
       <div className="space-y-8 text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
         <div>
           <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-3">1. Choose Your Input Type</h3>
-          <p>
+          <div>
             You can summarize content by either:
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li>Entering a video/audio URL (e.g., YouTube, Facebook, .mp4 links)</li>
               <li>Uploading a file (video, audio, PDF, DOCX, Markdown, or plain text)</li>
               <li>Typing or pasting text directly into the input area</li>
             </ul>
-          </p>
+          </div>
         </div>
 
         <div>

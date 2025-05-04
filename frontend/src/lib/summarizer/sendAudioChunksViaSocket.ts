@@ -1,0 +1,62 @@
+/**
+ * Split base64 string into audio chunks and send over WebSocket.
+ */
+export const sendAudioChunksViaSocket = async (
+  fullBase64: string,
+  summarizerSocket: any,
+  chunkDurationSec: number = 5
+) => {
+  if (!summarizerSocket || summarizerSocket.readyState !== WebSocket.OPEN) {
+    throw new Error('🔴 [Summarizer] WebSocket is not connected!')
+  }
+
+  // Approximate byte size of 5s audio (e.g. 16kbps mono ≈ 10KB/sec → 50KB base64)
+  const bytesPerSecond = 16000 // adjust based on audio encoding bitrate
+  const estimatedChunkBytes = bytesPerSecond * chunkDurationSec
+  const base64ChunkSize = (estimatedChunkBytes * 4) / 3 // base64 expands 3:4
+
+  const chunks = fullBase64.match(new RegExp(`.{1,${Math.floor(base64ChunkSize)}}`, 'g')) || []
+
+  // log full base64 size and chunk size
+  // console.log('🔊 [Summarizer] Full base64 size:', fullBase64.length)
+
+  for (let i = 0; i < chunks.length; i++) {
+    const chunk = chunks[i]
+
+    // console.log('🔊 [Summarizer] Sending chunk:', i + 1, 'of', chunks.length)
+    // console.log('🔊 [Summarizer] Chunk base64 size:', chunk.length)
+
+    summarizerSocket.send(
+      JSON.stringify({
+        type: 'datastream',
+        message: {
+          type: 'data',
+          module: 'summarizer',
+          scope: 'audio_chunk',
+          message: chunk,
+          sender: 'client',
+          chunk_index: i,
+          is_last: i === chunks.length - 1,
+          total_length: fullBase64.length,
+        },
+      })
+    )
+
+    // Optional: add delay to simulate real-time upload (for testing)
+    // await new Promise((resolve) => setTimeout(resolve, 200))
+  }
+  console.log('🔊 [Summarizer] All chunks sent successfully!')
+  // send end signal
+  summarizerSocket.send(
+    JSON.stringify({
+      type: 'datastream',
+      message: {
+        type: 'signal',
+        module: 'summarizer',
+        scope: 'audio_chunk',
+        message: 'END_CHUNK',
+        sender: 'client',
+      },
+    }) // send end signal
+  )
+}

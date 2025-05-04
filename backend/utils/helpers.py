@@ -172,13 +172,45 @@ class ProjectGenericModelViewset(ModelViewSet):
 channel_layer = get_channel_layer()
 
 
-def send_log_message(
-    message=None, *, type="event", module="common", scope=None, **kwargs
+async def send_log_message_async(
+    message=None,
+    *,
+    type="event",
+    module="common",
+    scope=None,
+    sender="server",
+    **kwargs,
 ):
     payload = {
         "type": "send.log",  # This is the handler method name in your consumer
         "message": {
             "type": type,
+            "sender": sender,
+            "module": module,
+            "scope": scope,
+            "message": message,
+            **kwargs,  # This allows for any extra keys to be added if needed
+        },
+    }
+
+    if channel_layer is not None:
+        await channel_layer.group_send("log_group", payload)
+
+
+def send_log_message(
+    message=None,
+    *,
+    type="event",
+    module="common",
+    scope=None,
+    sender="server",
+    **kwargs,
+):
+    payload = {
+        "type": "send.log",  # This is the handler method name in your consumer
+        "message": {
+            "type": type,
+            "sender": sender,
             "module": module,
             "scope": scope,
             "message": message,
@@ -191,7 +223,8 @@ def send_log_message(
 
 # Assign Order to Models Instances
 
-def assign_order(instance, model_class, order_field='order'):
+
+def assign_order(instance, model_class, order_field="order"):
     """
     Assigns an automatic order to a new instance of a model.
     It finds the lowest missing integer starting from 1 if any previous order is deleted.
@@ -213,7 +246,9 @@ def assign_order(instance, model_class, order_field='order'):
     existing_orders = model_class.objects.values_list(order_field, flat=True)
     existing_orders = sorted(filter(None, existing_orders))
 
-    max_order = model_class.objects.aggregate(max_order=Max(order_field))['max_order'] or 0
+    max_order = (
+        model_class.objects.aggregate(max_order=Max(order_field))["max_order"] or 0
+    )
 
     for i in range(1, max_order + 2):
         if i not in existing_orders:
@@ -251,6 +286,7 @@ def yt_dlp_cookies_exists():
     """Checks if the yt-dlp cookies.txt file exists."""
     COOKIES_PATH = os.path.join(get_yt_dlp_cookies_dir(), "cookies.txt")
     return os.path.exists(COOKIES_PATH)
+
 
 def get_cookies_path():
     """Returns the path to the yt-dlp cookies.txt file."""

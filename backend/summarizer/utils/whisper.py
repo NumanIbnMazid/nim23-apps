@@ -1,20 +1,27 @@
 import io
 import base64
 import logging
-from utils.helpers import send_log_message
+from utils.helpers import send_log_message_async
+from asgiref.sync import async_to_sync
 
 
 logger = logging.getLogger("summarizer")
 
 
-def transcribe_audio_base64(
+async def transcribe_audio_base64(
     audio_b64: str, model: any, batch: bool = False, batch_size: int = 8
 ) -> str:
     """
     Transcribes audio from a base64-encoded stream using faster-whisper (non-streaming).
     """
     try:
+        if not audio_b64.strip():
+            raise ValueError("Received empty base64 audio string")
+
         audio_bytes = base64.b64decode(audio_b64)
+        if not audio_bytes:
+            raise ValueError("Decoded audio is empty")
+
         audio_stream = io.BytesIO(audio_bytes)
 
         if batch:
@@ -32,7 +39,7 @@ def transcribe_audio_base64(
 
         transcript = []
         for segment in segments:
-            send_log_message(
+            await send_log_message_async(
                 f"{segment.start:.2f}s -> {segment.end:.2f}s: {segment.text}",
                 module="summarizer",
                 scope="whisper",

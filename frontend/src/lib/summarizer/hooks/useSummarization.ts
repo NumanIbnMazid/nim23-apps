@@ -4,30 +4,7 @@ import { convertAudioUrlToFile } from '@/lib/summarizer/convertAudioUrlToFile'
 import { convertVideoUrlToAudio } from '@/lib/summarizer/convertVideoUrlToAudioFile'
 import { convertAudioFileToBase64 } from '@/lib/summarizer/convertAudioFileToBase64'
 import { PUBLIC_SITE_URL } from '@/lib/constants'
-
-/**
- * Transcribes base64 audio by calling the backend API
- */
-const transcribeAudioBase64 = async (
-  audioBase64: string,
-  setWhisperTranscription: (text: string) => void
-): Promise<string> => {
-  const transcriptionRes = await fetch(`${PUBLIC_SITE_URL}/api/summarizer/transcribe-bs64-audio`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ audio_b64: audioBase64 }),
-  })
-
-  if (!transcriptionRes.ok) {
-    const err = await transcriptionRes.json()
-    throw new Error(err.error || 'Failed to transcribe audio.')
-  }
-
-  const transcriptionData = await transcriptionRes.json()
-  const transcription = transcriptionData.data.transcription
-  setWhisperTranscription(transcription)
-  return transcription
-}
+import { useTranscribeAudio } from '@/lib/summarizer/hooks/useTranscribeAudio'
 
 export const useSummarization = () => {
   const [summary, setSummary] = useState('')
@@ -36,6 +13,8 @@ export const useSummarization = () => {
   const [statusMessage, setStatusMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const { transcribeAudioBase64 } = useTranscribeAudio()
 
   const reset = () => {
     setSummary('')
