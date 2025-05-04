@@ -15,4 +15,6 @@
 - [ ] [Summarizer] Add Limit to video/audio/pdf/text/word length. And validate input.
 - [ ] [Summarizer] Add batch and chunk by chunk summarization support for long text.
 - [ ] [Summarizer] Update prompt and save in database.
+- [ ] [Summarizer] Chunk base64 file.
+- [ ] [Summarizer] Store whisper model in separate storage.
 - [ ] Analyze Hosting providers: https://www.hetzner.com/cloud/
