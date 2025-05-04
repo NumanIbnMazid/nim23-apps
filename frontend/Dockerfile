@@ -40,6 +40,7 @@ ENV NEXT_PUBLIC_HUMANIZER_AI_MIN_WORDS=$NEXT_PUBLIC_HUMANIZER_AI_MIN_WORDS
 # Set the environment variable to avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=Asia/Dhaka
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 
 # Install dependencies only when needed
 FROM base AS deps

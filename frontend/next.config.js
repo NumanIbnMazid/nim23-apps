@@ -15,18 +15,14 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-  buildExcludes: ['.next/static/chunks/pages/*.js'], // ✅ Prevents slow initial navigation
+  buildExcludes: [/middleware-manifest\.json$/], // ✅ Prevents slow initial navigation
   publicExcludes: ['!robots.txt', '!sitemap.xml', '!workbox-*.js', '!sw.js'],
 })
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withPWA({
   output: 'standalone',
-  experimental: {
-    turbo: {}, // ✅ Ensure Turbopack is enabled correctly
-    serverActions: {}, // ✅ Ensure Server Actions are enabled correctly,
-    workerThreads: true, // ✅ Ensure service worker updates
-  },
+  experimental: {},
   generateBuildId: async () => {
     return 'nim23-apps-build'
   },

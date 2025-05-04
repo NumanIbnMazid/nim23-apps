@@ -5,7 +5,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "tsc": "tsc",
     "build": "next build",
     "start": "next start",
