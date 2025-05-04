@@ -181,9 +181,9 @@ meta.md
 # frontend/public/sitemap.xml
 
 
-# # pwa
+# pwa
 frontend/public/sw.js
-# frontend/public/workbox-*.js
+frontend/public/workbox-*.js
 # frontend/public/worker-*.js
 # frontend/public/sw.js.map
 # frontend/public/workbox-*.js.map
