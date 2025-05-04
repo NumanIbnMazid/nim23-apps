@@ -6,7 +6,12 @@ export const fetchFileInChunks = async (
   onProgress?: (percent: number, downloaded: number, total: number) => void
 ): Promise<Uint8Array> => {
   const decodedUrl = decodeURIComponent(url)
+  console.log('Decoded URL:', decodedUrl)
+  console.log('Original URL:', url);
+  
   const isAlreadyProxied = decodedUrl.includes('/api/grabit/proxy')
+  console.log('Is already proxied:', isAlreadyProxied);
+  
 
   const targetUrl = isAlreadyProxied ? url : `${PUBLIC_SITE_URL}/api/grabit/proxy?url=${encodeURIComponent(url)}`
 
