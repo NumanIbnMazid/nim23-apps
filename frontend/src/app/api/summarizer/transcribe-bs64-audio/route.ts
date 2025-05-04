@@ -27,6 +27,14 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(requestBody),
     })
 
+    // Check if the response is JSON
+    const contentType = response.headers.get('Content-Type') || ''
+    if (!contentType.includes('application/json')) {
+      const errorText = await response.text() // Read the response as plain text
+      console.error('Non-JSON response:', errorText) // Log it for debugging
+      return NextResponse.json({ error: 'Invalid response from backend', details: errorText }, { status: 500 })
+    }
+
     // Check if the response from the backend is successful
     if (!response.ok) {
       const error = await response.text()
