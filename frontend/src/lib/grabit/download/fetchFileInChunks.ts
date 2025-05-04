@@ -18,9 +18,9 @@ export const fetchFileInChunks = async (
   let start = 0
   let end = 0
 
-  if (!contentLength || isNaN(contentLength)) {
-    throw new Error('Invalid Content-Length header from proxy.')
-  }
+  // if (!contentLength || isNaN(contentLength)) {
+  //   throw new Error('Invalid Content-Length header from proxy.')
+  // }
 
   while (start < contentLength) {
     end = Math.min(start + chunkSize - 1, contentLength - 1)
