@@ -14,7 +14,7 @@ MAX_AUDIO_SIZE = 1024 * 1024 * 10  # Max size for chunk processing (10MB)
 class SummarizerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
-        self.ping_interval = 30  # seconds
+        self.ping_interval = 20  # seconds
         self.session_id = self.scope["query_string"].decode().split("session_id=")[-1]
         self.group_name = get_socket_group_name(
             group_name="summarizer", session_id=self.session_id
@@ -168,23 +168,29 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
 
     # Send the transcription result back to the client
     async def send_transcription_result(self, transcription):
-        await self.send(
-            text_data=json.dumps(
-                {
-                    "type": "datastream",
-                    "message": {
-                        "type": "transcription_result",
-                        "sender": "server",
-                        "module": "summarizer",
-                        "scope": "full_transcription",
-                        "message": transcription,
-                    },
-                }
+        try:
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "datastream",
+                        "message": {
+                            "type": "transcription_result",
+                            "sender": "server",
+                            "module": "summarizer",
+                            "scope": "full_transcription",
+                            "message": transcription,
+                        },
+                    }
+                )
             )
-        )
+        except Exception as e:
+            logger.warning(f"🛑 Could not send transcription result: {e}")
 
     # Send error response in case of invalid data format or failure
     async def send_error_response(self, error_message):
-        await self.send(
-            text_data=json.dumps({"type": "error", "message": error_message})
-        )
+        try:
+            await self.send(
+                text_data=json.dumps({"type": "error", "message": error_message})
+            )
+        except Exception as e:
+            logger.warning(f"🛑 Could not send error response: {e}")

@@ -11,7 +11,7 @@ logger = logging.getLogger("log_consumers")
 class LogConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
-        self.ping_interval = 30  # seconds
+        self.ping_interval = 20  # seconds
         self.session_id = self.scope["query_string"].decode().split("session_id=")[-1]
         self.group_name = get_socket_group_name(
             group_name="log", session_id=self.session_id

@@ -22,7 +22,8 @@ const WebSocketContext = createContext<WebSocketContextType>({
 export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [logs, setLogs] = useState<any | null>(null)
   const [summarizerLogs, setSummarizerLogs] = useState<any | null>(null)
-  const [socketSessionID] = useState(() => crypto.randomUUID()) // ⬅️ sessionID is stable per tab
+  const [socketSessionID] = useState(() => crypto.randomUUID()) // 🔑 sessionID is stable per tab
+
   const logsRef = useRef<WebSocket | null>(null)
   const summarizerRef = useRef<WebSocket | null>(null)
 
@@ -30,26 +31,38 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     let reconnectLogsTimeout: NodeJS.Timeout
     let reconnectSummarizerTimeout: NodeJS.Timeout
 
-    // console.log(`🔑 Session ID: ${socketSessionID}`)
+    let logsPingInterval: NodeJS.Timeout
+    let summarizerPingInterval: NodeJS.Timeout
 
     const connectLogs = () => {
       const socketUrl = `${WEBSOCKET_URL}/ws/logs/?session_id=${socketSessionID}`
       const ws = new WebSocket(socketUrl)
       logsRef.current = ws
 
-      // ws.onopen = () => console.log('✅ [Log] WebSocket connected')
-      ws.onopen = () => ws.send(JSON.stringify({ type: 'ready' }))
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: 'ready' }))
+
+        // ⏱️ Ping every 25 seconds
+        logsPingInterval = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'ping' }))
+          }
+        }, 25000) // 25 seconds
+      }
+
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data)
-        // console.log('📩 [Log] message:', data)
         setLogs(data)
         if (data.type === 'ping') {
           ws.send(JSON.stringify({ type: 'pong' }))
         }
       }
+
       ws.onclose = (e) => {
+        clearInterval(logsPingInterval)
         if (!e.wasClean) reconnectLogsTimeout = setTimeout(connectLogs, 1000)
       }
+
       ws.onerror = (err) => console.warn('🔴 Logs WS error:', err)
     }
 
@@ -58,19 +71,30 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
       const ws = new WebSocket(socketUrl)
       summarizerRef.current = ws
 
-      // ws.onopen = () => console.log('✅ [Summarizer] WebSocket connected')
-      ws.onopen = () => ws.send(JSON.stringify({ type: 'ready' }))
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: 'ready' }))
+
+        // ⏱️ Ping every 25 seconds
+        summarizerPingInterval = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'ping' }))
+          }
+        }, 25000) // 25 seconds
+      }
+
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data)
-        // console.log('📩 [Summarizer] message:', data)
         setSummarizerLogs(data)
         if (data.type === 'ping') {
           ws.send(JSON.stringify({ type: 'pong' }))
         }
       }
+
       ws.onclose = (e) => {
+        clearInterval(summarizerPingInterval)
         if (!e.wasClean) reconnectSummarizerTimeout = setTimeout(connectSummarizer, 1000)
       }
+
       ws.onerror = (err) => console.warn('🔴 Summarizer WS error:', err)
     }
 
@@ -80,8 +104,10 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     return () => {
       logsRef.current?.close()
       summarizerRef.current?.close()
-      if (reconnectLogsTimeout) clearTimeout(reconnectLogsTimeout)
-      if (reconnectSummarizerTimeout) clearTimeout(reconnectSummarizerTimeout)
+      clearTimeout(reconnectLogsTimeout)
+      clearTimeout(reconnectSummarizerTimeout)
+      clearInterval(logsPingInterval)
+      clearInterval(summarizerPingInterval)
     }
   }, [socketSessionID])
 
