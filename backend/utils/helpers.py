@@ -165,6 +165,18 @@ class ProjectGenericModelViewset(ModelViewSet):
         if limit:
             queryset = queryset[: int(limit)]
         return queryset
+    
+
+def get_socket_group_name(group_name, session_id):
+    """
+    Generates a unique group name for WebSocket connections based on the group name and session ID.
+    """
+    valid_group_names = ["log", "summarizer"]
+    if group_name not in valid_group_names:
+        raise ValueError(f"Invalid group name: {group_name}. Valid names are: {valid_group_names}")
+    if not session_id:
+        raise ValueError("Session ID cannot be None or empty.")
+    return f"{group_name}_group_{session_id}"
 
 
 # Django Channels
@@ -175,37 +187,44 @@ channel_layer = get_channel_layer()
 async def send_log_message_async(
     message=None,
     *,
+    group_id=None,
     type="event",
     module="common",
     scope=None,
     sender="server",
     **kwargs,
 ):
+    if group_id is None:
+        raise ValueError("`group_id` is required for per-session routing")
+
     payload = {
-        "type": "send.log",  # This is the handler method name in your consumer
+        "type": "send.log",
         "message": {
             "type": type,
             "sender": sender,
             "module": module,
             "scope": scope,
             "message": message,
-            **kwargs,  # This allows for any extra keys to be added if needed
+            **kwargs,
         },
     }
 
     if channel_layer is not None:
-        await channel_layer.group_send("log_group", payload)
+        await channel_layer.group_send(group_id, payload)
 
 
 def send_log_message(
     message=None,
     *,
+    group_id=None,
     type="event",
     module="common",
     scope=None,
     sender="server",
     **kwargs,
 ):
+    if group_id is None:
+        raise ValueError("`group_id` is required for per-session routing")
     payload = {
         "type": "send.log",  # This is the handler method name in your consumer
         "message": {
@@ -217,8 +236,8 @@ def send_log_message(
             **kwargs,  # This allows for any extra keys to be added if needed
         },
     }
-
-    async_to_sync(channel_layer.group_send)("log_group", payload)
+    if channel_layer is not None:
+        async_to_sync(channel_layer.group_send)(group_id, payload)
 
 
 # Assign Order to Models Instances

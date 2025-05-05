@@ -27,7 +27,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
   const [modifyPreferencesScrollToPrefs, setModifyPreferencesScrollToPrefs] = useState(false)
   const [loadingRecommendationsScrollTo, setLoadingRecommendationsScrollTo] = useState(false)
   const [recommendationListScrollTo, setRecommendationListScrollTo] = useState(false)
-  const { logs } = useWebSocket()
+  const { logs, socketSessionID } = useWebSocket()
   const [recommendationActiveLog, setRecommendationActiveLog] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -86,7 +86,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
     setLoadingRecommendationsScrollTo(true)
 
     try {
-      const response = await getRecommendations(prefs, clientID)
+      const response = await getRecommendations(prefs, clientID, socketSessionID)
       setRecommendations(response || [])
     } catch (error) {
       console.error('Error fetching recommendations:', error)

@@ -22,7 +22,12 @@ from recommendr.api.cache import (
     extract_titles_by_type,
 )
 from utils.throttles import RecommendrRateThrottle
-from utils.helpers import custom_response_wrapper, ResponseWrapper, send_log_message
+from utils.helpers import (
+    custom_response_wrapper,
+    ResponseWrapper,
+    send_log_message,
+    get_socket_group_name,
+)
 
 from google import genai
 from googleapiclient.discovery import build
@@ -87,6 +92,7 @@ class MediaRecommendation(BaseModel):
 class RecommendationViewSet(GenericViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = RecommendationRequestSerializer
+    socket_group_id = None
 
     @swagger_auto_schema(
         method="get", responses={200: openapi.Response("Available preferences")}
@@ -191,6 +197,7 @@ class RecommendationViewSet(GenericViewSet):
         logger.info(f"🔍 Searching for `{title}` in OMDB...")
         send_log_message(
             f"🔍 Searching for `{title}` in Movie Database...",
+            group_id=self.socket_group_id,
             module="recommendr",
             scope="get-recommendation",
         )
@@ -207,6 +214,7 @@ class RecommendationViewSet(GenericViewSet):
             logger.info(f"✅ Found `{title}` in OMDB")
             send_log_message(
                 f"✅ Found `{title}` in Movie Database.",
+                group_id=self.socket_group_id,
                 module="recommendr",
                 scope="get-recommendation",
             )
@@ -279,6 +287,7 @@ class RecommendationViewSet(GenericViewSet):
         logger.info(f"🔍 Searching for `{title}` in IMDB...")
         send_log_message(
             f"🔍 Searching for `{title}` in IMDB...",
+            group_id=self.socket_group_id,
             module="recommendr",
             scope="get-recommendation",
         )
@@ -290,6 +299,7 @@ class RecommendationViewSet(GenericViewSet):
             logger.info(f"✅ Found `{title}` in IMDB with ID: {movie.movieID}")
             send_log_message(
                 f"✅ Found `{title}` in IMDB with ID: {movieID}",
+                group_id=self.socket_group_id,
                 module="recommendr",
                 scope="get-recommendation",
             )
@@ -316,6 +326,7 @@ class RecommendationViewSet(GenericViewSet):
             logger.info(f"⚠️ No results found for `{title}` in IMDB.")
             send_log_message(
                 f"⚠️ No results found for `{title}` in IMDB.",
+                group_id=self.socket_group_id,
                 module="recommendr",
                 scope="get-recommendation",
             )
@@ -325,6 +336,7 @@ class RecommendationViewSet(GenericViewSet):
         logger.info(f"🔍 Searching for `{query}` in YouTube...")
         send_log_message(
             f"🔍 Searching for `{query}` in YouTube...",
+            group_id=self.socket_group_id,
             module="recommendr",
             scope="get-recommendation",
         )
@@ -337,6 +349,7 @@ class RecommendationViewSet(GenericViewSet):
             logger.info(f"✅ Found `{query}` in YouTube with ID: {video_id}")
             send_log_message(
                 f"✅ Found `{query}` in YouTube with ID: {video_id}",
+                group_id=self.socket_group_id,
                 module="recommendr",
                 scope="get-recommendation",
             )
@@ -347,6 +360,7 @@ class RecommendationViewSet(GenericViewSet):
         logger.info(f"🔍 Searching for `{query}` in Spotify...")
         send_log_message(
             f"🔍 Searching for `{query}` in Spotify...",
+            group_id=self.socket_group_id,
             module="recommendr",
             scope="get-recommendation",
         )
@@ -356,6 +370,7 @@ class RecommendationViewSet(GenericViewSet):
             logger.info(f"✅ Found `{query}` in Spotify with ID: {tracks[0]['id']}")
             send_log_message(
                 f"✅ Found `{query}` in Spotify with ID: {tracks[0]['id']}",
+                group_id=self.socket_group_id,
                 module="recommendr",
                 scope="get-recommendation",
             )
@@ -383,6 +398,7 @@ class RecommendationViewSet(GenericViewSet):
             media_type_name_plural = "Documentaries"
         send_log_message(
             f"Finding best {media_type_name_plural} for you...",
+            group_id=self.socket_group_id,
             module="recommendr",
             scope="get-recommendation",
         )
@@ -425,10 +441,16 @@ class RecommendationViewSet(GenericViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        socket_session_id = serializer.validated_data.get("socket_session_id")
+
+        self.socket_group_id = get_socket_group_name(
+            group_name="log", session_id=socket_session_id
+        )
 
         try:
             send_log_message(
                 f"Generating recommendations...",
+                group_id=self.socket_group_id,
                 module="recommendr",
                 scope="get-recommendation",
             )

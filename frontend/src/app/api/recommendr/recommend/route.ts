@@ -10,6 +10,9 @@ export async function POST(req: Request) {
     if (!preferences?.client_id) {
       return NextResponse.json({ success: false, message: 'Client ID is required' }, { status: 400 })
     }
+    if (!preferences?.socket_session_id) {
+      return NextResponse.json({ success: false, message: 'Socket session ID is required' }, { status: 400 })
+    }
 
     const res = await fetch(apiURL, {
       method: 'POST',

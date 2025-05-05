@@ -1,12 +1,16 @@
 import { PUBLIC_SITE_URL } from '@/lib/constants'
 
-export async function getRecommendations(preferences: any, clientID: string | null) {
+export async function getRecommendations(preferences: any, clientID: string | null, socketSessionID: string | null) {
+  if (!socketSessionID) {
+    throw new Error('Socket session ID is required')
+  }
   if (!clientID) {
     throw new Error('Client ID is required')
   }
 
   const body = {
     client_id: clientID,
+    socket_session_id: socketSessionID,
     media_type: preferences.media_type,
     mood: preferences.mood,
     occasion: preferences.occasion || [],

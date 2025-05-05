@@ -1,5 +1,5 @@
-from django.urls import path
-from project.consumers import LogConsumer
+from django.urls import re_path
+from project.log_consumers import LogConsumer
 from summarizer.consumers import SummarizerConsumer
 
 
@@ -7,6 +7,6 @@ from summarizer.consumers import SummarizerConsumer
 # *** Websocket URLs ***
 # ----------------------------------------------------
 websocket_urlpatterns = [
-    path("ws/logs/", LogConsumer.as_asgi()),
-    path("ws/summarizer/", SummarizerConsumer.as_asgi()),
+    re_path(r"ws/logs/$", LogConsumer.as_asgi()),
+    re_path(r"ws/summarizer/$", SummarizerConsumer.as_asgi()),
 ]
