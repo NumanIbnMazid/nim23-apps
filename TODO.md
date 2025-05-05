@@ -18,4 +18,3 @@
 - [ ] [Summarizer] Chunk base64 file.
 - [ ] [Summarizer] Store whisper model in separate storage.
 - [ ] [Summarizer] Add extra text area to provide additional requirements for summarization. That will be provided to LLM.
-- [ ] Analyze Hosting providers: https://www.hetzner.com/cloud/
