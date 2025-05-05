@@ -36,7 +36,7 @@ export const useTranscribeAudio = () => {
       setTimeout(() => {
         summarizerSocket.removeEventListener('message', onMessage)
         reject(new Error('🔴 [Summarizer] Timeout waiting for transcription result.'))
-      }, 30000)
+      }, 5 * 60 * 1000) // 5 minutes = 300000 ms
     })
   }
 
