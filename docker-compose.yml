@@ -10,21 +10,6 @@ services:
     networks:
       - net-tier
 
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    ports:
-      - '80:80'
-      - '443:443'
-    volumes:
-      - ./nginx/backend-nginx.conf:/etc/nginx/conf.d/backend.conf
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - ./certbot:/var/www/certbot
-    depends_on:
-      - backend
-    networks:
-      - net-tier
-
 networks:
   net-tier:
     driver: bridge
