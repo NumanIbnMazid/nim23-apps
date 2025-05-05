@@ -14,7 +14,7 @@ export const useTranscribeAudio = () => {
 
     await sendAudioChunksViaSocket(audioBase64, summarizerSocket, 5)
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve) => {
       const onMessage = (event: MessageEvent) => {
         const data = JSON.parse(event.data)
         if (
@@ -30,13 +30,7 @@ export const useTranscribeAudio = () => {
           resolve(transcription)
         }
       }
-
       summarizerSocket.addEventListener('message', onMessage)
-
-      setTimeout(() => {
-        summarizerSocket.removeEventListener('message', onMessage)
-        reject(new Error('🔴 [Summarizer] Timeout waiting for transcription result.'))
-      }, 5 * 60 * 1000) // 5 minutes = 300000 ms
     })
   }
 
