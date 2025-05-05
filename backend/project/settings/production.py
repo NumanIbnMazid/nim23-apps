@@ -7,11 +7,10 @@ print("✅ Running Production Settings...")
 # ----------------------------------------------------
 # Initial list of allowed hosts
 ALLOWED_HOSTS = [
+    "backend.apps.nim23.com",  # Backend Host
     "apps.nim23.com",  # Frontend Host (Vercel)
     "nim23-apps.vercel.app",  # Frontend Host (Vercel)
-    "backend.apps.nim23.com",  # Backend Host (Northflank)
-    "p02--nim23-apps--47v76khxj6jn.code.run",  # Backend Host (Northflank)
-    "47.130.76.187",  # Backend Host (AWS EC2)
+    "nim23-apps.up.railway.app",  # Backend Host (Railway)
 ]
 
 # Load extra hosts from environment and merge with de-duplication
