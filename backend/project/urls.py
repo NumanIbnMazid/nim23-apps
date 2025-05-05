@@ -28,6 +28,7 @@ from django.views import defaults as default_views
 from django.contrib.auth import views as auth_views
 from utils.decorators import authenticated_user_required
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Yet Another Swagger Schema View
@@ -93,7 +94,7 @@ THIRD_PARTY_URLS = [
 ]
 
 urlpatterns = [
-    path("health/", healthcheck),
+    re_path(r"^health/?$", csrf_exempt(healthcheck)),
     # ----------------------------------------------------
     # *** Django & Django Admin URLs ***
     # ----------------------------------------------------
