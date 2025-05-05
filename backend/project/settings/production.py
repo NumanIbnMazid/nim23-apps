@@ -11,6 +11,7 @@ ALLOWED_HOSTS = [
     "apps.nim23.com",  # Frontend Host (Vercel)
     "nim23-apps.vercel.app",  # Frontend Host (Vercel)
     "nim23-apps.up.railway.app",  # Backend Host (Railway)
+    "healthcheck.railway.app",  # Healthcheck Host (Railway)
 ]
 
 # Load extra hosts from environment and merge with de-duplication
