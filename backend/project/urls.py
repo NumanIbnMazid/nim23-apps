@@ -53,7 +53,6 @@ def healthcheck(request):
 
 
 THIRD_PARTY_URLS = [
-    path("health/", healthcheck),
     # ----------------------------------------------------
     # *** REST FRMAEWORK API URLs ***
     # ----------------------------------------------------
@@ -94,6 +93,7 @@ THIRD_PARTY_URLS = [
 ]
 
 urlpatterns = [
+    path("health/", healthcheck),
     # ----------------------------------------------------
     # *** Django & Django Admin URLs ***
     # ----------------------------------------------------

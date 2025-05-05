@@ -73,5 +73,7 @@ COPY supervisord.conf /etc/supervisor/supervisord.conf
 # Add the entrypoint script and make it executable
 RUN chmod +x /app/entrypoint.sh
 
+EXPOSE 8000
+
 # Entrypoint
 ENTRYPOINT ["bash", "-c", "/app/entrypoint.sh"]
