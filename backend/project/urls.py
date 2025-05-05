@@ -93,7 +93,7 @@ THIRD_PARTY_URLS = [
 ]
 
 urlpatterns = [
-    path("health", healthcheck),
+    path("health/", healthcheck),
     # ----------------------------------------------------
     # *** Django & Django Admin URLs ***
     # ----------------------------------------------------
