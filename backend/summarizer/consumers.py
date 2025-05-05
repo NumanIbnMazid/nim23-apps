@@ -2,8 +2,8 @@ import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from summarizer.utils.whisper import transcribe_audio_base64
-from summarizer.api.views import get_whisper_model
 from asgiref.sync import sync_to_async
+import asyncio
 from utils.helpers import get_socket_group_name
 
 logger = logging.getLogger("summarizer_consumers")
@@ -14,6 +14,7 @@ MAX_AUDIO_SIZE = 1024 * 1024 * 10  # Max size for chunk processing (10MB)
 class SummarizerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
+        self.ping_interval = 30  # seconds
         self.session_id = self.scope["query_string"].decode().split("session_id=")[-1]
         self.group_name = get_socket_group_name(
             group_name="summarizer", session_id=self.session_id
@@ -22,7 +23,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
         await self.send(
             text_data=json.dumps(
                 {
-                    "message": f"🟢 [Summarizer] Connected with session_id={self.session_id}"
+                    "message": f"🟢 [SummarizerLogConsumer] Connected with session_id={self.session_id}"
                 }
             )
         )
@@ -33,19 +34,49 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
         logger.info(
             f"🟢 [SummarizerLogConsumer] Connected with session_id={self.session_id}"
         )
+        # Start a background task for keep-alive (pinging)
+        self.keep_alive_task = asyncio.create_task(self.keep_alive())
 
     async def disconnect(self, close_code):
+        if hasattr(self, "keep_alive_task"):
+            self.keep_alive_task.cancel()
+            try:
+                await self.keep_alive_task
+            except asyncio.CancelledError:
+                logger.info("🛑 [SummarizerLogConsumer] Keep-alive task cancelled")
+
         self.transcription_chunks = []
         self.audio_chunks = []
-        logger.info(f"🔴 [Summarizer] WebSocket disconnected (code: {close_code})")
+        logger.warning(
+            f"🔴 [SummarizerLogConsumer] WebSocket disconnected (code: {close_code})"
+        )
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
+    async def keep_alive(self):
+        logger.info("🟢 [SummarizerLogConsumer] Keep-alive started")
+        try:
+            while True:
+                await asyncio.sleep(self.ping_interval)
+                await self.send(text_data=json.dumps({"type": "ping"}))
+        except asyncio.CancelledError:
+            pass
 
     async def receive(self, text_data):
         try:
             data = self.parse_message(text_data)
+
+            # Showing logs in the console
+            message_str = str(data)
+            preview = message_str[:100] + ("..." if len(message_str) > 100 else "")
+            logger.info(f"🔵 [SummarizerLogConsumer] Received message: {preview}")
+
             if data.get("type") == "ready":
                 ip = self.scope["client"][0]
-                logger.info(f"✅ [Summarizer] WebSocket ready flag set for {ip}")
+                logger.info(
+                    f"✅ [SummarizerLogConsumer] WebSocket ready flag set for {ip}"
+                )
+            if data.get("type") == "ping":
+                await self.send(text_data=json.dumps({"type": "pong"}))
 
             message_type = data.get("type")
             message_content = data.get("message", {})
@@ -62,7 +93,9 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
                 await self.send_error_response("Invalid message format")
 
         except Exception as e:
-            logger.exception("❌ [Summarizer] Error processing WebSocket message")
+            logger.exception(
+                "❌ [SummarizerLogConsumer] Error processing WebSocket message"
+            )
             await self.send_error_response(f"Exception: {str(e)}")
 
     # Parse the incoming WebSocket message (modular and reusable)
@@ -107,7 +140,6 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
     async def transcribe_and_store_main(self):
         transcription = await transcribe_audio_base64(
             self.current_chunk,
-            model=get_whisper_model(),
             socket_session_id=self.session_id,
         )
         self.transcription_chunks.append(transcription)
@@ -118,7 +150,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
         logger.info("Using fallback method for transcription")
         full_audio_b64 = "".join(self.audio_chunks)
         full_transcription = await sync_to_async(transcribe_audio_base64)(
-            full_audio_b64, model=get_whisper_model()
+            full_audio_b64
         )
         self.transcription_chunks.append(full_transcription)
         self.audio_chunks = []  # Reset audio buffer
@@ -126,7 +158,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
     # Handle the end chunk signal and send the transcription result
     async def handle_end_chunk_signal(self, message_content):
         if message_content.get("message") == "END_CHUNK":
-            logger.info("🟡 Received END_CHUNK signal")
+            logger.info("🟣 Received END_CHUNK signal")
             full_transcription = " ".join(self.transcription_chunks)
             await self.send_transcription_result(full_transcription)
             self.transcription_chunks = []

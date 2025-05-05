@@ -8,11 +8,9 @@ from utils.helpers import custom_response_wrapper, ResponseWrapper
 
 from summarizer.api.serializers import SummarizerRequestSerializer
 from summarizer.handlers.url_handler import extract_audio_from_url
-from summarizer.utils.whisper import transcribe_audio_base64
 from summarizer.utils.summarizer import summarize_text
 
 from google import genai
-from faster_whisper import WhisperModel, BatchedInferencePipeline
 
 import os
 import logging
@@ -26,36 +24,6 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Gemini Client
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
-
-# Whisper
-whisper_model_size = os.getenv("WHISPER_MODEL_SIZE", "tiny")
-whisper_device = os.getenv("WHISPER_DEVICE", "cpu")
-whisper_batch_enabled = os.getenv("WHISPER_BATCH_ENABLED", "False").lower() == "true"
-whisper_batch_size = int(os.getenv("WHISPER_BATCH_SIZE", 8))
-
-if whisper_model_size not in ["tiny", "base", "small", "medium", "large"]:
-    raise ValueError("Invalid whisper model size")
-
-if whisper_device not in ["cpu", "cuda"]:
-    raise ValueError("Invalid whisper device")
-
-# Singleton Whisper model
-_whisper_model = None
-_batched_model = None
-
-def get_whisper_model():
-    global _whisper_model
-    if _whisper_model is None:
-        logger.info("[Whisper] Loading model...")
-        _whisper_model = WhisperModel(whisper_model_size, device=whisper_device)
-    return _whisper_model
-
-
-def get_batched_model():
-    global _batched_model
-    if _batched_model is None:
-        _batched_model = BatchedInferencePipeline(model=get_whisper_model())
-    return _batched_model
 
 
 @custom_response_wrapper
@@ -119,46 +87,6 @@ class SummarizerViewset(GenericViewSet):
         except Exception as e:
             return ResponseWrapper(
                 message="Failed to extract audio from URL.",
-                error_message=str(e),
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-    @swagger_auto_schema(
-        method="post",
-        manual_parameters=[
-            openapi.Parameter(
-                "audio_b64",
-                openapi.IN_BODY,
-                description="Base64 encoded audio",
-                type=openapi.TYPE_STRING,
-            )
-        ],
-        responses={200: openapi.Response("Extracted audio URL")},
-    )
-    @action(detail=False, methods=["post"], url_path="transcribe-bs64-audio")
-    def transcribe_bs64_audio(self, request):
-        audio_b64 = request.data.get("audio_b64")
-        text = ""
-        try:
-            if audio_b64:
-                if whisper_batch_enabled:
-                    text = transcribe_audio_base64(
-                        audio_b64=audio_b64,
-                        model=get_batched_model(),
-                        batch=True,
-                        batch_size=whisper_batch_size,
-                    )
-                else:
-                    text = transcribe_audio_base64(
-                        audio_b64=audio_b64, model=get_whisper_model()
-                    )
-            return ResponseWrapper(
-                data={"transcription": text}, status=status.HTTP_200_OK
-            )
-
-        except Exception as e:
-            return ResponseWrapper(
-                message="Failed to transcribe audio.",
                 error_message=str(e),
                 status=status.HTTP_400_BAD_REQUEST,
             )

@@ -7,6 +7,7 @@ interface WebSocketContextType {
   logsSocket: WebSocket | null
   summarizerSocket: WebSocket | null
   logs: any | null
+  summarizerLogs: any | null
   socketSessionID: string | null
 }
 
@@ -14,11 +15,13 @@ const WebSocketContext = createContext<WebSocketContextType>({
   logsSocket: null,
   summarizerSocket: null,
   logs: null,
+  summarizerLogs: null,
   socketSessionID: null,
 })
 
 export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [logs, setLogs] = useState<any | null>(null)
+  const [summarizerLogs, setSummarizerLogs] = useState<any | null>(null)
   const [socketSessionID] = useState(() => crypto.randomUUID()) // ⬅️ sessionID is stable per tab
   const logsRef = useRef<WebSocket | null>(null)
   const summarizerRef = useRef<WebSocket | null>(null)
@@ -60,6 +63,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data)
         // console.log('📩 [Summarizer] message:', data)
+        setSummarizerLogs(data)
         if (data.type === 'ping') {
           ws.send(JSON.stringify({ type: 'pong' }))
         }
@@ -87,6 +91,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         logsSocket: logsRef.current,
         summarizerSocket: summarizerRef.current,
         logs,
+        summarizerLogs,
         socketSessionID,
       }}
     >
