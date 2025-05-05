@@ -8,7 +8,7 @@
     "dev": "next dev",
     "tsc": "tsc",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "tsc-watch": "tsc --watch",
     "lint": "next lint",
     "find:unused": "next-unused"
