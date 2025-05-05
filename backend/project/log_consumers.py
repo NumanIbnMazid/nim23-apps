@@ -57,7 +57,10 @@ class LogConsumer(AsyncWebsocketConsumer):
 
         # Showing logs in the console
         message_str = str(data)
-        preview = message_str[:100] + ("..." if len(message_str) > 100 else "")
+        message_max_size = 300
+        preview = message_str[:message_max_size] + (
+            ". . ." if len(message_str) > message_max_size else ""
+        )
         logger.info(f"🔵 [LogConsumer] Received message: {preview}")
 
         if data.get("type") == "ready":
