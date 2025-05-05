@@ -27,8 +27,7 @@ from django.conf.urls.static import static
 from django.views import defaults as default_views
 from django.contrib.auth import views as auth_views
 from utils.decorators import authenticated_user_required
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from django.http import JsonResponse
 
 
 # Yet Another Swagger Schema View
@@ -49,9 +48,8 @@ schema_view = get_schema_view(
 # ----------------------------------------------------
 # *** Health Check ***
 # ----------------------------------------------------
-@api_view(["GET"])
 def healthcheck(request):
-    return Response({"status": "ok"})
+    return JsonResponse({"status": "ok"})
 
 
 THIRD_PARTY_URLS = [
