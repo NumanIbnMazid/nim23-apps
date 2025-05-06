@@ -1,4 +1,3 @@
-# summarizer/consumers.py
 import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -55,7 +54,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
             elif data.get("type") == "ready":
                 ip = self.scope["client"][0]
                 logger.info(
-                    f"🟢 [SummarizerConsumer] WebSocket ready flag set for {ip} with session: {self.session_id}"
+                    f"🟢 [SummarizerConsumer] WebSocket ready flag set for ip: {ip} with session: {self.session_id}"
                 )
                 return
             elif data.get("type") == "datastream":

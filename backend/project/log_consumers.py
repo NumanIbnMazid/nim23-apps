@@ -66,7 +66,7 @@ class LogConsumer(AsyncWebsocketConsumer):
             elif data.get("type") == "ready":
                 ip = self.scope["client"][0]
                 logger.info(
-                    f"🟢 [LogConsumer] WebSocket ready flag set for {ip} with session: {self.session_id}"
+                    f"🟢 [LogConsumer] WebSocket ready flag set for ip: {ip} with session: {self.session_id}"
                 )
                 return
             else:

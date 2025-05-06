@@ -55,33 +55,6 @@
       "type": "image/png"
     }
   ],
-  "screenshots": [
-    {
-      "src": "screenshots/home.png",
-      "sizes": "411x821",
-      "type": "image/gif"
-    },
-    {
-      "src": "screenshots/blogs.png",
-      "sizes": "411x821",
-      "type": "image/gif"
-    },
-    {
-      "src": "screenshots/projects.png",
-      "sizes": "411x821",
-      "type": "image/gif"
-    },
-    {
-      "src": "screenshots/stats.png",
-      "sizes": "411x821",
-      "type": "image/gif"
-    },
-    {
-      "src": "screenshots/contact.png",
-      "sizes": "411x821",
-      "type": "image/gif"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Blogs",
