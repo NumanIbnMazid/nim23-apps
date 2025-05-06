@@ -13,6 +13,10 @@ import os
 from django.conf import settings
 from dotenv import load_dotenv
 import base64
+import logging
+
+
+logger = logging.getLogger("helpers")
 
 
 class ResponseWrapper(Response):
@@ -165,7 +169,7 @@ class ProjectGenericModelViewset(ModelViewSet):
         if limit:
             queryset = queryset[: int(limit)]
         return queryset
-    
+
 
 def get_socket_group_name(group_name, session_id):
     """
@@ -173,7 +177,9 @@ def get_socket_group_name(group_name, session_id):
     """
     valid_group_names = ["log", "summarizer"]
     if group_name not in valid_group_names:
-        raise ValueError(f"Invalid group name: {group_name}. Valid names are: {valid_group_names}")
+        raise ValueError(
+            f"Invalid group name: {group_name}. Valid names are: {valid_group_names}"
+        )
     if not session_id:
         raise ValueError("Session ID cannot be None or empty.")
     return f"{group_name}_group_{session_id}"
@@ -210,6 +216,7 @@ async def send_log_message_async(
     }
 
     if channel_layer is not None:
+        logger.info(f"[helpers][Channels] channel_layer = {channel_layer}")
         await channel_layer.group_send(group_id, payload)
 
 
@@ -237,6 +244,7 @@ def send_log_message(
         },
     }
     if channel_layer is not None:
+        logger.info(f"[helpers][Channels] channel_layer = {channel_layer}")
         async_to_sync(channel_layer.group_send)(group_id, payload)
 
 

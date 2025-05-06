@@ -9,7 +9,7 @@ from utils.helpers import (
     get_cookies_path,
 )
 
-logger = logging.getLogger("summarizer")
+logger = logging.getLogger("summarizer_url_handlers")
 
 
 def extract_audio_from_url(url: str) -> str:

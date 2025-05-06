@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logger = logging.getLogger("summarizer")
+logger = logging.getLogger("summarizer_whisper")
 
 # Whisper
 whisper_model_size = os.getenv("WHISPER_MODEL_SIZE", "tiny")

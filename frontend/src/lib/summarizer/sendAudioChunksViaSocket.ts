@@ -7,6 +7,7 @@ export const sendAudioChunksViaSocket = async (
   chunkDurationSec: number = 5
 ) => {
   if (!summarizerSocket || summarizerSocket.readyState !== WebSocket.OPEN) {
+    console.error('🔴 [Summarizer] WebSocket is not connected')
     throw new Error('🔴 [Summarizer] WebSocket is not connected!')
   }
 
@@ -45,7 +46,6 @@ export const sendAudioChunksViaSocket = async (
     // Optional: add delay to simulate real-time upload (for testing)
     // await new Promise((resolve) => setTimeout(resolve, 200))
   }
-  console.log('🔊 [Summarizer] All chunks sent successfully!')
   // send end signal
   summarizerSocket.send(
     JSON.stringify({

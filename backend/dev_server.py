@@ -10,7 +10,7 @@ def run():
         workers=1,  # 1 worker for reload mode
         timeout_keep_alive=60,
         ws_ping_interval=30,
-        ws_ping_timeout=60,
+        ws_ping_timeout=99999,
         log_level="info",
         lifespan="off",
     )

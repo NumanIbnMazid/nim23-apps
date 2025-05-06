@@ -1,7 +1,7 @@
 from google import genai
 import logging
 
-logger = logging.getLogger("summarizer")
+logger = logging.getLogger("summarizer_summarizer")
 
 
 def summarize_text(text: str, model: str, client: any) -> str:

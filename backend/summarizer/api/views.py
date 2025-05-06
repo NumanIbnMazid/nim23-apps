@@ -15,7 +15,7 @@ from google import genai
 import os
 import logging
 
-logger = logging.getLogger("summarizer")
+logger = logging.getLogger("summarizer_views")
 
 load_dotenv()
 

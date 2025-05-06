@@ -29,7 +29,7 @@ export default function HowToUse() {
           <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
             2. Customize Your Preferences
           </h3>
-          <p>
+          <div>
             Click on <span className="text-emerald-600">Advanced Filters</span> and tailor your experience by selecting
             specific <b>languages, genres, ratings, media age, categories, occasions, and other preferences</b>. You
             can add as many or as few filters as you like — the choice is yours.
@@ -38,14 +38,14 @@ export default function HowToUse() {
               <span className="text-emerald-600">Active Preferences</span>. Also you can clear your current selected
               preferences by clicking on <span className="text-emerald-600">Clear Preferences</span> button.
             </p>
-          </p>
+          </div>
         </div>
 
         <div>
           <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
             3. Get Smart Recommendations
           </h3>
-          <p>
+          <div>
             Once you're ready, submit your preferences by clicking on{' '}
             <span className="text-emerald-600">Get Recommendation</span>. Recommendr will instantly curate a list of
             movies, music, TV shows, and more that perfectly match your selections and mood.
@@ -55,7 +55,7 @@ export default function HowToUse() {
               <span className="text-emerald-600">Get More</span> to get more recommendations based on current
               preferences.
             </p>
-          </p>
+          </div>
         </div>
 
         <div>

@@ -20,11 +20,11 @@ class LogConsumer(AsyncWebsocketConsumer):
         await self.send(
             text_data=json.dumps(
                 {
-                    "message": f"🟢 [LogConsumer] Connected with session_id={self.session_id}"
+                    "message": f"🔵 [LogConsumer] Connected with group_name={self.group_name}"
                 }
             )
         )
-        logger.info(f"🟢 [LogConsumer] Connected with session_id={self.session_id}")
+        logger.info(f"🔵 [LogConsumer] Connected with group_name={self.group_name}")
         # Start a background task for keep-alive (pinging)
         self.keep_alive_task = asyncio.create_task(self.keep_alive())
 
@@ -53,18 +53,31 @@ class LogConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({"message": event["message"]}))
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
+        try:
+            data = json.loads(text_data)
 
-        # Showing logs in the console
-        message_str = str(data)
-        message_max_size = 300
-        preview = message_str[:message_max_size] + (
-            ". . ." if len(message_str) > message_max_size else ""
-        )
-        logger.info(f"🔵 [LogConsumer] Received message: {preview}")
+            logger.info(f"✅ [LogConsumer] Received: {data.get('type')}")
 
-        if data.get("type") == "ready":
-            ip = self.scope["client"][0]
-            logger.info(f"✅ [LogConsumer] WebSocket ready flag set for {ip}")
-        if data.get("type") == "ping":
-            await self.send(text_data=json.dumps({"type": "pong"}))
+            if data.get("type") == "ping":
+                await self.send(text_data=json.dumps({"type": "pong"}))
+                return
+            elif data.get("type") == "pong":
+                return
+            elif data.get("type") == "ready":
+                ip = self.scope["client"][0]
+                logger.info(
+                    f"🟢 [LogConsumer] WebSocket ready flag set for {ip} with session: {self.session_id}"
+                )
+                return
+            else:
+                # Showing logs in the console
+                message_str = str(data)
+                message_max_size = 300
+                preview = message_str[:message_max_size] + (
+                    ". . ." if len(message_str) > message_max_size else ""
+                )
+                logger.info(f"✅ [LogConsumer] Received message: {preview}")
+                return
+        except Exception as e:
+            logger.exception("❌ [LogConsumer] Error in WebSocket")
+            await self.send(json.dumps({"type": "error", "message": str(e)}))
