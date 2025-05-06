@@ -9,8 +9,8 @@ import RecommendationList from '@/components/Recommendr/RecommendationList'
 import LoadingRecommendations from '@/components/Recommendr/LoadingRecommendations'
 import AppIntro from '@/components/Recommendr/AppIntro'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { useClientID } from '@/context/clientIdContext'
-import { useWebSocket } from '@/context/WebSocketContext'
+import { useClientID } from '@/providers/ClientIdProvider'
+import { useWebSocket } from '@/providers/WebSocketProvider'
 import PreferenceControls from '@/components/Recommendr/PreferenceControls'
 import Error from '@/components/Recommendr/Error'
 import HowToUse from '@/components/Recommendr/HowToUse'
@@ -227,7 +227,7 @@ export default function RecommendrClient({ preferencesChoices }: { preferencesCh
               setModifyPreferencesScrollToPrefs={setModifyPreferencesScrollToPrefs} // Scroll trigger
             />
           )}
-          <hr className="my-6 border-gray-300 dark:border-gray-700" />
+          <hr className="my-20 border-gray-300 dark:border-gray-700" />
           <HowToUse />
         </div>
       )}

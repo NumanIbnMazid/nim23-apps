@@ -7,7 +7,7 @@ import useSWR from 'swr'
 import fetcher from '@/lib/fetcher'
 import { HiOutlineQrcode } from 'react-icons/hi'
 import { BsDot } from 'react-icons/bs'
-import { useDarkMode } from '@/context/darkModeContext'
+import { useDarkMode } from '@/providers/DarkModeProvider'
 import { GOOGLE_ANALYTICS_API_ROUTE } from '@/lib/apiRouteMaps'
 
 export default function Footer({ setShowQR, showQR }: { setShowQR: (value: boolean) => void; showQR: boolean }) {

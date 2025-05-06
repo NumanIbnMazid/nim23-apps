@@ -3,13 +3,13 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { FadeContainer } from '@/content/FramerMotionVariants'
-import HumanizerInput from '@/components/humanizerAI/HumanizerInput'
-import RegenerateButton from '@/components/humanizerAI/RegenerateButton'
-import HumanizedOutput from '@/components/humanizerAI/HumanizedOutput'
-import AppIntro from '@/components/humanizerAI/AppIntro'
-import ErrorMessage from '@/components/humanizerAI/ErrorMessage'
+import HumanizerInput from '@/components/HumanizerAI/HumanizerInput'
+import RegenerateButton from '@/components/HumanizerAI/RegenerateButton'
+import HumanizedOutput from '@/components/HumanizerAI/HumanizedOutput'
+import AppIntro from '@/components/HumanizerAI/AppIntro'
+import ErrorMessage from '@/components/HumanizerAI/ErrorMessage'
 import { fetchHumanizedText } from '@/lib/humanizerAI/fetchHumanizedText'
-import HowToUseHumanizer from '@/components/humanizerAI/HowToUse'
+import HowToUseHumanizer from '@/components/HumanizerAI/HowToUse'
 
 export default function HumanizerAiClient() {
   const [inputText, setInputText] = useState('')

@@ -6,7 +6,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { GoogleAnalytics } from 'nextjs-google-analytics'
 import { Toaster } from 'sonner' // ✅ Import Toaster here
-import { useDarkMode } from '@/context/darkModeContext' // ✅ Now works in Client Component
+import { useDarkMode } from '@/providers/DarkModeProvider' // ✅ Now works in Client Component
 
 NProgress.configure({
   easing: 'ease',

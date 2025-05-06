@@ -19,6 +19,7 @@ import { useSummarization } from '@/lib/summarizer/hooks/useSummarization'
 // Import the revised reset function
 import { useTranscriptionLogs, resetTranscriptionLogs } from '@/lib/summarizer/hooks/useTranscriptionLogs'
 import FFmpegManager from '@/lib/grabit/ffmpeg/FFmpegManager'
+import { useWebSocket } from '@/providers/WebSocketProvider'
 
 const SummarizerClient: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -30,6 +31,7 @@ const SummarizerClient: React.FC = () => {
   const [isValidUrl, setIsValidUrl] = useState(false)
   const [uploadKey, setUploadKey] = useState(0) // Used to reset FileUploadInput
   const [urlError, setUrlError] = useState('')
+  const { summarizerConnected, summarizerRetrying } = useWebSocket()
 
   // Use the updated hook - it doesn't need 'loading' as a parameter anymore
   const transcriptionTimeline = useTranscriptionLogs()
@@ -106,6 +108,20 @@ const SummarizerClient: React.FC = () => {
         <section className="mx-auto px-5">
           <AppIntro />
           <div className="max-w-4xl mx-auto p-4">
+            <div className="">
+              {!summarizerConnected && summarizerRetrying && (
+                <div className="p-4 mb-6 text-sm text-white bg-blue-600 animate-pulse rounded">
+                  🛠 Trying to reconnect with server...
+                </div>
+              )}
+
+              {!summarizerConnected && !summarizerRetrying && (
+                <div className="p-4 mb-6 text-sm text-white bg-red-600 rounded">
+                  🔴 Server disconnected. Some functionality might not work. Please refresh the page.
+                </div>
+              )}
+            </div>
+
             <h1 className="text-2xl font-bold mb-4">Summarizer</h1>
             {/* Render input fields based on selectedInputType or if none is selected */}
             {(selectedInputType === 'url' || selectedInputType === null) && (
@@ -131,29 +147,44 @@ const SummarizerClient: React.FC = () => {
                 <Loader /> <span className="ml-2 text-sm">Loading necessary components...</span>
               </div>
             ) : (
-              // Show buttons only after FFmpeg is loaded
-              <div className="flex items-center gap-4 mt-4">
-                {/* Summarize Button - enabled only if conditions are met */}
-                {(isValidUrl || selectedFile !== null || textInput !== '') && (
-                  <SummarizeButton
-                    onClick={() => {
-                      // IMPORTANT: Reset the timeline display state BEFORE starting a new process
-                      resetTranscriptionLogs()
-                      // Then call the handleSummarize logic
-                      handleSummarize(selectedFile, mediaUrl, textInput, ffmpegInstance)
-                    }}
-                    loading={loading}
-                  />
-                )}
-                {/* Reset Button - shown if any input type is selected */}
-                {selectedInputType !== null && (
-                  <button
-                    onClick={resetForm}
-                    className="mt-4 px-4 py-2 border rounded-md text-sm font-medium bg-gray-100 dark:bg-darkSecondary dark:text-white hover:bg-gray-200 dark:hover:bg-darkTertiary transition"
-                    disabled={loading} // Disable reset while summarizing
-                  >
-                    Reset
-                  </button>
+              <div>
+                {/* Show buttons only after FFmpeg is loaded */}
+                <div className="flex items-center gap-4 mt-4">
+                  {/* Summarize Button - enabled only if conditions are met */}
+                  {(isValidUrl || selectedFile !== null || textInput !== '') && (
+                    <SummarizeButton
+                      onClick={() => {
+                        // IMPORTANT: Reset the timeline display state BEFORE starting a new process
+                        resetTranscriptionLogs()
+                        // Then call the handleSummarize logic
+                        handleSummarize(selectedFile, mediaUrl, textInput, ffmpegInstance)
+                      }}
+                      loading={loading}
+                      disabled={summarizerConnected === false}
+                    />
+                  )}
+                  {/* Reset Button - shown if any input type is selected */}
+                  {selectedInputType !== null && !loading && (
+                    <button
+                      onClick={resetForm}
+                      className="mt-4 px-4 py-2 border rounded-md text-sm font-medium bg-gray-100 dark:bg-darkSecondary dark:text-white hover:bg-gray-200 dark:hover:bg-darkTertiary transition"
+                      disabled={loading} // Disable reset while summarizing
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+                {!summarizerConnected && (
+                  // show loader
+                  <div className="mt-4">
+                    <span className="text-sm text-yellow-600">Waiting for server connection... Please try to </span>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="ml-1 p-1 bg-transparent rounded-md text-sm font-medium bg-gray-100 dark:bg-darkSecondary dark:text-white hover:bg-gray-200 dark:hover:bg-transparent transition"
+                    >
+                      Refresh
+                    </button>
+                  </div>
                 )}
               </div>
             )}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { useWebSocket } from '@/context/WebSocketContext' // Ensure this path is correct
-import { sendAudioChunksViaSocket } from '@/lib/summarizer/sendAudioChunksViaSocket' // Ensure this path is correct
+import { useWebSocket } from '@/providers/WebSocketProvider'
+import { sendAudioChunksViaSocket } from '@/lib/summarizer/sendAudioChunksViaSocket'
 
 export const useTranscribeAudio = () => {
   // Use the summarizerLogs array as specified

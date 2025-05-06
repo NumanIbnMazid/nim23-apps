@@ -27,13 +27,13 @@ export default function HowToUseHumanizer({ maxLength, minLength }: { maxLength:
 
         <div>
           <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-3">2. Check Word Limit</h3>
-          <p>
+          <div>
             Ensure your text meets the minimum and maximum word count requirements. This helps the engine work
             effectively to transform your content into smooth, natural language.
             <br />
             <p className="text-emerald-600">Maximum: {maxLength} words</p>
             <p className="text-emerald-600">Minimum: {minLength} words</p>
-          </p>
+          </div>
         </div>
 
         <div>

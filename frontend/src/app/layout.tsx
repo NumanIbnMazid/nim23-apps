@@ -1,8 +1,8 @@
 import '@/styles/globals.css' // ✅ Load global styles
 import { Inter } from 'next/font/google'
-import { DarkModeProvider } from '@/context/darkModeContext'
-import { ClientIDProvider } from '@/context/clientIdContext'
-import { WebSocketProvider } from '@/context/WebSocketContext'
+import { DarkModeProvider } from '@/providers/DarkModeProvider'
+import { ClientIDProvider } from '@/providers/ClientIdProvider'
+import { WebSocketProvider } from '@/providers/WebSocketProvider'
 import Layout from '@/layout/Layout'
 import LayoutClient from '@/app/LayoutClient'
 import { Metadata } from 'next'

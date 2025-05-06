@@ -2,7 +2,7 @@ import QRCode from 'react-qr-code'
 import useWindowLocation from '@/hooks/useWindowLocation'
 import { CgClose } from 'react-icons/cg'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useDarkMode } from '@/context/darkModeContext'
+import { useDarkMode } from '@/providers/DarkModeProvider'
 
 export default function QRCodeContainer({
   showQR,

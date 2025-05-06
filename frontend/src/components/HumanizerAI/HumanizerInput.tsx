@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { FaPaste, FaTrash } from 'react-icons/fa'
-import CharacterCounter from '@/components/humanizerAI/CharacterCounter'
-import SubmitButton from '@/components/humanizerAI/SubmitButton'
+import CharacterCounter from '@/components/HumanizerAI/CharacterCounter'
+import SubmitButton from '@/components/HumanizerAI/SubmitButton'
 
 interface Props {
   inputText: string

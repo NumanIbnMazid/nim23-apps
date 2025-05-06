@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation' // ✅ Use App Router hook
 import Link from 'next/link'
 import { motion, useAnimation, AnimatePresence } from 'framer-motion'
 import { FadeContainer, hamFastFadeContainer, mobileNavItemSideways, popUp } from '../content/FramerMotionVariants'
-import { useDarkMode } from '@/context/darkModeContext'
+import { useDarkMode } from '@/providers/DarkModeProvider'
 import { namedNavigationRoutesAll } from '@/utils/utils'
 import Logo from './SVG/Logo'
 import { DarkModeSwitch } from 'react-toggle-dark-mode'
