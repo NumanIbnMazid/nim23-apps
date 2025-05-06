@@ -33,6 +33,13 @@ const SummarizerClient: React.FC = () => {
   const [urlError, setUrlError] = useState('')
   const { summarizerConnected, summarizerRetrying } = useWebSocket()
 
+  const [gracePeriodOver, setGracePeriodOver] = useState(false)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setGracePeriodOver(true), 3000) // 3-second grace
+    return () => clearTimeout(timeout)
+  }, [])
+
   // Use the updated hook - it doesn't need 'loading' as a parameter anymore
   const transcriptionTimeline = useTranscriptionLogs()
   const { summary, whisperTranscription, statusMessage, errorMessage, loading, handleSummarize, reset } =
@@ -109,15 +116,20 @@ const SummarizerClient: React.FC = () => {
           <AppIntro />
           <div className="max-w-4xl mx-auto p-4">
             <div className="">
-              {!summarizerConnected && summarizerRetrying && (
+              {gracePeriodOver && !summarizerConnected && summarizerRetrying && (
                 <div className="p-4 mb-6 text-sm text-white bg-blue-600 animate-pulse rounded">
                   🛠 Trying to reconnect with server...
                 </div>
               )}
 
-              {!summarizerConnected && !summarizerRetrying && (
+              {gracePeriodOver && !summarizerConnected && !summarizerRetrying && (
                 <div className="p-4 mb-6 text-sm text-white bg-red-600 rounded">
                   🔴 Server disconnected. Some functionality might not work. Please refresh the page.
+                </div>
+              )}
+              {!gracePeriodOver && (
+                <div className="p-4 mb-6 text-sm text-gray-500 bg-gray-100 dark:bg-darkSecondary rounded">
+                  🔄 Connecting to server...
                 </div>
               )}
             </div>
@@ -174,8 +186,7 @@ const SummarizerClient: React.FC = () => {
                     </button>
                   )}
                 </div>
-                {!summarizerConnected && (
-                  // show loader
+                {!summarizerConnected && gracePeriodOver && (
                   <div className="mt-4">
                     <span className="text-sm text-yellow-600">Waiting for server connection... Please try to </span>
                     <button
