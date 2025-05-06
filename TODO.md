@@ -22,5 +22,6 @@
 - [ ] [Summarizer] If whisper cannot provide correct localization, then use LLM or other tool to provide Timeline with batch support.
 - [ ] [Summarizer] Handle log consumer disconnect event for specific session.
 - [ ] [Summarizer] Define supported file types for summarization and validate.
+- [ ] [Summarizer] Reduce and analyze resource usage specially on backend.
 - [ ] [Summarizer] Use FFMPEG WASM for chunking audio/video for large files and then pass for summarization.
 - [ ] [Summarizer] Add extra text area to provide additional requirements for summarization. That will be provided to LLM.

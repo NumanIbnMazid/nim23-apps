@@ -12,6 +12,7 @@ class LogConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         self.ping_interval = 20  # seconds
+        self.client_ip = self.scope["client"][0]
         self.session_id = self.scope["query_string"].decode().split("session_id=")[-1]
         self.group_name = get_socket_group_name(
             group_name="log", session_id=self.session_id
@@ -20,11 +21,13 @@ class LogConsumer(AsyncWebsocketConsumer):
         await self.send(
             text_data=json.dumps(
                 {
-                    "message": f"🔵 [LogConsumer] Connected with group_name={self.group_name}"
+                    "message": f"🔵 [LogConsumer] Connected! [Group: {self.group_name}, IP: {self.client_ip}]"
                 }
             )
         )
-        logger.info(f"🔵 [LogConsumer] Connected with group_name={self.group_name}")
+        logger.info(
+            f"🔵 [LogConsumer] Connected! [Group: {self.group_name}, IP: {self.client_ip}]"
+        )
         # Start a background task for keep-alive (pinging)
         self.keep_alive_task = asyncio.create_task(self.keep_alive())
 
@@ -36,7 +39,9 @@ class LogConsumer(AsyncWebsocketConsumer):
             except asyncio.CancelledError:
                 logger.info("🛑 [LogConsumer] Keep-alive task cancelled")
 
-        logger.warning(f"🔴 [LogConsumer] WebSocket disconnected (code: {close_code})")
+        logger.warning(
+            f"🔴 [LogConsumer] WebSocket disconnected (code: {close_code}). [Group: {self.group_name}, IP: {self.client_ip}]"
+        )
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def keep_alive(self):
@@ -64,10 +69,9 @@ class LogConsumer(AsyncWebsocketConsumer):
             elif data.get("type") == "pong":
                 return
             elif data.get("type") == "ready":
-                ip = self.scope["client"][0]
-                logger.info(
-                    f"🟢 [LogConsumer] WebSocket ready flag set for ip: {ip} with session: {self.session_id}"
-                )
+                # logger.info(
+                #     f"🟢 [LogConsumer] WebSocket ready flag set for ip: {self.client_ip} with session: {self.session_id}"
+                # )
                 return
             else:
                 # Showing logs in the console

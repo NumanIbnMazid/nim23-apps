@@ -12,6 +12,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         self.ping_interval = 20  # seconds
+        self.client_ip = self.scope["client"][0]
         self.session_id = self.scope["query_string"].decode().split("session_id=")[-1]
         self.group_name = get_socket_group_name("summarizer", self.session_id)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
@@ -19,12 +20,12 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
         await self.send(
             text_data=json.dumps(
                 {
-                    "message": f"🔵 [SummarizerConsumer] Connected with group_name={self.group_name}"
+                    "message": f"🔵 [SummarizerConsumer] Connected! [Group: {self.group_name}, IP: {self.client_ip}]"
                 }
             )
         )
         logger.info(
-            f"🔵 [SummarizerConsumer] Connected with group_name={self.group_name}"
+            f"🔵 [SummarizerConsumer] Connected! [Group: {self.group_name}, IP: {self.client_ip}]"
         )
         self.keep_alive_task = asyncio.create_task(self.keep_alive())
 
@@ -37,7 +38,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
                 logger.info("🛑 [SummarizerConsumer] Keep-alive task cancelled")
 
         logger.warning(
-            f"🔴 [SummarizerConsumer] WebSocket disconnected (code: {close_code})"
+            f"🔴 [SummarizerConsumer] WebSocket disconnected (code: {close_code}). [Group: {self.group_name}, IP: {self.client_ip}]"
         )
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
@@ -52,10 +53,9 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
             elif data.get("type") == "pong":
                 return
             elif data.get("type") == "ready":
-                ip = self.scope["client"][0]
-                logger.info(
-                    f"🟢 [SummarizerConsumer] WebSocket ready flag set for ip: {ip} with session: {self.session_id}"
-                )
+                # logger.info(
+                #     f"🟢 [SummarizerConsumer] WebSocket ready flag set for ip: {self.client_ip} with session: {self.session_id}"
+                # )
                 return
             elif data.get("type") == "datastream":
                 msg = data.get("message", {})
