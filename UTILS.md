@@ -80,7 +80,7 @@ Models:
 
 ## OTHER RESOURCES
 
-- Sample icons: ✅, ❌, 🚫, 🟢, 🔴, 🟡, 🔵, 🟣, 🟠, 🟡, 🛠, 📍, ❓, ⚠️, 🧪, 🔊, 🔄,
+- Sample icons: ✅, ❌, 🚫, 🟢, 🔴, 🟡, 🔵, 🟣, 🟠, 🟡, 🛠, 📍, ❓, ⚠️, 🧪, 🔊, 🔄, 👈,
 
 - Youtube Alterntives to download: https://yewtu.be/, https://id.420129.xyz/, https://freetubeapp.io/
 - https://askubuntu.com/questions/1342197/why-is-youtube-dl-blocking-me-from-downloading-youtube-videos-which-are-supposed

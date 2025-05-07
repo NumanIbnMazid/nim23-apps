@@ -36,7 +36,9 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
             try:
                 await self.keep_alive_task
             except asyncio.CancelledError:
-                logger.info("🛑 [SummarizerConsumer] Keep-alive task cancelled")
+                logger.warning(
+                    f"🛑 [SummarizerConsumer] Keep-alive task cancelled. [Group: {self.group_name}, IP: {self.client_ip}]"
+                )
 
         logger.warning(
             f"🔴 [SummarizerConsumer] WebSocket disconnected (code: {close_code}). [Group: {self.group_name}, IP: {self.client_ip}]"
@@ -46,7 +48,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            logger.info(f"✅ [SummarizerConsumer] Received: {data.get('type')}")
+            logger.debug(f"✅ [SummarizerConsumer] Received: {data.get('type')}")
 
             if data.get("type") == "ping":
                 await self.send(text_data=json.dumps({"type": "pong"}))
@@ -76,13 +78,13 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
             "id": log_id,
             "message": event["message"],
         }
-        logger.info(
+        logger.debug(
             f"✅ [SummarizerConsumer] Sending log message: {message_obj} to group: {self.group_name}"
         )
         await self.send(text_data=json.dumps(message_obj))
 
     async def keep_alive(self):
-        logger.info("🟢 [SummarizerConsumer] Keep-alive started")
+        logger.debug("🟢 [SummarizerConsumer] Keep-alive started")
         try:
             while True:
                 await asyncio.sleep(self.ping_interval)

@@ -194,7 +194,7 @@ class RecommendationViewSet(GenericViewSet):
 
     def update_data_with_omdb(self, resultObj, index):
         title = resultObj[index].get("title")
-        logger.info(f"🔍 Searching for `{title}` in OMDB...")
+        logger.debug(f"🔍 Searching for `{title}` in OMDB...")
         send_log_message(
             f"🔍 Searching for `{title}` in Movie Database...",
             group_id=self.socket_group_id,
@@ -211,7 +211,7 @@ class RecommendationViewSet(GenericViewSet):
         decoded_str = result_byte_data.decode("utf-8")
         json_data = json.loads(decoded_str)
         if json_data.get("Response") == "True":
-            logger.info(f"✅ Found `{title}` in OMDB")
+            logger.debug(f"✅ Found `{title}` in OMDB")
             send_log_message(
                 f"✅ Found `{title}` in Movie Database.",
                 group_id=self.socket_group_id,
@@ -237,7 +237,7 @@ class RecommendationViewSet(GenericViewSet):
             resultObj[index]["writer"] = json_data.get("Writer").split(", ")[:7]
             return True
         else:
-            logger.info(f"❌ Could not find `{title}` in OMDB")
+            logger.debug(f"❌ Could not find `{title}` in OMDB")
         return False
 
     def update_data_with_imdb(self, resultObj, index):
@@ -284,7 +284,7 @@ class RecommendationViewSet(GenericViewSet):
             return names
 
         title = resultObj[index].get("title")
-        logger.info(f"🔍 Searching for `{title}` in IMDB...")
+        logger.debug(f"🔍 Searching for `{title}` in IMDB...")
         send_log_message(
             f"🔍 Searching for `{title}` in IMDB...",
             group_id=self.socket_group_id,
@@ -296,7 +296,7 @@ class RecommendationViewSet(GenericViewSet):
             # Get detailed info from first match
             movie = results[0]
             movieID = movie.movieID
-            logger.info(f"✅ Found `{title}` in IMDB with ID: {movie.movieID}")
+            logger.debug(f"✅ Found `{title}` in IMDB with ID: {movie.movieID}")
             send_log_message(
                 f"✅ Found `{title}` in IMDB with ID: {movieID}",
                 group_id=self.socket_group_id,
@@ -323,7 +323,7 @@ class RecommendationViewSet(GenericViewSet):
             resultObj[index]["writer"] = extract_names_from_field(movie, "writer")
             return True
         else:
-            logger.info(f"⚠️ No results found for `{title}` in IMDB.")
+            logger.debug(f"⚠️ No results found for `{title}` in IMDB.")
             send_log_message(
                 f"⚠️ No results found for `{title}` in IMDB.",
                 group_id=self.socket_group_id,
@@ -333,7 +333,7 @@ class RecommendationViewSet(GenericViewSet):
         return False
 
     def get_youtube_link(self, query):
-        logger.info(f"🔍 Searching for `{query}` in YouTube...")
+        logger.debug(f"🔍 Searching for `{query}` in YouTube...")
         send_log_message(
             f"🔍 Searching for `{query}` in YouTube...",
             group_id=self.socket_group_id,
@@ -346,7 +346,7 @@ class RecommendationViewSet(GenericViewSet):
         response = request.execute()
         if response["items"]:
             video_id = response["items"][0]["id"]["videoId"]
-            logger.info(f"✅ Found `{query}` in YouTube with ID: {video_id}")
+            logger.debug(f"✅ Found `{query}` in YouTube with ID: {video_id}")
             send_log_message(
                 f"✅ Found `{query}` in YouTube with ID: {video_id}",
                 group_id=self.socket_group_id,
@@ -357,7 +357,7 @@ class RecommendationViewSet(GenericViewSet):
         return ""
 
     def get_spotify_track(self, query):
-        logger.info(f"🔍 Searching for `{query}` in Spotify...")
+        logger.debug(f"🔍 Searching for `{query}` in Spotify...")
         send_log_message(
             f"🔍 Searching for `{query}` in Spotify...",
             group_id=self.socket_group_id,
@@ -367,7 +367,7 @@ class RecommendationViewSet(GenericViewSet):
         results = spotify_client.search(q=query, limit=1, type="track")
         tracks = results.get("tracks", {}).get("items", [])
         if tracks:
-            logger.info(f"✅ Found `{query}` in Spotify with ID: {tracks[0]['id']}")
+            logger.debug(f"✅ Found `{query}` in Spotify with ID: {tracks[0]['id']}")
             send_log_message(
                 f"✅ Found `{query}` in Spotify with ID: {tracks[0]['id']}",
                 group_id=self.socket_group_id,
@@ -454,7 +454,7 @@ class RecommendationViewSet(GenericViewSet):
                 module="recommendr",
                 scope="get-recommendation",
             )
-            # logger.info(f"\n\n🔥 Request data:🔥\n\n {serializer.validated_data}\n\n")
+            # logger.debug(f"\n\n🔥 Request data:🔥\n\n {serializer.validated_data}\n\n")
 
             # Get client id
             client_id = serializer.validated_data.get("client_id")
@@ -479,7 +479,7 @@ class RecommendationViewSet(GenericViewSet):
             result = self.generate_recommendation(serializer.validated_data)
 
             if not result:
-                logger.info(f"⚠️ No recommendations found. {result}")
+                logger.debug(f"⚠️ No recommendations found. {result}")
                 return ResponseWrapper(
                     message="No recommendations found",
                     status=status.HTTP_404_NOT_FOUND,
@@ -522,7 +522,7 @@ class RecommendationViewSet(GenericViewSet):
                         logger.error(f"Error updating data with OMDB: {e}")
                         is_omdb_update_success = False
                     if not is_omdb_update_success:
-                        logger.info("Trying to update data with IMDB...")
+                        logger.debug("Trying to update data with IMDB...")
                         try:
                             self.update_data_with_imdb(filtered_result, index)
                         except Exception as e:
@@ -565,7 +565,7 @@ class RecommendationViewSet(GenericViewSet):
             titles = by_type.get(media_type.lower(), [])
             save_recommendations(client_id, media_type, titles)
 
-            # logger.info(f"\n\n🔥 Final Result:\n {filtered_result} \n\n")
+            # logger.debug(f"\n\n🔥 Final Result:\n {filtered_result} \n\n")
 
             return ResponseWrapper(
                 data={"recommendations": filtered_result}, status=status.HTTP_200_OK

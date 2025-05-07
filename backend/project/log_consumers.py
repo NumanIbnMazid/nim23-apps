@@ -38,7 +38,9 @@ class LogConsumer(AsyncWebsocketConsumer):
             try:
                 await self.keep_alive_task
             except asyncio.CancelledError:
-                logger.info("🛑 [LogConsumer] Keep-alive task cancelled")
+                logger.warning(
+                    f"🛑 [LogConsumer] Keep-alive task cancelled. [Group: {self.group_name}, IP: {self.client_ip}]"
+                )
 
         logger.warning(
             f"🔴 [LogConsumer] WebSocket disconnected (code: {close_code}). [Group: {self.group_name}, IP: {self.client_ip}]"
@@ -46,7 +48,7 @@ class LogConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def keep_alive(self):
-        logger.info("🟢 [LogConsumer] Keep-alive started")
+        logger.debug("🟢 [LogConsumer] Keep-alive started")
         try:
             while True:
                 await asyncio.sleep(self.ping_interval)
@@ -60,7 +62,7 @@ class LogConsumer(AsyncWebsocketConsumer):
             "id": log_id,
             "message": event["message"],
         }
-        logger.info(
+        logger.debug(
             f"✅ [LogConsumer] Sending log message: {message_obj} to group: {self.group_name}"
         )
         await self.send(text_data=json.dumps(message_obj))
@@ -69,7 +71,7 @@ class LogConsumer(AsyncWebsocketConsumer):
         try:
             data = json.loads(text_data)
 
-            logger.info(f"✅ [LogConsumer] Received: {data.get('type')}")
+            logger.debug(f"✅ [LogConsumer] Received: {data.get('type')}")
 
             if data.get("type") == "ping":
                 await self.send(text_data=json.dumps({"type": "pong"}))
@@ -88,7 +90,7 @@ class LogConsumer(AsyncWebsocketConsumer):
                 preview = message_str[:message_max_size] + (
                     ". . ." if len(message_str) > message_max_size else ""
                 )
-                logger.info(f"✅ [LogConsumer] Received message: {preview}")
+                logger.debug(f"✅ [LogConsumer] Received message: {preview}")
                 return
         except Exception as e:
             logger.exception("❌ [LogConsumer] Error in WebSocket")

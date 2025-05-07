@@ -211,7 +211,7 @@ LOGGING = {
         },
         "django.request": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": config.DJANGO_LOG_LEVEL,
             "propagate": False,
         },
     },

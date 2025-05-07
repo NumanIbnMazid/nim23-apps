@@ -68,16 +68,16 @@ async def transcribe_audio_base64(
 
         if batch:
             model = get_batched_model()
-            logger.info(
-                f"[Whisper] Using batched inference with batch size: {batch_size}"
+            logger.debug(
+                f"# [Whisper] Using batched inference with batch size: {batch_size}"
             )
             segments, info = model.transcribe(audio_stream, batch_size=batch_size)
         else:
             model = get_whisper_model()
-            logger.info("[Whisper] Using non-batched inference")
+            logger.debug("# [Whisper] Using non-batched inference")
             segments, info = model.transcribe(audio_stream)
 
-        logger.info(
+        logger.debug(
             f"[Whisper] Detected language: {info.language} ({info.language_probability:.2f})"
         )
 

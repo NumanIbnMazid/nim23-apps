@@ -22,13 +22,13 @@ class AudioChunkProcessor:
         self.current_chunk += chunk
 
         if self.total_audio_length < MAX_AUDIO_SIZE:
-            logger.info(
+            logger.debug(
                 "# Audio chunk size is within the limit. Prcessing in one go..."
             )
             if is_last:
                 await self.transcribe_main()
         else:
-            logger.info("# Audio chunk size exceeds the limit. Processing in chunks...")
+            logger.debug("# Audio chunk size exceeds the limit. Processing in chunks...")
             self.audio_chunks.append(chunk)
             if is_last:
                 await self.transcribe_fallback()

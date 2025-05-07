@@ -216,7 +216,7 @@ async def send_log_message_async(
     }
 
     if channel_layer is not None:
-        logger.info(f"[helpers][Channels] channel_layer = {channel_layer}")
+        logger.debug(f"[helpers][Channels] channel_layer = {channel_layer}")
         await channel_layer.group_send(group_id, payload)
 
 
@@ -244,7 +244,7 @@ def send_log_message(
         },
     }
     if channel_layer is not None:
-        logger.info(f"[helpers][Channels] channel_layer = {channel_layer}")
+        logger.debug(f"[helpers][Channels] channel_layer = {channel_layer}")
         async_to_sync(channel_layer.group_send)(group_id, payload)
 
 
