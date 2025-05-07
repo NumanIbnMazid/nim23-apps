@@ -66,3 +66,6 @@ class AudioChunkProcessor:
             self.transcription_chunks.append(transcript)
             self.audio_chunks = []
             self.current_chunk = ""
+
+    async def finalize(self):
+        return " ".join(self.transcription_chunks)
