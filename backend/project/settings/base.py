@@ -40,6 +40,8 @@ THIRD_PARTY_APPS = [
     "tinymce",
     # Django Channels
     "channels",
+    # Django Prometheus
+    "django_prometheus",
 ]
 LOCAL_APPS = [
     # Users
@@ -81,6 +83,8 @@ INSTALLED_APPS = (
 # *** Middleware Definition ***
 # ----------------------------------------------------
 MIDDLEWARE = [
+    # Needs to be placed before all other middlewares
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     # Django CORS Headers Middleware
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -92,6 +96,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Needs to be placed after all other middlewares
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 # ----------------------------------------------------

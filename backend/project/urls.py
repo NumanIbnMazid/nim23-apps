@@ -94,6 +94,8 @@ THIRD_PARTY_URLS = [
 
 urlpatterns = [
     path("health/", healthcheck),
+    # GET metrics
+    path("", include("django_prometheus.urls"), name="django-prometheus"),
     # ----------------------------------------------------
     # *** Django & Django Admin URLs ***
     # ----------------------------------------------------

@@ -27,6 +27,7 @@ django-admin-interface==0.26.0
 django-cleanup==8.0.0
 django-colorfield==0.13.0
 django-cors-headers==4.2.0
+django-prometheus==2.3.1
 django-redis==5.4.0
 django-rest-knox==4.2.0
 django-tinymce==3.6.1
@@ -82,6 +83,7 @@ openai==1.76.0
 orjson==3.10.16
 packaging==24.2
 Pillow==9.5.0
+prometheus_client==0.21.1
 propcache==0.3.1
 proto-plus==1.26.1
 protobuf==6.30.2

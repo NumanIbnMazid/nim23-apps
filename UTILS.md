@@ -77,10 +77,57 @@ URL: https://openrouter.ai/models
 Models:
 - nvidia/llama-3.1-nemotron-nano-8b-v1:free
 
+## Prometheus
+
+- sudo apt-get install prometheus
+- sudo nano /etc/prometheus/prometheus.yml
+scrape_configs:
+  - job_name: 'django-app'
+    static_configs:
+      - targets: ['localhost:8000']
+- sudo systemctl restart prometheus
+- http://localhost:9090
+
+## Graphana
+
+### Installation
+
+- https://grafana.com/grafana/download
+
+```bash
+sudo apt-get install -y adduser libfontconfig1 musl
+wget https://dl.grafana.com/enterprise/release/grafana-enterprise_12.0.0_amd64.deb
+sudo dpkg -i grafana-enterprise_12.0.0_amd64.deb
+
+sudo systemctl start grafana-server
+sudo systemctl enable grafana-server
+sudo systemctl status grafana-server
+
+sudo nano /etc/grafana/grafana.ini
+```
+
+```ini
+[server]
+# Protocol (http, https, socket)
+protocol = http
+
+# The ip address to bind to, empty will bind to all interfaces
+http_addr =
+
+# The http port to use
+http_port = 3001
+```
+🚨 Important: remove the semicolon ; at the beginning of both lines!
+
+- http://127.0.0.1:3001/
+- 
+Default username and password: admin/admin
+
+Connection URL: http://localhost:9090
 
 ## OTHER RESOURCES
 
-- Sample icons: ✅, ❌, 🚫, 🟢, 🔴, 🟡, 🔵, 🟣, 🟠, 🟡, 🛠, 📍, ❓, ⚠️, 🧪, 🔊, 🔄, 👈,
+- Sample icons: ✅, ❌, 🚫, 🟢, 🔴, 🟡, 🔵, 🟣, 🟠, 🟡, 🛠, 📍, ❓, ⚠️, 🧪, 🔊, 🔄, 👈, 📄, 🚨, ⚙️, 🔧, 💾, 🧠, ⚡, 
 
 - Youtube Alterntives to download: https://yewtu.be/, https://id.420129.xyz/, https://freetubeapp.io/
 - https://askubuntu.com/questions/1342197/why-is-youtube-dl-blocking-me-from-downloading-youtube-videos-which-are-supposed
