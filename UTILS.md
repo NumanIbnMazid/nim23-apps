@@ -86,6 +86,10 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:8000']
 - sudo systemctl restart prometheus
+- sudo systemctl disable prometheus
+- sudo systemctl enable prometheus
+- sudo systemctl start prometheus
+- sudo systemctl stop prometheus
 - http://localhost:9090
 
 ## Graphana
@@ -102,6 +106,8 @@ sudo dpkg -i grafana-enterprise_12.0.0_amd64.deb
 sudo systemctl start grafana-server
 sudo systemctl enable grafana-server
 sudo systemctl status grafana-server
+sudo systemctl stop grafana-server
+sudo systemctl disable grafana-server
 
 sudo nano /etc/grafana/grafana.ini
 ```
@@ -133,6 +139,7 @@ Connection URL: http://localhost:9090
 - https://askubuntu.com/questions/1342197/why-is-youtube-dl-blocking-me-from-downloading-youtube-videos-which-are-supposed
 - https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp
 - https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies
+- Recommender Setting for Uvicorn Worker: workers = (2 × CPU cores) + 1 (common Gunicorn/Uvicorn formula). But Higher Memory Usage.
 
 ### Sample Video Audio Files
 

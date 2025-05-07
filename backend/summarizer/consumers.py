@@ -51,7 +51,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
             logger.debug(f"✅ [SummarizerConsumer] Received: {data.get('type')}")
 
             if data.get("type") == "ping":
-                await self.send(text_data=json.dumps({"type": "pong"}))
+                # await self.send(text_data=json.dumps({"type": "pong"}))
                 return
             elif data.get("type") == "pong":
                 return
@@ -103,6 +103,22 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
                         "module": "summarizer",
                         "scope": "full_transcription",
                         "message": transcription,
+                    },
+                }
+            )
+        )
+
+    async def send_error_message(self, error_message):
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "error",
+                    "message": {
+                        "type": "error",
+                        "sender": "server",
+                        "module": "summarizer",
+                        "scope": "consumer",
+                        "message": error_message,
                     },
                 }
             )

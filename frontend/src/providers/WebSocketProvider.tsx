@@ -121,7 +121,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
       // The initializedRef is true, so we skip the setup.
       // The cleanup function defined above is still returned and available
       // for potential future unmounts.
-      console.log('WebSocket setup skipped (already initialized for this instance)')
+      console.log('⚡ WebSocket setup skipped (already initialized for this instance)')
     }
     // --- End Setup Logic ---
     // Return the cleanup function. This is returned regardless of whether the setup block ran

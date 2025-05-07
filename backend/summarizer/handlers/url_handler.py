@@ -25,7 +25,9 @@ def extract_audio_from_url(url: str) -> str:
             "sleep_interval": 10,  # Always sleep at least 10 seconds between downloads
             "max_sleep_interval": 15,  # Random sleep between 10-15 seconds
             "sleep_requests": 1,  # Sleep 1 second between network requests (metadata fetches)
-            "format": "bestaudio/best",
+            # "format": "bestaudio/best",
+            "format": "worstaudio",
+            # "format": "bestaudio[abr<=128]/bestaudio",
             "extract_flat": False,
         }
         if is_youtube_url(url):

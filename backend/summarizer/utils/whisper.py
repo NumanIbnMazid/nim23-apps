@@ -5,6 +5,7 @@ import logging
 from utils.helpers import send_log_message_async, get_socket_group_name
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 from dotenv import load_dotenv
+from summarizer.utils.whisper_model_cache import WhisperModelCache
 
 
 load_dotenv()
@@ -17,27 +18,32 @@ whisper_device = os.getenv("WHISPER_DEVICE", "cpu")
 whisper_batch_enabled = os.getenv("WHISPER_BATCH_ENABLED", "False").lower() == "true"
 whisper_batch_size = int(os.getenv("WHISPER_BATCH_SIZE", 8))
 
-if whisper_model_size not in ["tiny", "base", "small", "medium", "large"]:
-    raise ValueError("Invalid whisper model size")
+# if whisper_model_size not in ["tiny", "base", "small", "medium", "large"]:
+#     raise ValueError("Invalid whisper model size")
 
-if whisper_device not in ["cpu", "cuda"]:
-    raise ValueError("Invalid whisper device")
+# if whisper_device not in ["cpu", "cuda"]:
+#     raise ValueError("Invalid whisper device")
 
 # Singleton Whisper model
-_whisper_model = None
+model_cache = WhisperModelCache()
+# _whisper_model = None
 _batched_model = None
 
 
+# def get_whisper_model():
+#     global _whisper_model
+#     if _whisper_model is None:
+#         logger.info(f"🟡 [Whisper] Loading model: {whisper_model_size}...")
+#         _whisper_model = WhisperModel(whisper_model_size, device=whisper_device)
+#     else:
+#         logger.info(
+#             f"🟢 [Whisper] Model already loaded. Using model {whisper_model_size} at {str(_whisper_model)}..."
+#         )
+#     return _whisper_model
+
+
 def get_whisper_model():
-    global _whisper_model
-    if _whisper_model is None:
-        logger.info(f"🟡 [Whisper] Loading model: {whisper_model_size}...")
-        _whisper_model = WhisperModel(whisper_model_size, device=whisper_device)
-    else:
-        logger.info(
-            f"🟢 [Whisper] Model already loaded. Using model {whisper_model_size} at {str(_whisper_model)}..."
-        )
-    return _whisper_model
+    return model_cache.get_model(model_size=whisper_model_size, device=whisper_device)
 
 
 def get_batched_model():

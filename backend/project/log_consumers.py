@@ -74,7 +74,7 @@ class LogConsumer(AsyncWebsocketConsumer):
             logger.debug(f"✅ [LogConsumer] Received: {data.get('type')}")
 
             if data.get("type") == "ping":
-                await self.send(text_data=json.dumps({"type": "pong"}))
+                # await self.send(text_data=json.dumps({"type": "pong"}))
                 return
             elif data.get("type") == "pong":
                 return

@@ -61,27 +61,27 @@ export const connectWebSocket = ({
     }
     // Start ping interval
     // Clear any existing interval before starting a new one
-    if (pingIntervalRef.current) clearInterval(pingIntervalRef.current)
-    pingIntervalRef.current = setInterval(() => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: 'ping' }))
-      } else {
-        // If socket is not open, clear interval to prevent errors
-        clearInterval(pingIntervalRef.current)
-        pingIntervalRef.current = undefined
-      }
-    }, 25000) // Send ping every 25 seconds
+    // if (pingIntervalRef.current) clearInterval(pingIntervalRef.current)
+    // pingIntervalRef.current = setInterval(() => {
+    //   if (ws.readyState === WebSocket.OPEN) {
+    //     ws.send(JSON.stringify({ type: 'ping' }))
+    //   } else {
+    //     // If socket is not open, clear interval to prevent errors
+    //     clearInterval(pingIntervalRef.current)
+    //     pingIntervalRef.current = undefined
+    //   }
+    // }, 25000) // Send ping every 25 seconds
   }
   ws.onmessage = (event) => {
     try {
       const data: SocketLogType = JSON.parse(event.data)
-      if (data.type === 'ping' || data.type === 'pong') {
-        if (data.type === 'ping' && ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ type: 'pong' })) // Respond to server ping
-        }
-        // Do NOT dispatch ping/pong messages as logs
-        return
-      }
+      // if (data.type === 'ping' || data.type === 'pong') {
+      //   if (data.type === 'ping' && ws.readyState === WebSocket.OPEN) {
+      //     ws.send(JSON.stringify({ type: 'pong' })) // Respond to server ping
+      //   }
+      //   // Do NOT dispatch ping/pong messages as logs
+      //   return
+      // }
       dispatch({ type: 'add', payload: data })
     } catch (error) {
       console.error(`🔴 Failed to parse ${type.toUpperCase()} WebSocket message:`, error, event.data)
