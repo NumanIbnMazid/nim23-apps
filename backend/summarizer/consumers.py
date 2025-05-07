@@ -2,6 +2,7 @@ import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
+import uuid
 from utils.helpers import get_socket_group_name
 from summarizer.utils.audio_transcription_processor import AudioChunkProcessor
 
@@ -68,6 +69,17 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.exception("❌ [SummarizerConsumer] Error in WebSocket")
             await self.send(json.dumps({"type": "error", "message": str(e)}))
+
+    async def send_log(self, event):
+        log_id = str(uuid.uuid4())  # Generate a unique ID
+        message_obj = {
+            "id": log_id,
+            "message": event["message"],
+        }
+        logger.info(
+            f"✅ [SummarizerConsumer] Sending log message: {message_obj} to group: {self.group_name}"
+        )
+        await self.send(text_data=json.dumps(message_obj))
 
     async def keep_alive(self):
         logger.info("🟢 [SummarizerConsumer] Keep-alive started")

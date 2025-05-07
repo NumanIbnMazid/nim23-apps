@@ -2,6 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 import logging
 import asyncio
+import uuid
 from utils.helpers import get_socket_group_name
 
 
@@ -54,8 +55,15 @@ class LogConsumer(AsyncWebsocketConsumer):
             pass
 
     async def send_log(self, event):
-        logger.info(f"✅ [LogConsumer] Sending log message: {event['message']}")
-        await self.send(text_data=json.dumps({"message": event["message"]}))
+        log_id = str(uuid.uuid4())  # Generate a unique ID
+        message_obj = {
+            "id": log_id,
+            "message": event["message"],
+        }
+        logger.info(
+            f"✅ [LogConsumer] Sending log message: {message_obj} to group: {self.group_name}"
+        )
+        await self.send(text_data=json.dumps(message_obj))
 
     async def receive(self, text_data):
         try:

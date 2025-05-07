@@ -7,7 +7,15 @@ export interface WebSocketContextType {
   logsSocket: WebSocket | null
   summarizerSocket: WebSocket | null
   logs: SocketLogType[]
+  dispatchLogs: React.Dispatch<{
+    type: 'add' | 'clear' | 'clearProcessed'
+    payload?: { lastProcessedId: string } | SocketLogType
+  }>
   summarizerLogs: SocketLogType[]
+  dispatchSummarizerLogs: React.Dispatch<{
+    type: 'add' | 'clear' | 'clearProcessed'
+    payload?: { lastProcessedId: string } | SocketLogType
+  }>
   socketSessionID: string | null
   summarizerConnected: boolean
   summarizerRetrying: boolean

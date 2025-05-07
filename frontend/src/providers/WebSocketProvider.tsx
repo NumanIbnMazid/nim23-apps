@@ -1,8 +1,8 @@
 'use client'
+
 import React, { useContext, useEffect, useRef, useState, useReducer } from 'react'
-// Import constants
-// Import types, context, reducers, and the new connect function
 import { WebSocketContext } from './websocket/context'
+// NOTE: *** Log reducer currently limiting logs to 1000, this won't show logs more than 1000 ***
 import { logReducer, summarizerLogReducer } from './websocket/reducers'
 import { connectWebSocket } from './websocket/connectWebSocket' // <-- Import the extracted function
 export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
@@ -10,6 +10,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   const [summarizerRetrying, setSummarizerRetrying] = useState(false)
   const summarizerRetryTimeout = useRef<NodeJS.Timeout | null>(null)
   const [logs, dispatchLogs] = useReducer(logReducer, [])
+
   const [summarizerLogs, dispatchSummarizerLogs] = useReducer(summarizerLogReducer, [])
   // Keep the session ID state
   // socketSessionID is passed to the connectWebSocket function
@@ -142,7 +143,9 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         logsSocket: logsRef.current, // This will be null initially, then the WS instance
         summarizerSocket: summarizerRef.current, // This will be null initially, then the WS instance
         logs,
+        dispatchLogs,
         summarizerLogs,
+        dispatchSummarizerLogs,
         socketSessionID,
         summarizerConnected,
         summarizerRetrying,
