@@ -18,6 +18,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
         self.group_name = get_socket_group_name("summarizer", self.session_id)
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         self.processor = AudioChunkProcessor(session_id=self.session_id)
+        self.data = None
         await self.send(
             text_data=json.dumps(
                 {
@@ -48,6 +49,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
+            self.data = data
             logger.debug(f"✅ [SummarizerConsumer] Received: {data.get('type')}")
 
             if data.get("type") == "ping":
@@ -56,17 +58,19 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
             elif data.get("type") == "pong":
                 return
             elif data.get("type") == "ready":
-                # logger.info(
-                #     f"🟢 [SummarizerConsumer] WebSocket ready flag set for ip: {self.client_ip} with session: {self.session_id}"
-                # )
+                logger.debug(
+                    f"🟢 [SummarizerConsumer] WebSocket ready flag set for ip: {self.client_ip} with session: {self.session_id}"
+                )
                 return
             elif data.get("type") == "datastream":
                 msg = data.get("message", {})
                 if msg.get("type") == "data":
                     await self.processor.handle_audio_chunk(msg)
-                elif msg.get("type") == "signal" and msg.get("message") == "END_CHUNK":
                     transcription = await self.processor.finalize()
                     await self.send_transcription_result(transcription)
+                elif msg.get("type") == "signal" and msg.get("message") == "END_CHUNK":
+                    # TODO
+                    pass
                 return
         except Exception as e:
             logger.exception("❌ [SummarizerConsumer] Error in WebSocket")

@@ -9,7 +9,7 @@ export const convertVideoUrlToAudio = async (
   videoUrl: string,
   ffmpegInstance: any,
   setStatusMessage?: any
-): Promise<Uint8Array> => {
+): Promise<string> => {
   const chunkSize = 1024 * 1024 * 2 // 2MB per chunk
   let totalProgress = 0
   let downloadedData = 0
@@ -56,6 +56,5 @@ export const convertVideoUrlToAudio = async (
     outputName,
   ])
 
-  const audioData = await ffmpegInstance.readFile(outputName)
-  return audioData as Uint8Array
+  return outputName
 }

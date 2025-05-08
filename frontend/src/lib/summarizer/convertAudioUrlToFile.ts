@@ -5,7 +5,7 @@ export const convertAudioUrlToFile = async (
   audioURL: string,
   ffmpegInstance: any,
   setStatusMessage: any = () => {}
-): Promise<Uint8Array> => {
+): Promise<string> => {
   const chunkSize = 1024 * 1024 * 2 // 2MB per chunk
   let totalProgress = 0
   let downloadedData = 0
@@ -33,11 +33,10 @@ export const convertAudioUrlToFile = async (
     updateOverallProgress()
   })
 
-  const inputName = 'input_audio'
-  const outputName = 'output.wav'
+  const inputName = 'input_audio.wav'
+  const outputName = 'output_audio.wav'
 
   await ffmpegInstance.writeFile(inputName, audioData)
-
   await ffmpegInstance.exec([
     '-i',
     inputName,
@@ -52,7 +51,5 @@ export const convertAudioUrlToFile = async (
     'wav',
     outputName,
   ])
-
-  const outputData = await ffmpegInstance.readFile(outputName)
-  return outputData as Uint8Array
+  return outputName
 }

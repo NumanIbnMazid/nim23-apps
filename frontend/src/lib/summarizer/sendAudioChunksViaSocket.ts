@@ -4,7 +4,10 @@
 export const sendAudioChunksViaSocket = async (
   fullBase64: string,
   summarizerSocket: any,
-  chunkDurationSec: number = 5
+  chunkSize: number = 1,
+  currentChunkIndex: number = 0,
+  // chunkDurationSec: number = 5,
+  currentStartTime: number = 0
 ) => {
   if (!summarizerSocket || summarizerSocket.readyState !== WebSocket.OPEN) {
     console.error('🔴 [Summarizer] WebSocket is not connected')
@@ -12,11 +15,12 @@ export const sendAudioChunksViaSocket = async (
   }
 
   // Approximate byte size of 5s audio (e.g. 16kbps mono ≈ 10KB/sec → 50KB base64)
-  const bytesPerSecond = 16000 // adjust based on audio encoding bitrate
-  const estimatedChunkBytes = bytesPerSecond * chunkDurationSec
-  const base64ChunkSize = (estimatedChunkBytes * 4) / 3 // base64 expands 3:4
+  // const bytesPerSecond = 16000 // adjust based on audio encoding bitrate
+  // const estimatedChunkBytes = bytesPerSecond * chunkDurationSec
+  // const base64ChunkSize = (estimatedChunkBytes * 4) / 3 // base64 expands 3:4
 
-  const chunks = fullBase64.match(new RegExp(`.{1,${Math.floor(base64ChunkSize)}}`, 'g')) || []
+  // const chunks = fullBase64.match(new RegExp(`.{1,${Math.floor(base64ChunkSize)}}`, 'g')) || []
+  const chunks = [fullBase64]
 
   // log full base64 size and chunk size
   // console.log('🔊 [Summarizer] Full base64 size:', fullBase64.length)
@@ -24,9 +28,9 @@ export const sendAudioChunksViaSocket = async (
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i]
 
-    // console.log('🔊 [Summarizer] Sending chunk:', i + 1, 'of', chunks.length)
-    // console.log('🔊 [Summarizer] Chunk base64 size:', chunk.length)
-
+    // console.log(`🔊 [Summarizer] Sending chunk ${currentChunkIndex + 1} of ${chunkSize}...`)
+    // console.log(`🔊 start_offset ${currentStartTime}...`);
+    
     summarizerSocket.send(
       JSON.stringify({
         type: 'datastream',
@@ -36,9 +40,10 @@ export const sendAudioChunksViaSocket = async (
           scope: 'audio_chunk',
           message: chunk,
           sender: 'client',
-          chunk_index: i,
-          is_last: i === chunks.length - 1,
-          total_length: fullBase64.length,
+          chunk_index: currentChunkIndex,
+          is_last: currentChunkIndex === chunkSize - 1,
+          total_length: chunkSize,
+          start_offset: currentStartTime,
         },
       })
     )
@@ -46,17 +51,4 @@ export const sendAudioChunksViaSocket = async (
     // Optional: add delay to simulate real-time upload (for testing)
     // await new Promise((resolve) => setTimeout(resolve, 200))
   }
-  // send end signal
-  summarizerSocket.send(
-    JSON.stringify({
-      type: 'datastream',
-      message: {
-        type: 'signal',
-        module: 'summarizer',
-        scope: 'audio_chunk',
-        message: 'END_CHUNK',
-        sender: 'client',
-      },
-    }) // send end signal
-  )
 }

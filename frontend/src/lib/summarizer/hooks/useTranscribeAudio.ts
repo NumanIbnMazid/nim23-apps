@@ -87,7 +87,10 @@ export const useTranscribeAudio = () => {
   // Function to initiate a new audio transcription task
   const transcribeAudioBase64 = async (
     audioBase64: string,
-    setWhisperTranscription: (text: string) => void // The component's state setter
+    setWhisperTranscription: (text: string) => void, // The component's state setter
+    chunkSize: number = 1, // Optional chunk size parameter
+    currentChunkIndex: number = 0, // Optional current chunk index parameter
+    currentStartTime: number = 0, // Optional current start time parameter
   ): Promise<string> => {
     if (!summarizerSocket || summarizerSocket.readyState !== WebSocket.OPEN) {
       console.error('🔴 [Summarizer] WebSocket is not connected')
@@ -113,7 +116,7 @@ export const useTranscribeAudio = () => {
     // Send the audio data to the server
     try {
       // Assuming sendAudioChunksViaSocket returns a promise that resolves when chunks are sent
-      await sendAudioChunksViaSocket(audioBase64, summarizerSocket, 5)
+      await sendAudioChunksViaSocket(audioBase64, summarizerSocket, chunkSize, currentChunkIndex, currentStartTime)
       // console.log('Audio chunks sent.')
     } catch (error) {
       console.error('Failed to send audio chunks:', error)

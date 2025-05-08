@@ -58,6 +58,7 @@ async def transcribe_audio_base64(
     batch: bool = False,
     batch_size: int = 8,
     socket_session_id: str = None,
+    start_offset: float = 0.0,
 ) -> str:
     """
     Transcribes audio from a base64-encoded stream using faster-whisper (non-streaming).
@@ -93,8 +94,10 @@ async def transcribe_audio_base64(
 
         transcript = []
         for segment in segments:
+            global_start = start_offset + segment.start
+            global_end = start_offset + segment.end
             await send_log_message_async(
-                f"{segment.start:.2f}s -> {segment.end:.2f}s: {segment.text}",
+                f"{global_start:.2f}s -> {global_end:.2f}s: {segment.text}",
                 group_id=socket_group_id,
                 module="summarizer",
                 scope="whisper",

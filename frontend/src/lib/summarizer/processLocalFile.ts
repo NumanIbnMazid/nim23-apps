@@ -4,39 +4,33 @@ import mammoth from 'mammoth'
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdfjs/pdf.worker.min.mjs'
 
-const getBase64FromArrayBuffer = (buffer: ArrayBuffer) => {
-  const bytes = new Uint8Array(buffer)
-  let binary = ''
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte)
-  })
-  return btoa(binary)
-}
-
 export async function processLocalFile(
   file: File,
   ffmpeg: FFmpeg,
   setStatusMessage: any
-): Promise<{ base64Audio?: string; text?: string }> {
+): Promise<{ ffmpegAudioFile?: string; text?: string }> {
   const fileType = file.type
 
   // === AUDIO FILE ===
   if (fileType.startsWith('audio/')) {
     setStatusMessage('Processing audio file...')
     const buffer = await file.arrayBuffer()
-    const base64 = getBase64FromArrayBuffer(buffer)
-    return { base64Audio: base64 }
+    const outputName = 'output_audio.wav'
+    await ffmpeg.writeFile(outputName, new Uint8Array(buffer))
+    return { ffmpegAudioFile: outputName }
   }
 
   // === VIDEO FILE ===
   if (fileType.startsWith('video/')) {
     setStatusMessage('Processing video file...')
     const buffer = await file.arrayBuffer()
-    await ffmpeg.writeFile('input.mp4', new Uint8Array(buffer))
+    const inputName = 'input.mp4'
+    const outputName = 'output_audio.wav'
+    await ffmpeg.writeFile(inputName, new Uint8Array(buffer))
 
     await ffmpeg.exec([
       '-i',
-      'input.mp4',
+      inputName,
       '-vn',
       '-acodec',
       'pcm_s16le',
@@ -46,13 +40,9 @@ export async function processLocalFile(
       '1',
       '-f',
       'wav',
-      'output.wav',
+      outputName,
     ])
-
-    const audio = await ffmpeg.readFile('output.wav')
-    // @ts-ignore
-    const base64 = getBase64FromArrayBuffer(audio.buffer)
-    return { base64Audio: base64 }
+    return { ffmpegAudioFile: outputName }
   }
 
   // === TEXT FILE ===

@@ -20,13 +20,21 @@ class FFmpegManager {
       setStatusMessage?.(`Please wait. Processing... ${Math.round(progress * 100)}%`)
     })
 
-    FFmpegManager.loadingPromise = ffmpeg.load({
-      coreURL: await toBlobURL('/scripts/ffmpeg-core.js', 'text/javascript'),
-      wasmURL: await toBlobURL('/scripts/ffmpeg-core.wasm', 'application/wasm'),
-      workerURL: await toBlobURL('/scripts/ffmpeg-core.worker.js', 'text/javascript'),
-    }).then(() => {})
+    ffmpeg.on('log', ({ message }) => {
+      // console.log(message)
+      setStatusMessage?.(message)
+    })
+
+    FFmpegManager.loadingPromise = ffmpeg
+      .load({
+        coreURL: await toBlobURL('/scripts/ffmpeg-core.js', 'text/javascript'),
+        wasmURL: await toBlobURL('/scripts/ffmpeg-core.wasm', 'application/wasm'),
+        workerURL: await toBlobURL('/scripts/ffmpeg-core.worker.js', 'text/javascript'),
+      })
+      .then(() => {})
 
     return FFmpegManager.loadingPromise
-  }}
+  }
+}
 
 export default FFmpegManager

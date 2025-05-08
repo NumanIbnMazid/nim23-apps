@@ -79,9 +79,9 @@ class LogConsumer(AsyncWebsocketConsumer):
             elif data.get("type") == "pong":
                 return
             elif data.get("type") == "ready":
-                # logger.info(
-                #     f"🟢 [LogConsumer] WebSocket ready flag set for ip: {self.client_ip} with session: {self.session_id}"
-                # )
+                logger.debug(
+                    f"🟢 [LogConsumer] WebSocket ready flag set for ip: {self.client_ip} with session: {self.session_id}"
+                )
                 return
             else:
                 # Showing logs in the console

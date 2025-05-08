@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { processLocalFile } from '@/lib/summarizer/processLocalFile'
 import { convertAudioUrlToFile } from '@/lib/summarizer/convertAudioUrlToFile'
 import { convertVideoUrlToAudio } from '@/lib/summarizer/convertVideoUrlToAudioFile'
-import { convertAudioFileToBase64 } from '@/lib/summarizer/convertAudioFileToBase64'
 import { PUBLIC_SITE_URL } from '@/lib/constants'
 import { useTranscribeAudio } from '@/lib/summarizer/hooks/useTranscribeAudio'
+import { transcribeAudioFile } from '@/lib/summarizer/transcribeAudioFile'
+import { useWebSocket } from '@/providers/WebSocketProvider'
 
 export const useSummarization = () => {
   const [summary, setSummary] = useState('')
@@ -15,6 +16,7 @@ export const useSummarization = () => {
   const [loading, setLoading] = useState(false)
 
   const { transcribeAudioBase64 } = useTranscribeAudio()
+  const { summarizerSocket } = useWebSocket()
 
   const reset = () => {
     setSummary('')
@@ -36,15 +38,20 @@ export const useSummarization = () => {
 
     try {
       let textToSummarize = ''
-      let audioBase64 = ''
-
       // ### Case: Local file upload
       if (selectedFile) {
         const result = await processLocalFile(selectedFile, ffmpegInstance, setStatusMessage)
-        if (result.base64Audio) {
-          audioBase64 = result.base64Audio
+        if (result.ffmpegAudioFile) {
+          const audioFile = result.ffmpegAudioFile
           setStatusMessage('Transcribing audio...')
-          textToSummarize = await transcribeAudioBase64(audioBase64, setWhisperTranscription)
+          textToSummarize = await transcribeAudioFile(
+            audioFile,
+            ffmpegInstance,
+            transcribeAudioBase64,
+            setStatusMessage,
+            setWhisperTranscription,
+            summarizerSocket
+          )
         }
         if (result.text) {
           textToSummarize = result.text
@@ -89,9 +96,14 @@ export const useSummarization = () => {
           throw new Error('Unsupported media type in URL.')
         }
 
-        audioBase64 = await convertAudioFileToBase64(audioData)
-        setStatusMessage('Transcribing audio...')
-        textToSummarize = await transcribeAudioBase64(audioBase64, setWhisperTranscription)
+        textToSummarize = await transcribeAudioFile(
+          audioData,
+          ffmpegInstance,
+          transcribeAudioBase64,
+          setStatusMessage,
+          setWhisperTranscription,
+          summarizerSocket
+        )
       }
       // ### Case: Plain text input
       else if (textInput) {
@@ -111,7 +123,7 @@ export const useSummarization = () => {
       const response = await fetch(`${PUBLIC_SITE_URL}/api/summarizer/summarize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: textToSummarize, audio_b64: audioBase64 }),
+        body: JSON.stringify({ text: textToSummarize }),
       })
 
       if (!response.ok) {
@@ -123,7 +135,7 @@ export const useSummarization = () => {
       setSummary(data.data.summary)
       setStatusMessage('Summarization completed!')
     } catch (error: any) {
-      // console.error('Summarization error:', error)
+      console.error('Summarization error:', error)
 
       const fallback = 'Something went wrong while processing your input.'
       let errorText = fallback
