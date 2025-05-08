@@ -65,12 +65,31 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
             elif data.get("type") == "datastream":
                 msg = data.get("message", {})
                 if msg.get("type") == "data":
+                    chunk_id = msg.get("chunk_id")
                     await self.processor.handle_audio_chunk(msg)
                     transcription = await self.processor.finalize()
-                    await self.send_transcription_result(transcription)
+                    logger.debug(
+                        f"✅ [SummarizerConsumer] Transcription: {transcription}"
+                    )
+                    await self.send_transcription_result(transcription, chunk_id)
                 elif msg.get("type") == "signal" and msg.get("message") == "END_CHUNK":
-                    # TODO
-                    pass
+                    logger.debug(
+                        f"⚡ [SummarizerConsumer] Received end chunk signal from ip: {self.client_ip} with session: {self.session_id}"
+                    )
+                    await self.send(
+                        text_data=json.dumps(
+                            {
+                                "type": "datastream",
+                                "message": {
+                                    "type": "signal",
+                                    "sender": "server",
+                                    "module": "summarizer",
+                                    "scope": "transcription",
+                                    "message": "SUCCESS",
+                                },
+                            }
+                        )
+                    )
                 return
         except Exception as e:
             logger.exception("❌ [SummarizerConsumer] Error in WebSocket")
@@ -96,7 +115,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
         except asyncio.CancelledError:
             pass
 
-    async def send_transcription_result(self, transcription):
+    async def send_transcription_result(self, transcription, chunk_id):
         await self.send(
             text_data=json.dumps(
                 {
@@ -107,6 +126,7 @@ class SummarizerConsumer(AsyncWebsocketConsumer):
                         "module": "summarizer",
                         "scope": "full_transcription",
                         "message": transcription,
+                        "chunk_id": chunk_id,
                     },
                 }
             )

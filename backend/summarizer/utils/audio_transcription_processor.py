@@ -62,4 +62,8 @@ class AudioChunkProcessor:
         self.current_chunk = ""
 
     async def finalize(self):
-        return " ".join(self.transcription_chunks)
+        result = " ".join(self.transcription_chunks)
+        self.transcription_chunks = []
+        self.audio_chunks = []
+        self.current_chunk = ""
+        return result

@@ -29,9 +29,7 @@ def summarize_text(text: str, model: str, client: any) -> str:
             ),
         )
         logger.debug(f"✅ Response Text:\n\n {response.text}\n\n")
-        # return response.text
-        # TODO: REMOVE
-        return text
+        return response.text
     except Exception as e:
         logger.error(f"Error summarizing text: {e}")
         raise ValueError(f"Failed to summarize text: {e}")

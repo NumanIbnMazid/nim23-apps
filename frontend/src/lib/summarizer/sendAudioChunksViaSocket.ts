@@ -7,7 +7,8 @@ export const sendAudioChunksViaSocket = async (
   chunkSize: number = 1,
   currentChunkIndex: number = 0,
   // chunkDurationSec: number = 5,
-  currentStartTime: number = 0
+  currentStartTime: number = 0,
+  chunkID: string
 ) => {
   if (!summarizerSocket || summarizerSocket.readyState !== WebSocket.OPEN) {
     console.error('🔴 [Summarizer] WebSocket is not connected')
@@ -44,6 +45,7 @@ export const sendAudioChunksViaSocket = async (
           is_last: currentChunkIndex === chunkSize - 1,
           total_length: chunkSize,
           start_offset: currentStartTime,
+          chunk_id: chunkID,
         },
       })
     )

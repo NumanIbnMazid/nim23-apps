@@ -1,135 +1,132 @@
-import { useEffect, useRef, useState } from 'react'
-import { useWebSocket } from '@/providers/WebSocketProvider'
-import { sendAudioChunksViaSocket } from '@/lib/summarizer/sendAudioChunksViaSocket'
+import { useEffect, useRef } from 'react'
+import { useWebSocket } from '@/providers/WebSocketProvider' // Adjust path as necessary
+import { sendAudioChunksViaSocket } from '@/lib/summarizer/sendAudioChunksViaSocket' // Adjust path as necessary
+
+// Define constants for polling behavior
+const POLLING_INTERVAL_MS = 50 // How often to check for the message
+const POLLING_TIMEOUT_MS = 60000 // Total time to wait (e.g., 60 seconds)
+const MAX_POLLING_ATTEMPTS = POLLING_TIMEOUT_MS / POLLING_INTERVAL_MS // Calculate max attempts
 
 export const useTranscribeAudio = () => {
-  // Use the summarizerLogs array as specified
+  // Access summarizerLogs state from the WebSocket provider
   const { summarizerSocket, summarizerLogs } = useWebSocket()
 
-  // State to indicate if we are currently waiting for a transcription result log
-  const [isWaiting, setIsWaiting] = useState(false)
+  // Create a ref to hold the *latest* value of summarizerLogs.
+  // This circumvents the stale closure issue in the async function.
+  const logsRef = useRef(summarizerLogs)
 
-  // Refs to hold the promise resolve function and the component's transcription setter
-  // These are needed to communicate the result back to the component that called the hook
-  const resolveRef = useRef<(value: string) => void>(undefined)
-  const setTranscriptionRef = useRef<(text: string) => void>(undefined)
-
-  // 📍 Track the index in the 'summarizerLogs' array where the *current* task's logs start.
-  // This is the key to ignoring logs from previous tasks in the cumulative array.
-  // When a new task starts, we set this to summarizerLogs.length.
-  const lastProcessedLogIndex = useRef<number>(0)
-
-  // Effect to process new logs from the summarizerLogs array.
-  // This effect runs whenever summarizerLogs changes (i.e., a new log arrives).
+  // Keep the ref updated whenever summarizerLogs changes in the provider's state.
   useEffect(() => {
-    const currentLogsSnapshot = summarizerLogs // Take a snapshot for a stable iteration context
+    logsRef.current = summarizerLogs
+    // Optional: Log when the ref updates, useful for debugging state propagation
+    // console.log('🔊 logsRef updated. New length:', summarizerLogs.length);
+  }, [summarizerLogs]) // Depend on the summarizerLogs array reference
 
-    // We only care about logs added since the last processing step.
-    // The 'slice' operation correctly processes only new entries.
-    // Because lastProcessedLogIndex is reset on new tasks, this correctly handles cumulative logs.
-    const newLogs = currentLogsSnapshot.slice(lastProcessedLogIndex.current)
-
-    // If there are no new logs or we are not waiting for a transcription result, do nothing
-    // The `isWaiting` check is crucial here to ensure we only process when actively expecting a result.
-    if (newLogs.length === 0 || !isWaiting) {
-      // Always update the index even if no new logs match the filter,
-      // so we don't reprocess the same empty slice next time.
-      // But only if we are not waiting, otherwise wait for a match.
-      // Wait, this logic is tricky. The index *must* update after processing, regardless of finding a match
-      // for the *current* batch of new logs. Let's move the index update outside the loop.
-      if (newLogs.length === 0) {
-        // Still update index if no new logs at all
-        lastProcessedLogIndex.current = currentLogsSnapshot.length
-      }
-      return
-    }
-
-    // Process the new logs received since the last update
-    for (const summarizerLog of newLogs) {
-      // Check if this log is the full transcription result we are waiting for
-      // Apply filters carefully based on the expected log structure
-      if (
-        summarizerLog?.type === 'datastream' && // Assuming the top-level type is datastream
-        summarizerLog?.message?.module === 'summarizer' &&
-        summarizerLog?.message?.sender === 'server' &&
-        summarizerLog?.message?.type === 'transcription_result' && // Assuming nested type indicates result
-        summarizerLog?.message?.scope === 'full_transcription' &&
-        typeof summarizerLog?.message?.message === 'string' // Ensure the message content is a string
-      ) {
-        // console.log('✅ Received full transcription result log.')
-        const transcription = summarizerLog.message.message
-
-        // Use the stored setter and resolver
-        setTranscriptionRef.current?.(transcription)
-        resolveRef.current?.(transcription)
-        setIsWaiting(false)
-
-        // Clear the refs now that the result is handled
-        resolveRef.current = undefined
-        setTranscriptionRef.current = undefined
-
-        // No need to process further logs for this task once the result is found
-        // We can potentially break here if we only expect one final result log per task.
-        // If there could be multiple 'full_transcription' logs (unlikely), remove the break.
-        // Assuming one final log, break is efficient.
-        break
-      }
-    }
-
-    // Always update lastProcessedLogIndex to the current total length of the snapshot.
-    // This ensures that the next time this effect runs, it starts processing from the logs
-    // added *after* this current batch.
-    lastProcessedLogIndex.current = currentLogsSnapshot.length
-
-    // Depend on summarizerLogs changing (new logs arrive) and isWaiting (so we react when waiting starts)
-  }, [summarizerLogs, isWaiting, resolveRef, setTranscriptionRef]) // Include refs in deps if their values are critical for the logic flow
-
-  // Function to initiate a new audio transcription task
+  /**
+   * Sends an audio chunk via WebSocket and waits for the corresponding transcription result.
+   *
+   * This function polls the summarizerLogs state (via a ref) for a message
+   * matching the provided chunkID, up to a defined timeout.
+   *
+   * @param audioBase64 The audio chunk data as a Base64 string.
+   * @param totalChunks The total number of chunks the audio file was split into.
+   * @param currentChunkIndex The zero-based index of the current chunk being processed.
+   * @param currentStartTime The start time in seconds of the current chunk within the original audio.
+   * @param chunkID A unique identifier for this specific chunk.
+   * @param setStatusMessage A function to set the status message in the parent component.
+   * @returns A Promise that resolves with the transcription text for the chunk,
+   *          or rejects if the WebSocket is not connected, the message format is invalid,
+   *          or the timeout is reached without finding the result.
+   */
   const transcribeAudioBase64 = async (
     audioBase64: string,
-    setWhisperTranscription: (text: string) => void, // The component's state setter
-    chunkSize: number = 1, // Optional chunk size parameter
-    currentChunkIndex: number = 0, // Optional current chunk index parameter
-    currentStartTime: number = 0, // Optional current start time parameter
+    totalChunks: number = 1,
+    currentChunkIndex: number = 0,
+    currentStartTime: number = 0,
+    chunkID: string,
+    setStatusMessage: (message: string) => void
   ): Promise<string> => {
     if (!summarizerSocket || summarizerSocket.readyState !== WebSocket.OPEN) {
-      console.error('🔴 [Summarizer] WebSocket is not connected')
-      throw new Error('🔴 [Summarizer] WebSocket is not connected')
+      // Throw an error immediately if socket is not ready
+      const error = new Error('🔴 [Summarizer] WebSocket is not connected')
+      console.error(error.message)
+      throw error
     }
 
-    // 📍 IMPORTANT: Reset the log processing index BEFORE starting a new task.
-    // This captures the current state of the summarizerLogs array.
-    // When new logs for THIS task arrive, they will appear *after* this index.
-    lastProcessedLogIndex.current = summarizerLogs.length
-    // console.log(`Starting new transcription task. Resetting log index to ${lastProcessedLogIndex.current}.`)
+    // Send the audio chunk with metadata
+    // setStatusMessage(`🔊 Sending chunk ${currentChunkIndex + 1}/${totalChunks})...`)
+    await sendAudioChunksViaSocket(
+      audioBase64,
+      summarizerSocket,
+      totalChunks,
+      currentChunkIndex,
+      currentStartTime,
+      chunkID
+    )
 
-    // Store the component's setter and the promise resolver for later use in the useEffect
-    setTranscriptionRef.current = setWhisperTranscription
-    // Create a new promise and store its resolve function
-    const transcriptionPromise = new Promise<string>((resolve) => {
-      resolveRef.current = resolve
-    })
+    let resultText = ''
+    let attempts = 0
+    // Use the ref to get the current number of logs *before* we expect the new one
+    const initialLogCount = logsRef.current.length
+    let foundLog = null
 
-    // Indicate that we are now waiting for a transcription result
-    setIsWaiting(true) // This state change will trigger the useEffect
+    // setStatusMessage(`🔊 Waiting for transcription result for chunk ${currentChunkIndex + 1}...`)
 
-    // Send the audio data to the server
+    // Use a try/catch block to handle potential errors during the waiting process (like timeout)
     try {
-      // Assuming sendAudioChunksViaSocket returns a promise that resolves when chunks are sent
-      await sendAudioChunksViaSocket(audioBase64, summarizerSocket, chunkSize, currentChunkIndex, currentStartTime)
-      // console.log('Audio chunks sent.')
-    } catch (error) {
-      console.error('Failed to send audio chunks:', error)
-      // Reject the promise and clean up if sending fails
-      resolveRef.current?.('') // Resolve with empty string or reject with error
-      resolveRef.current = undefined
-      setTranscriptionRef.current = undefined
-      setIsWaiting(false) // Stop waiting
-      throw error // Re-throw the error
+      // Poll the logsRef.current until the message is found or timeout is reached
+      while (attempts < MAX_POLLING_ATTEMPTS && !foundLog) {
+        await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL_MS))
+        attempts++
+
+        // Use the latest logs from the ref on each iteration
+        const currentLogs = logsRef.current
+        // Search only the logs that have arrived since we started waiting
+        const newLogs = currentLogs.slice(initialLogCount)
+
+        // Find the specific log for this chunkID
+        foundLog = newLogs.find(
+          (log) =>
+            log.type === 'datastream' &&
+            log.message?.module === 'summarizer' &&
+            log.message?.sender === 'server' &&
+            log.message?.type === 'transcription_result' &&
+            log.message?.scope === 'full_transcription' &&
+            typeof log.message?.message === 'string' &&
+            log.message?.chunk_id === chunkID // *** Crucial check ***
+        )
+
+        // Optional: Add more specific logging if needed during debugging
+        // console.log(`Attempt ${attempts}: checked ${newLogs.length} new logs. Found: ${!!foundLog}`);
+      }
+
+      // After the loop, check if a log was found
+      if (foundLog) {
+        resultText = foundLog.message.message
+        setStatusMessage(`🔊 Got transcription result for chunk ${currentChunkIndex + 1}...`) // Log snippet
+      } else {
+        // If the loop finished but foundLog is still null, it means timeout occurred
+        // This should be caught by the try/catch if the timeout throws an error inside the loop
+        // However, if the loop could exit for other reasons, handle them here.
+        // Given our current loop structure, the only other exit besides finding the log is the timeout.
+        // So this 'else' block is primarily for clarity if the timeout logic wasn't throwing.
+        // With the timeout check throwing, this else might be redundant if the catch block always runs on timeout.
+        // Let's ensure the timeout condition *always* throws.
+        const unexpectedError = new Error(
+          `🔴 [Summarizer] Polling loop ended unexpectedly for chunk ${currentChunkIndex + 1} (ID: ${chunkID}).`
+        )
+        console.error(unexpectedError.message)
+        throw unexpectedError // Treat unexpected loop exit as an error
+      }
+    } catch (error: any) {
+      // This catch block will run if the timeout is reached or if any other error occurs during the wait
+      setStatusMessage(`🔴 Error or timeout waiting for transcription result for chunk ${currentChunkIndex + 1}!`)
+      // Re-throw the error so the caller (transcribeAudioFile) can handle it
+      throw error
     }
 
-    // Return the promise. It will be resolved by the useEffect when the corresponding log arrives.
-    return transcriptionPromise
+    // If we reach here, it means the transcription result was successfully found and resultText is set.
+    return resultText // Return the successfully found text
   }
 
   return { transcribeAudioBase64 }

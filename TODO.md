@@ -27,3 +27,4 @@
 - [ ] [Summarizer] Add extra text area to provide additional requirements for summarization. That will be provided to LLM.
 - [ ] [Summarizer] INFO [2025-05-08 09:32:08] [channels_redis.core] [core] 1 of 2 channels over capacity in group log_group_2f164a3b-bd5b-4573-a233-0d715688dc6b. RESET LOG AFTER DEFINED TIME.
 - [ ] [Summarizer] If stoped one process, but that is still consuming by backend socket, then it's keeps generating logs and showing in timeline.
+- [ ] [Summarizer] Automatically clear reducer logs after defined time.
