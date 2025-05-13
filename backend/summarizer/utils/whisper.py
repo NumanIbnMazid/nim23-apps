@@ -2,44 +2,26 @@ import io
 import base64
 import os
 import logging
+import httpx
 from utils.helpers import send_log_message_async, get_socket_group_name
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 from dotenv import load_dotenv
 from summarizer.utils.whisper_model_cache import WhisperModelCache
-
+import json
 
 load_dotenv()
 
 logger = logging.getLogger("summarizer_whisper")
 
-# Whisper
+# Whisper config
 whisper_model_size = os.getenv("WHISPER_MODEL_SIZE", "tiny")
 whisper_device = os.getenv("WHISPER_DEVICE", "cpu")
 whisper_batch_enabled = os.getenv("WHISPER_BATCH_ENABLED", "False").lower() == "true"
 whisper_batch_size = int(os.getenv("WHISPER_BATCH_SIZE", 8))
+faster_whisper_api_url = os.getenv("FASTER_WHISPER_API_URL", "").strip()
 
-# if whisper_model_size not in ["tiny", "base", "small", "medium", "large"]:
-#     raise ValueError("Invalid whisper model size")
-
-# if whisper_device not in ["cpu", "cuda"]:
-#     raise ValueError("Invalid whisper device")
-
-# Singleton Whisper model
 model_cache = WhisperModelCache()
-# _whisper_model = None
 _batched_model = None
-
-
-# def get_whisper_model():
-#     global _whisper_model
-#     if _whisper_model is None:
-#         logger.info(f"🟡 [Whisper] Loading model: {whisper_model_size}...")
-#         _whisper_model = WhisperModel(whisper_model_size, device=whisper_device)
-#     else:
-#         logger.info(
-#             f"🟢 [Whisper] Model already loaded. Using model {whisper_model_size} at {str(_whisper_model)}..."
-#         )
-#     return _whisper_model
 
 
 def get_whisper_model():
@@ -53,19 +35,57 @@ def get_batched_model():
     return _batched_model
 
 
+async def call_faster_whisper_api(
+    audio_b64: str, start_offset: float = 0.0, socket_session_id: str = None
+) -> str:
+    if not faster_whisper_api_url:
+        raise ValueError("FASTER_WHISPER_API_URL is not set")
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{faster_whisper_api_url}/transcribe",
+                json={
+                    "audio_base64": audio_b64,
+                    "start_offset": start_offset,
+                    "socket_session_id": socket_session_id,
+                },
+                headers={"x-api-key": os.getenv("FASTER_WHISPER_API_KEY", "")},
+                timeout=60,
+            )
+            response.raise_for_status()
+            return response.json().get("transcription", "")
+    except httpx.HTTPError as e:
+        logger.error(f"[API] Error calling faster-whisper API: {e}")
+        raise ValueError(f"External API error: {e}")
+
+
 async def transcribe_audio_base64(
     audio_b64: str,
     batch: bool = False,
     batch_size: int = 8,
     socket_session_id: str = None,
     start_offset: float = 0.0,
+    use_faster_whisper_api: bool = False,
 ) -> str:
     """
-    Transcribes audio from a base64-encoded stream using faster-whisper (non-streaming).
+    Transcribes audio from a base64-encoded stream using either local faster-whisper or external API.
     """
     try:
         if not audio_b64.strip():
             raise ValueError("Received empty base64 audio string")
+
+        if use_faster_whisper_api:
+            logger.info("[Whisper] Using external faster-whisper API")
+            response = await call_faster_whisper_api(
+                audio_b64,
+                start_offset=start_offset,
+                socket_session_id=socket_session_id,
+            )
+            if not response:
+                raise ValueError("Received empty response from faster-whisper API")
+            logger.debug(f"[Whisper] Transcription from API: {response}")
+            return response
 
         audio_bytes = base64.b64decode(audio_b64)
         if not audio_bytes:

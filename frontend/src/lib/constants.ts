@@ -10,5 +10,9 @@ export const STATIC_SITE_URL = isDev
   : process.env.NEXT_PUBLIC_SITE_URL || 'https://apps.nim23.com'
 
 export const WEBSOCKET_URL = isDev
-  ? `ws://localhost:8000` // Localhost with dynamic port
+  ? `ws://localhost:8000`
   : `wss://${process.env.NEXT_PUBLIC_BACKEND_DOMAIN}`
+
+export const WHISPER_WEBSOCKET_URL = isDev
+  ? `ws://localhost:7860`
+  : `wss://${process.env.NEXT_PUBLIC_WHISPER_BACKEND_DOMAIN}`

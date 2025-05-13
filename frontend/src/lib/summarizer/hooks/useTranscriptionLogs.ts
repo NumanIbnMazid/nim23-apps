@@ -5,23 +5,26 @@ let signalTimelineReset: (() => void) | null = null
 
 export const useTranscriptionLogs = () => {
   const [transcriptionTimeline, setTranscriptionTimeline] = useState('')
-  const { logs, dispatchLogs } = useWebSocket()
+  const { whisperLogs, dispatchWhisperLogs } = useWebSocket()
   const lastProcessedId = useRef<string | null>(null)
+
+  console.log('whisperLogs', whisperLogs);
+  
 
   useEffect(() => {
     signalTimelineReset = () => {
-      lastProcessedId.current = logs.at(-1)?.id ?? null
+      lastProcessedId.current = whisperLogs.at(-1)?.id ?? null
       setTranscriptionTimeline('')
     }
     return () => {
       signalTimelineReset = null
     }
-  }, [logs])
+  }, [whisperLogs])
 
   useEffect(() => {
     const newLogs = lastProcessedId.current
-      ? logs.slice(logs.findIndex((log) => log.id === lastProcessedId.current) + 1)
-      : logs
+      ? whisperLogs.slice(whisperLogs.findIndex((log) => log.id === lastProcessedId.current) + 1)
+      : whisperLogs
 
     if (newLogs.length === 0) return
 
@@ -29,7 +32,7 @@ export const useTranscriptionLogs = () => {
     newLogs.forEach((log: any) => {
       if (
         log?.message?.type === 'event' &&
-        log.message.module === 'summarizer' &&
+        log.message.module === 'whisper_api' &&
         log.message.scope === 'whisper' &&
         typeof log.message.message === 'string'
       ) {
@@ -57,9 +60,9 @@ export const useTranscriptionLogs = () => {
     const last = newLogs.at(-1)
     if (last?.id) {
       lastProcessedId.current = last.id
-      dispatchLogs?.({ type: 'clearProcessed', payload: { lastProcessedId: last.id } })
+      dispatchWhisperLogs?.({ type: 'clearProcessed', payload: { lastProcessedId: last.id } })
     }
-  }, [logs])
+  }, [whisperLogs])
 
   return transcriptionTimeline
 }

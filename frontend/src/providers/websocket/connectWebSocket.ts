@@ -1,8 +1,8 @@
 import React from 'react'
-import { WEBSOCKET_URL } from '@/lib/constants'
+import { WEBSOCKET_URL, WHISPER_WEBSOCKET_URL } from '@/lib/constants'
 import { SocketLogType } from './types' // Import SocketLogType
 interface ConnectWebSocketParams {
-  type: 'logs' | 'summarizer'
+  type: 'logs' | 'summarizer' | 'whisper'
   ref: React.RefObject<WebSocket | null>
   dispatch: React.Dispatch<{ type: 'add'; payload: SocketLogType }>
   reconnectTimeoutRef: React.RefObject<NodeJS.Timeout | undefined>
@@ -45,7 +45,12 @@ export const connectWebSocket = ({
     // For now, we'll just log and return to prevent connecting without it.
     return
   }
-  const socketUrl = `${WEBSOCKET_URL}/ws/${type}/?session_id=${socketSessionID}`
+  let socketUrl = ''
+  if (type === 'whisper') {
+    socketUrl = `${WHISPER_WEBSOCKET_URL}/ws/${type}?session_id=${socketSessionID}`
+  } else {
+    socketUrl = `${WEBSOCKET_URL}/ws/${type}/?session_id=${socketSessionID}`
+  }
   const ws = new WebSocket(socketUrl)
   ref.current = ws // Assign the new socket instance to the ref
   ws.onopen = () => {

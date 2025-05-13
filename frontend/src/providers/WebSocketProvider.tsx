@@ -3,7 +3,7 @@
 import React, { useContext, useEffect, useRef, useState, useReducer } from 'react'
 import { WebSocketContext } from './websocket/context'
 // NOTE: *** Log reducer currently limiting logs to 1000, this won't show logs more than 1000 ***
-import { logReducer, summarizerLogReducer } from './websocket/reducers'
+import { logReducer, summarizerLogReducer, whisperLogReducer } from './websocket/reducers'
 import { connectWebSocket } from './websocket/connectWebSocket' // <-- Import the extracted function
 export const WebSocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [summarizerConnected, setSummarizerConnected] = useState(true)
@@ -12,6 +12,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   const [logs, dispatchLogs] = useReducer(logReducer, [])
 
   const [summarizerLogs, dispatchSummarizerLogs] = useReducer(summarizerLogReducer, [])
+  const [whisperLogs, dispatchWhisperLogs] = useReducer(whisperLogReducer, [])
   // Keep the session ID state
   // socketSessionID is passed to the connectWebSocket function
   const [socketSessionID] = useState(() => crypto.randomUUID())
@@ -19,12 +20,15 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   // These refs are passed to the connectWebSocket function
   const logsRef = useRef<WebSocket | null>(null)
   const summarizerRef = useRef<WebSocket | null>(null)
+  const whisperRef = useRef<WebSocket | null>(null)
   // Refs for managing timeouts and intervals (standard practice)
   // These refs are passed to the connectWebSocket function
   const reconnectLogsTimeout = useRef<NodeJS.Timeout | undefined>(undefined)
   const reconnectSummarizerTimeout = useRef<NodeJS.Timeout | undefined>(undefined)
+  const reconnectWhisperTimeout = useRef<NodeJS.Timeout | undefined>(undefined)
   const logsPingInterval = useRef<NodeJS.Timeout | undefined>(undefined)
   const summarizerPingInterval = useRef<NodeJS.Timeout | undefined>(undefined)
+  const whisperPingInterval = useRef<NodeJS.Timeout | undefined>(undefined)
   // *** NEW: Ref to track if initialization has occurred for this component instance ***
   // This ref persists across renders and its value is not affected by Strict Mode's
   // double effect runs on mount, allowing us to track if the setup logic
@@ -35,7 +39,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     // --- Define Cleanup Logic ---
     // This cleanup function will run on unmount, or between runs in Strict Mode development
     const cleanup = () => {
-      console.log('Cleaning up WebSocket connections...')
+      console.log('🔧 Cleaning up WebSocket connections...')
       // Clear any pending reconnect timeouts
       if (reconnectLogsTimeout.current) {
         clearTimeout(reconnectLogsTimeout.current)
@@ -45,6 +49,10 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         clearTimeout(reconnectSummarizerTimeout.current)
         reconnectSummarizerTimeout.current = undefined
       }
+      if (reconnectWhisperTimeout.current) {
+        clearTimeout(reconnectWhisperTimeout.current)
+        reconnectWhisperTimeout.current = undefined
+      }
       // Clear any pending ping intervals
       if (logsPingInterval.current) {
         clearInterval(logsPingInterval.current)
@@ -53,6 +61,10 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
       if (summarizerPingInterval.current) {
         clearInterval(summarizerPingInterval.current)
         summarizerPingInterval.current = undefined
+      }
+      if (whisperPingInterval.current) {
+        clearInterval(whisperPingInterval.current)
+        whisperPingInterval.current = undefined
       }
       if (summarizerRetryTimeout.current) {
         clearTimeout(summarizerRetryTimeout.current)
@@ -80,6 +92,16 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
       } else {
         // If ref is null or already closing/closed, just ensure ref is null
         summarizerRef.current = null
+      }
+      if (
+        whisperRef.current &&
+        whisperRef.current.readyState !== WebSocket.CLOSING &&
+        whisperRef.current.readyState !== WebSocket.CLOSED
+      ) {
+        whisperRef.current.close(1000, 'Client disconnecting')
+      } else {
+        // If ref is null or already closing/closed, just ensure ref is null
+        whisperRef.current = null
       }
       // IMPORTANT: Do NOT reset initializedRef.current here.
       // The initializedRef is meant to track if the *component instance* has initialized,
@@ -116,6 +138,18 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         setSummarizerRetrying,
         summarizerRetryTimeout,
       })
+      connectWebSocket({
+        type: 'whisper',
+        ref: whisperRef,
+        dispatch: dispatchWhisperLogs,
+        reconnectTimeoutRef: reconnectWhisperTimeout,
+        pingIntervalRef: whisperPingInterval,
+        socketSessionID,
+        // Pass dummy values for summarizer-specific parameters if type is whisper
+        setSummarizerConnected: () => {},
+        setSummarizerRetrying: () => {},
+        summarizerRetryTimeout: { current: null }, // Provide a dummy ref
+      })
     } else {
       // This block will be hit on the second effect run in Strict Mode development.
       // The initializedRef is true, so we skip the setup.
@@ -142,10 +176,13 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
       value={{
         logsSocket: logsRef.current, // This will be null initially, then the WS instance
         summarizerSocket: summarizerRef.current, // This will be null initially, then the WS instance
+        whisperSocket: whisperRef.current, // This will be null initially, then the WS instance
         logs,
         dispatchLogs,
         summarizerLogs,
         dispatchSummarizerLogs,
+        whisperLogs,
+        dispatchWhisperLogs,
         socketSessionID,
         summarizerConnected,
         summarizerRetrying,

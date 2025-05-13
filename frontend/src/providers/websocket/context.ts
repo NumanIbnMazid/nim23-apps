@@ -4,10 +4,13 @@ import { WebSocketContextType } from './types'
 export const WebSocketContext = createContext<WebSocketContextType>({
   logsSocket: null,
   summarizerSocket: null,
+  whisperSocket: null,
   logs: [],
   dispatchLogs: () => {},
   summarizerLogs: [],
   dispatchSummarizerLogs: () => {},
+  whisperLogs: [],
+  dispatchWhisperLogs: () => {},
   socketSessionID: null,
   summarizerConnected: false,
   summarizerRetrying: false,

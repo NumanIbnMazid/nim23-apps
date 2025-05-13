@@ -46,6 +46,7 @@ class AudioChunkProcessor:
             self.current_chunk,
             socket_session_id=self.session_id,
             start_offset=self.start_offset,
+            use_faster_whisper_api=True,
         )
         self.transcription_chunks.append(transcript)
         self.current_chunk = ""
@@ -56,6 +57,7 @@ class AudioChunkProcessor:
             full_audio,
             socket_session_id=self.session_id,
             start_offset=self.start_offset,
+            use_faster_whisper_api=True,
         )
         self.transcription_chunks.append(transcript)
         self.audio_chunks = []

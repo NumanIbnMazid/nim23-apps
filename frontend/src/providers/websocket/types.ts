@@ -6,6 +6,7 @@ export interface SocketLogType {
 export interface WebSocketContextType {
   logsSocket: WebSocket | null
   summarizerSocket: WebSocket | null
+  whisperSocket: WebSocket | null
   logs: SocketLogType[]
   dispatchLogs: React.Dispatch<{
     type: 'add' | 'clear' | 'clearProcessed'
@@ -13,6 +14,11 @@ export interface WebSocketContextType {
   }>
   summarizerLogs: SocketLogType[]
   dispatchSummarizerLogs: React.Dispatch<{
+    type: 'add' | 'clear' | 'clearProcessed'
+    payload?: { lastProcessedId: string } | SocketLogType
+  }>
+  whisperLogs: SocketLogType[]
+  dispatchWhisperLogs: React.Dispatch<{
     type: 'add' | 'clear' | 'clearProcessed'
     payload?: { lastProcessedId: string } | SocketLogType
   }>
