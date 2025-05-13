@@ -6,10 +6,7 @@ let signalTimelineReset: (() => void) | null = null
 export const useTranscriptionLogs = () => {
   const [transcriptionTimeline, setTranscriptionTimeline] = useState('')
   const { whisperLogs, dispatchWhisperLogs } = useWebSocket()
-  const lastProcessedId = useRef<string | null>(null)
-
-  console.log('whisperLogs', whisperLogs);
-  
+  const lastProcessedId = useRef<string | null>(null)  
 
   useEffect(() => {
     signalTimelineReset = () => {
