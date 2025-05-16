@@ -182,7 +182,7 @@ export const transcribeAudioFile = async (
           setStatusMessage
         )
 
-        allText += chunkText + '\n\n' // Append chunk text with separators
+        allText += chunkText + ' ' // Append chunk text with space
         setWhisperTranscription(allText) // Update UI with cumulative text *after each chunk*
 
         // console.log(`🔊 [Summarizer] Transcribed chunk ${index + 1}: ${chunkText.substring(0, 100)}...`) // Log snippet

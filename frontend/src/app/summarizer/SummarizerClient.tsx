@@ -15,9 +15,10 @@ import ErrorMessage from '@/components/Summarizer/ErrorMessage'
 import SummaryBlock from '@/components/Summarizer/SummaryBlock'
 // Ensure the path to TranscriptionTimeline is correct if it's not under Summarizer
 import TranscriptionTimeline from '@/components/Summarizer/TranscriptionTimeline'
+import WhisperTranscription from '@/components/Summarizer/WhisperTranscription'
 import { useSummarization } from '@/lib/summarizer/hooks/useSummarization'
 // Import the revised reset function
-import { useTranscriptionLogs, resetTranscriptionLogs } from '@/lib/summarizer/hooks/useTranscriptionLogs'
+import { resetTranscriptionLogs } from '@/lib/summarizer/hooks/useTranscriptionLogs'
 import FFmpegManager from '@/lib/grabit/ffmpeg/FFmpegManager'
 import { useWebSocket } from '@/providers/WebSocketProvider'
 
@@ -41,7 +42,9 @@ const SummarizerClient: React.FC = () => {
   }, [])
 
   // Use the updated hook - it doesn't need 'loading' as a parameter anymore
-  const transcriptionTimeline = useTranscriptionLogs()
+  // NOTE: *** Disable transcriptionTimeline for now (DO NOT REMOVE) ***
+  // const transcriptionTimeline = useTranscriptionLogs()
+  const transcriptionTimeline = null // Placeholder for the transcription timeline
   const { summary, whisperTranscription, statusMessage, errorMessage, loading, handleSummarize, reset } =
     useSummarization()
 
@@ -215,6 +218,8 @@ const SummarizerClient: React.FC = () => {
                 whisperTranscription={whisperTranscription} // Assuming whisperTranscription is the final one from useSummarization
               />
             )}
+            {/* Display the full whisper transcription if available */}
+            {whisperTranscription && <WhisperTranscription whisperTranscription={whisperTranscription} />}
           </div>
 
           <hr className="my-16 border-gray-300 dark:border-gray-700" />

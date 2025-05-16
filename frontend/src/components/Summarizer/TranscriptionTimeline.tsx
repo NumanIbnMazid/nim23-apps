@@ -3,7 +3,7 @@ import ReactModal from 'react-modal'
 import WhisperTranscriptionModal from './WhisperTranscriptionModal'
 
 interface TranscriptionTimelineProps {
-  rawTranscription: string
+  rawTranscription: string | null
   whisperTranscription: string
 }
 

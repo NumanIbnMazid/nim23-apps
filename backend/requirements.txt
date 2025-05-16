@@ -48,6 +48,7 @@ google-auth==2.38.0
 google-auth-httplib2==0.2.0
 google-genai==1.10.0
 googleapis-common-protos==1.70.0
+gradio_client==1.10.1
 greenlet==3.2.1
 grpcio==1.72.0rc1
 grpcio-status==1.72.0rc1
@@ -82,7 +83,7 @@ onnxruntime==1.21.1
 openai==1.76.0
 orjson==3.10.16
 packaging==24.2
-Pillow==11.2.1
+pillow==11.2.1
 prometheus_client==0.21.1
 propcache==0.3.1
 proto-plus==1.26.1

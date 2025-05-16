@@ -138,18 +138,19 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         setSummarizerRetrying,
         summarizerRetryTimeout,
       })
-      connectWebSocket({
-        type: 'whisper',
-        ref: whisperRef,
-        dispatch: dispatchWhisperLogs,
-        reconnectTimeoutRef: reconnectWhisperTimeout,
-        pingIntervalRef: whisperPingInterval,
-        socketSessionID,
-        // Pass dummy values for summarizer-specific parameters if type is whisper
-        setSummarizerConnected: () => {},
-        setSummarizerRetrying: () => {},
-        summarizerRetryTimeout: { current: null }, // Provide a dummy ref
-      })
+      // NOTE: ** disable whisper for now (DO NOT REMOVE) **
+      // connectWebSocket({
+      //   type: 'whisper',
+      //   ref: whisperRef,
+      //   dispatch: dispatchWhisperLogs,
+      //   reconnectTimeoutRef: reconnectWhisperTimeout,
+      //   pingIntervalRef: whisperPingInterval,
+      //   socketSessionID,
+      //   // Pass dummy values for summarizer-specific parameters if type is whisper
+      //   setSummarizerConnected: () => {},
+      //   setSummarizerRetrying: () => {},
+      //   summarizerRetryTimeout: { current: null }, // Provide a dummy ref
+      // })
     } else {
       // This block will be hit on the second effect run in Strict Mode development.
       // The initializedRef is true, so we skip the setup.
