@@ -45,7 +45,7 @@ const SummarizerClient: React.FC = () => {
   // NOTE: *** Disable transcriptionTimeline for now (DO NOT REMOVE) ***
   // const transcriptionTimeline = useTranscriptionLogs()
   const transcriptionTimeline = null // Placeholder for the transcription timeline
-  const { summary, whisperTranscription, statusMessage, errorMessage, loading, handleSummarize, reset } =
+  const { finalTextToSummarize, summary, whisperTranscription, statusMessage, errorMessage, loading, handleSummarize, reset } =
     useSummarization()
 
   const resetForm = () => {
@@ -219,7 +219,7 @@ const SummarizerClient: React.FC = () => {
               />
             )}
             {/* Display the full whisper transcription if available */}
-            {whisperTranscription && <WhisperTranscription whisperTranscription={whisperTranscription} />}
+            {whisperTranscription && <WhisperTranscription whisperTranscription={whisperTranscription} finalTextToSummarize={finalTextToSummarize} />}
           </div>
 
           <hr className="my-16 border-gray-300 dark:border-gray-700" />

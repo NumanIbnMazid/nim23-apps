@@ -9,6 +9,7 @@ import { useWebSocket } from '@/providers/WebSocketProvider'
 
 export const useSummarization = () => {
   const [summary, setSummary] = useState('')
+  const [finalTextToSummarize, setFinalTextToSummarize] = useState('')
   const [whisperTranscription, setWhisperTranscription] = useState('')
   const [transcriptionTimeline, setTranscriptionTimeline] = useState('')
   const [statusMessage, setStatusMessage] = useState('')
@@ -24,6 +25,7 @@ export const useSummarization = () => {
     setTranscriptionTimeline('')
     setStatusMessage('')
     setErrorMessage('')
+    setFinalTextToSummarize('')
   }
 
   const handleSummarize = async (
@@ -119,6 +121,9 @@ export const useSummarization = () => {
 
       setStatusMessage('Processing completed. Generating summary...')
 
+      // Set the final text to summarize
+      setFinalTextToSummarize(textToSummarize)
+
       // Summarization API call
       const response = await fetch(`${PUBLIC_SITE_URL}/api/summarizer/summarize`, {
         method: 'POST',
@@ -160,6 +165,7 @@ export const useSummarization = () => {
     }
   }
   return {
+    finalTextToSummarize,
     summary,
     whisperTranscription,
     transcriptionTimeline,

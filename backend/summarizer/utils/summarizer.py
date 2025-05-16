@@ -1,18 +1,22 @@
 from google import genai
 import logging
+from summarizer.models import SummarizerUtils
+
 
 logger = logging.getLogger("summarizer_summarizer")
 
+def get_prompt():
+    system_prompt = SummarizerUtils.objects.first().system_prompt
+    if not system_prompt:
+        raise ValueError("System prompt is empty")
+    return system_prompt
 
 def summarize_text(text: str, model: str, client: any) -> str:
     """
     Summarizes the provided text using Gemini AI.
     """
     try:
-        system_prompt = (
-            "You are a helpful assistant that summarizes text. "
-            "Your task is to summarize the provided text in a concise and clear manner."
-        )
+        system_prompt = get_prompt()
         user_prompt = f"Summarize the following text:\n\n{text}"
 
         logger.debug(f"Summarizing text with Gemini AI model: {model}")
