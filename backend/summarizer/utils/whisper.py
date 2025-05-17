@@ -23,6 +23,8 @@ whisper_batch_enabled = os.getenv("WHISPER_BATCH_ENABLED", "False").lower() == "
 whisper_batch_size = int(os.getenv("WHISPER_BATCH_SIZE", 8))
 faster_whisper_api_url = os.getenv("FASTER_WHISPER_API_URL", "").strip()
 hf_api_space = os.getenv("HF_WHISPER_SPACE", "hf-audio/whisper-large-v3-turbo")
+hf_token = os.getenv("HF_TOKEN")
+hf_client = Client(hf_api_space, hf_token=hf_token)
 
 model_cache = WhisperModelCache()
 _batched_model = None
@@ -83,8 +85,7 @@ def call_huggingface_whisper(audio_b64: str) -> str:
             temp_audio_file.write(audio_bytes)
             temp_audio_path = temp_audio_file.name
 
-        client = Client(hf_api_space)
-        result = client.predict(
+        result = hf_client.predict(
             inputs=handle_file(temp_audio_path), task="transcribe", api_name="/predict"
         )
 
