@@ -34,7 +34,7 @@ export default function Footer({ setShowQR, showQR }: { setShowQR: (value: boole
           {/* 1st 5 navigation routes */}
           <div className="flex flex-col gap-4 capitalize">
             {Object.entries(namedNavigationRoutesAll)
-              .slice(0, 4)
+              .slice(0, 5)
               .map(([route, text], index) => (
                 <FooterLink key={index} route={route} text={text} />
               ))}
@@ -42,7 +42,7 @@ export default function Footer({ setShowQR, showQR }: { setShowQR: (value: boole
           {/* Last navigation routes */}
           <div className="flex flex-col gap-4 capitalize">
             {Object.entries(namedNavigationRoutesAll)
-              .slice(4)
+              .slice(5)
               .map(([route, text], index) => (
                 <FooterLink key={index} route={route} text={text === 'rss' ? 'RSS' : text} />
               ))}
