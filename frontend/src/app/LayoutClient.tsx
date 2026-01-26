@@ -58,7 +58,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         {/* 🚧 Under Construction Notice */}
         {showNotice && (
           <div className="relative z-40 bg-amber-50 dark:bg-amber-900/40 border-b border-amber-200 dark:border-amber-800">
-            <div className="mx-auto max-w-7xl px-4 py-3 flex items-start gap-3">
+            <div className="max-w-6xl mx-auto py-16 px-2 flex items-start gap-3">
 
               {/* Icon */}
               <div className="mt-0.5 text-amber-600 dark:text-amber-400">
