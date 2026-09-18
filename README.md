@@ -348,7 +348,6 @@ Released under the [MIT License](LICENSE). © 2025 Numan Ibn Mazid.
 
 ## Contact
 
-- Apps — [apps.nim23.com](https://apps.nim23.com)
 - Portfolio — [nim23.com](https://nim23.com)
 - GitHub — [@NumanIbnMazid](https://github.com/NumanIbnMazid)
 - LinkedIn — [Numan Ibn Mazid](https://www.linkedin.com/in/numanibnmazid/)
