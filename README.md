@@ -1,6 +1,6 @@
 # NIM23 Apps
 
-**A monorepo of small, useful web apps built and hosted by [NIM23](https://nim23.com) — a Next.js 15 frontend and a Django 5 / DRF backend, deployed together at [apps.nim23.com](https://apps.nim23.com).**
+**A monorepo of small, useful web apps built.**
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
