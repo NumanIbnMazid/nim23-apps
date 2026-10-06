@@ -1,6 +1,6 @@
 # NIM23 Apps
 
-**A monorepo of small, useful web apps built.**
+**A monorepo of small, useful web apps — a Next.js 15 frontend and a Django 5 / DRF backend.**
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
@@ -37,13 +37,13 @@
 
 | App | Route | What it does |
 | --- | --- | --- |
-| **Grabit** | [`/grabit`](https://apps.nim23.com/grabit) | Video and audio downloader powered by `yt-dlp`. Paste a link from YouTube, Facebook, Instagram, X/Twitter, TikTok and more, inspect the available formats and qualities (up to 8K), and download the video or extract audio only. |
-| **Humanizer AI** | [`/humanizer-ai`](https://apps.nim23.com/humanizer-ai) | Rewrites robotic or AI-generated text into natural, human-sounding prose. Tone and system prompt are configurable from the Django admin, and the LLM client is pluggable (Gemini today, with Anthropic and OpenRouter wiring in place). |
-| **Summarizer** | [`/summarizer`](https://apps.nim23.com/summarizer) | Distills text, documents (PDF, DOCX, TXT, Markdown), uploaded audio/video, or any URL into a concise summary. Media is transcribed with Faster-Whisper, then summarized with Gemini. Progress is streamed back to the browser over a WebSocket. |
-| **Recommendr** | [`/recommendr`](https://apps.nim23.com/recommendr) | Mood- and vibe-based media recommendation engine. Pick a media type, mood, genre, language, occasion and rating, and get curated movies, shows, documentaries or music — enriched with metadata from IMDb, OMDb, YouTube and Spotify, with recent results cached so you don't see the same titles twice. |
+| **Grabit** | `/grabit` | Video and audio downloader powered by `yt-dlp`. Paste a link from YouTube, Facebook, Instagram, X/Twitter, TikTok and more, inspect the available formats and qualities (up to 8K), and download the video or extract audio only. |
+| **Humanizer AI** | `/humanizer-ai` | Rewrites robotic or AI-generated text into natural, human-sounding prose. Tone and system prompt are configurable from the Django admin, and the LLM client is pluggable (Gemini today, with Anthropic and OpenRouter wiring in place). |
+| **Summarizer** | `/summarizer` | Distills text, documents (PDF, DOCX, TXT, Markdown), uploaded audio/video, or any URL into a concise summary. Media is transcribed with Faster-Whisper, then summarized with Gemini. Progress is streamed back to the browser over a WebSocket. |
+| **Recommendr** | `/recommendr` | Mood- and vibe-based media recommendation engine. Pick a media type, mood, genre, language, occasion and rating, and get curated movies, shows, documentaries or music — enriched with metadata from IMDb, OMDb, YouTube and Spotify, with recent results cached so you don't see the same titles twice. |
 | **AI Text Detector** | API only | Scores a block of text 0–100 for how likely it is to be AI-generated, via an OpenRouter model. Exposed at `/api/detect-ai/detect/`; no UI is shipped yet. |
 
-The landing page at [apps.nim23.com](https://apps.nim23.com) lists every app with a live card, and `/contact` and `/privacy` round out the site.
+The landing page at `/` lists every app with a card, and `/contact` and `/privacy` round out the frontend.
 
 ---
 
